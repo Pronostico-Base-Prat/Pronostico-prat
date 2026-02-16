@@ -3,108 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Prat | Dashboard</title>
+    <title>Meteo Prat | Dashboard Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; min-height: 300px; }
-        .dia-grupo { margin-bottom: 35px; text-align: center; }
-        .dia-titulo { background: var(--navy); color: white; padding: 10px 25px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 18px; border-left: 6px solid var(--green); text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; }
+        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        .dia-titulo { background: var(--navy); color: white; padding: 10px 25px; border-radius: 50px; display: inline-block; margin: 20px 0; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 12px; padding: 18px; border-left: 6px solid var(--green); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card h3 { margin: 0 0 10px 0; color: var(--navy); border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; }
         .dato { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
-        .label { color: #777; } .val { font-weight: bold; color: #111; }
-        .temps { background: #f8faff; border-radius: 8px; padding: 12px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
-        .t-val { font-size: 1.1rem; font-weight: bold; color: var(--blue); display: block; }
-        .t-lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        #status { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
+        .val { font-weight: bold; }
+        .temps { background: #f8faff; border-radius: 8px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
+        
+        /* Estilos Tabla de Mareas */
+        .seccion-mareas { background: white; margin-top: 50px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; }
+        .seccion-mareas h2 { color: var(--navy); text-align: center; border-bottom: 3px solid var(--blue); display: inline-block; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: var(--navy); color: white; padding: 12px; font-size: 0.85rem; }
+        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.85rem; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .p-mareas { color: #d35400; font-weight: bold; } /* Pleamar */
+        .b-mareas { color: #2980b9; font-weight: bold; } /* Bajamar */
     </style>
 </head>
 <body>
 
 <header>
     <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
-    <p>Pronóstico Meteorológico Oficial</p>
+    <p>Pronóstico Meteorológico y Mareas</p>
 </header>
 
 <div id="dashboard">
-    <div style="text-align:center; padding:80px;">
-        <p>📡 Conectando con la base de datos...</p>
+    <div id="clima-container"></div>
+    
+    <div class="seccion-mareas">
+        <center><h2>🌊 Tabla de Mareas - Febrero 2026</h2></center>
+        <table id="tabla-mareas">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-mareas">
+                </tbody>
+        </table>
     </div>
 </div>
-<div id="status">Sincronizando...</div>
 
 <script>
-    // URL de exportación CSV de tu hoja publicada
-    const URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv';
+    const SHEET_ID = '186HJEbrDHelhKLu0jRCfXNX3XIVJpHfvkepO5Zm6MI';
+    const URL_CLIMA = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+    const URL_MAREAS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2017374824`; // ID de Hoja 2
 
-    async function cargarClima() {
-        const dash = document.getElementById('dashboard');
-        const stat = document.getElementById('status');
-
+    async function cargarTodo() {
+        // 1. CARGAR CLIMA
         try {
-            const resp = await fetch(URL + "&v=" + Date.now());
-            const data = await resp.text();
+            const res = await fetch(URL_CLIMA + "&v=" + Date.now());
+            const csv = await res.text();
+            const filas = csv.split('\n').map(r => r.split(','));
+            let html = ""; let diaAct = "";
             
-            // Procesar el CSV
-            const filas = data.split(/\r?\n/).map(row => {
-                return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
-            });
-
-            if (filas.length <= 1) {
-                stat.innerHTML = "⏳ Esperando datos válidos...";
-                return;
-            }
-
-            dash.innerHTML = "";
-            let diaActual = "";
-            let gridActual = null;
-
-            // Empezamos en 1 para saltar el encabezado del Excel
-            for (let i = 1; i < filas.length; i++) {
-                const col = filas[i];
-                if (!col[0]) continue;
-
-                if (col[0] !== diaActual) {
-                    diaActual = col[0];
-                    const divDia = document.createElement('div');
-                    divDia.className = 'dia-grupo';
-                    divDia.innerHTML = `<div class="dia-titulo">📅 ${diaActual}</div>`;
-                    gridActual = document.createElement('div');
-                    gridActual.className = 'grid';
-                    divDia.appendChild(gridActual);
-                    dash.appendChild(divDia);
+            for(let i=1; i<filas.length; i++) {
+                const col = filas[i]; if(!col[0]) continue;
+                if(col[0] !== diaAct) {
+                    if(diaAct !== "") html += '</div></div>';
+                    diaAct = col[0];
+                    html += `<div class="dia-grupo"><center><div class="dia-titulo">📅 ${diaAct}</div></center><div class="grid">`;
                 }
-
-                gridActual.innerHTML += `
-                    <div class="card">
-                        <h3>🕒 ${col[1]}</h3>
-                        <div class="dato"><span class="label">☁️ Nubosidad</span><span class="val">${col[2]}</span></div>
-                        <div class="dato"><span class="label">👁️ Visibilidad</span><span class="val">${col[3]}</span></div>
-                        <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${col[4]}</span></div>
-                        <div class="dato"><span class="label">🌊 Estado Mar</span><span class="val">${col[5]}</span></div>
-                        <div class="temps">
-                            <div style="text-align:center"><span class="t-val">${col[6]}</span><span class="t-lbl">T° Aire</span></div>
-                            <div style="text-align:center"><span class="t-val">${col[7]}</span><span class="t-lbl">S. Térmica</span></div>
-                        </div>
-                    </div>`;
+                html += `<div class="card"><h3>🕒 ${col[1]}</h3>
+                    <div class="dato"><span>☁️ Nubes</span><span class="val">${col[2]}</span></div>
+                    <div class="dato"><span>👁️ Visib.</span><span class="val">${col[3]}</span></div>
+                    <div class="dato"><span>🌬️ Viento</span><span class="val">${col[4]}</span></div>
+                    <div class="dato"><span>🌊 Mar</span><span class="val">${col[5]}</span></div>
+                    <div class="temps">
+                        <div><span style="display:block;color:var(--blue);font-weight:bold">${col[6]}</span><small>T° AIRE</small></div>
+                        <div><span style="display:block;color:var(--blue);font-weight:bold">${col[7]}</span><small>S. TÉRMICA</small></div>
+                    </div></div>`;
             }
+            document.getElementById('clima-container').innerHTML = html;
+        } catch(e) { console.error(e); }
 
-            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
-
-        } catch (e) {
-            console.error(e);
-            stat.innerHTML = "⚠️ Error de red. Reintentando...";
-            setTimeout(cargarClima, 10000);
-        }
+        // 2. CARGAR MAREAS (Hoja 2)
+        try {
+            const resM = await fetch(URL_MAREAS + "&v=" + Date.now());
+            const csvM = await resM.text();
+            const filasM = csvM.split('\n').map(r => r.split(','));
+            let tableHtml = "";
+            
+            // Empezamos en i=2 para saltar el título "Mes de Febrero" y encabezados
+            for(let i=2; i<filasM.length; i++) {
+                const c = filasM[i]; if(!c[0]) continue;
+                tableHtml += `<tr>
+                    <td><b>${c[0]}</b></td>
+                    <td>${c[1]}</td><td class="${c[2].includes('P')?'p-mareas':'b-mareas'}">${c[2]}</td>
+                    <td>${c[3]}</td><td class="${c[4].includes('P')?'p-mareas':'b-mareas'}">${c[4]}</td>
+                    <td>${c[5]}</td><td class="${c[6].includes('P')?'p-mareas':'b-mareas'}">${c[6]}</td>
+                    <td>${c[7]}</td><td class="${c[8].includes('P')?'p-mareas':'b-mareas'}">${c[8]}</td>
+                </tr>`;
+            }
+            document.getElementById('cuerpo-mareas').innerHTML = tableHtml;
+        } catch(e) { console.error(e); }
     }
 
-    cargarClima();
-    setInterval(cargarClima, 300000); // Auto-refresco cada 5 minutos
+    cargarTodo();
+    setInterval(cargarTodo, 300000);
 </script>
 </body>
 </html>

@@ -3,27 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Prat | Oficial</title>
+    <title>Meteo Prat | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --navy: #0a2540; --blue: #004e92; --green: #2ecc71; --bg: #f0f2f5; }
+        :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; }
+        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 20px; text-align: center; }
         #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .dia-grupo { margin-bottom: 30px; }
-        .dia-titulo { background: var(--navy); color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
+        .dia-grupo { margin-bottom: 30px; text-align: center; }
+        .dia-titulo { background: var(--navy); color: white; padding: 8px 20px; border-radius: 5px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 10px; padding: 15px; border-left: 6px solid var(--green); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .card h3 { margin: 0 0 10px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; border-bottom: 1px solid #f9f9f9; }
-        .label { color: #666; } .val { font-weight: bold; color: #222; }
-        .temps { background: #f8f9fa; border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; text-align: center; }
-        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; }
-        .t-lbl { font-size: 0.65rem; color: #888; }
+        .card { background: white; border-radius: 10px; padding: 15px; border-left: 6px solid #2ecc71; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0 0 10px 0; color: var(--navy); font-size: 1rem; border-bottom: 1px solid #eee; }
+        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+        .val { font-weight: bold; }
+        .temps { background: #f8f9fa; border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; }
+        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); }
+        .t-lbl { font-size: 0.6rem; color: #888; display: block; }
         #status { text-align: center; padding: 20px; color: #666; font-size: 0.8rem; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 40px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -34,88 +31,71 @@
 </header>
 
 <div id="dashboard">
-    <div class="loader" id="loader"></div>
+    <p style="text-align:center; padding:50px;">📡 Conectando con los sensores de la base...</p>
 </div>
-<div id="status">Conectando con la base...</div>
+<div id="status">Iniciando...</div>
 
 <script>
-    // USAMOS EL MODO EXPORT PARA EVITAR SCRIPTS DE BLOQUEO
-    const SHEET_ID = "1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+    // ESTE MÉTODO ES EL MÁS ESTABLE Y NO SE BLOQUEA
+    const SHEET_ID = '1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72';
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-    async function init() {
+    async function cargarClima() {
         const dash = document.getElementById('dashboard');
         const stat = document.getElementById('status');
-        
+
         try {
-            const response = await fetch(CSV_URL + "&cache=" + Date.now());
-            const text = await response.text();
-
-            // Si Google manda código raro, lo detectamos
-            if (text.includes("<!DOCTYPE") || text.includes("function n(a)")) {
-                stat.innerHTML = "⏳ Google está verificando la conexión... Reintentando automáticamente.";
-                setTimeout(init, 5000);
-                return;
-            }
-
-            // Procesamos filas (separación inteligente por comas)
-            const rows = text.split(/\r?\n/).map(line => {
-                const parts = []; let cell = ''; let inQ = false;
-                for (let char of line) {
-                    if (char === '"') inQ = !inQ;
-                    else if (char === ',' && !inQ) { parts.push(cell.trim()); cell = ''; }
-                    else cell += char;
-                }
-                parts.push(cell.trim());
-                return parts;
-            }).filter(r => r.length >= 8 && (r[0].toLowerCase().includes("lunes") || r[0].toLowerCase().includes("martes") || r[0].toLowerCase().includes("miércoles") || r[0].toLowerCase().includes("jueves") || r[0].toLowerCase().includes("viernes") || r[0].toLowerCase().includes("sábado") || r[0].toLowerCase().includes("domingo")));
-
-            if (rows.length === 0) {
-                stat.innerHTML = "⚠️ No hay datos disponibles en la planilla actualmente.";
-                document.getElementById('loader').style.display = 'none';
-                return;
-            }
+            const resp = await fetch(URL + "&v=" + Date.now());
+            const text = await resp.text();
+            
+            // Limpiar la respuesta de Google (viene con un prefijo raro)
+            const jsonData = JSON.parse(text.substring(47, text.length - 2));
+            const rows = jsonData.table.rows;
 
             dash.innerHTML = "";
-            let currentDay = "";
-            let currentGrid = null;
+            let diaActual = "";
+            let gridActual = null;
 
-            rows.forEach(row => {
-                if (row[0] !== currentDay) {
-                    currentDay = row[0];
-                    const container = document.createElement('div');
-                    container.className = 'dia-grupo';
-                    container.innerHTML = `<div class="dia-titulo">📅 ${currentDay}</div>`;
-                    currentGrid = document.createElement('div');
-                    currentGrid.className = 'grid';
-                    container.appendChild(currentGrid);
-                    dash.appendChild(container);
+            rows.forEach(r => {
+                const col = r.c.map(cell => cell ? cell.v : "");
+                if (!col[0] || col[0] === "Día") return; // Saltar encabezados o vacíos
+
+                if (col[0] !== diaActual) {
+                    diaActual = col[0];
+                    const divDia = document.createElement('div');
+                    divDia.className = 'dia-grupo';
+                    divDia.innerHTML = `<div class="dia-titulo">📅 ${diaActual}</div>`;
+                    gridActual = document.createElement('div');
+                    gridActual.className = 'grid';
+                    divDia.appendChild(gridActual);
+                    dash.appendChild(divDia);
                 }
 
-                currentGrid.innerHTML += `
+                gridActual.innerHTML += `
                     <div class="card">
-                        <h3>🕒 ${row[1]}</h3>
-                        <div class="dato"><span class="label">☁️ Nubosidad</span><span class="val">${row[2]}</span></div>
-                        <div class="dato"><span class="label">👁️ Visibilidad</span><span class="val">${row[3]}</span></div>
-                        <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${row[4]}</span></div>
-                        <div class="dato"><span class="label">🌊 Mar</span><span class="val">${row[5]}</span></div>
+                        <h3>🕒 ${col[1]}</h3>
+                        <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${col[2]}</span></div>
+                        <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${col[3]}</span></div>
+                        <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${col[4]}</span></div>
+                        <div class="dato"><span class="label">🌊 Mar</span><span class="val">${col[5]}</span></div>
                         <div class="temps">
-                            <div class="t-item"><span class="t-val">${row[6].replace(/"/g,'')}</span><span class="t-lbl">T° Aire</span></div>
-                            <div class="t-item"><span class="t-val">${row[7].replace(/"/g,'')}</span><span class="t-lbl">S. Térmica</span></div>
+                            <div style="text-align:center"><span class="t-val">${col[6]}</span><span class="t-lbl">T° Aire</span></div>
+                            <div style="text-align:center"><span class="t-val">${col[7]}</span><span class="t-lbl">S. Térmica</span></div>
                         </div>
                     </div>`;
             });
 
-            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
+            stat.innerHTML = `✅ Sincronizado: ${new Date().toLocaleTimeString()}`;
 
         } catch (e) {
-            stat.innerHTML = "❌ Error de red. Reintentando...";
-            setTimeout(init, 10000);
+            console.error(e);
+            stat.innerHTML = "⚠️ Error de datos. Reintentando en 10 segundos...";
+            setTimeout(cargarClima, 10000);
         }
     }
 
-    init();
-    setInterval(init, 300000); // 5 min refresh
+    cargarClima();
+    setInterval(cargarClima, 300000); // Actualiza cada 5 minutos
 </script>
 </body>
 </html>

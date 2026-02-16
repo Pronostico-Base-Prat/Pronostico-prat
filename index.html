@@ -21,21 +21,22 @@
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
     <div id="contenido-principal" style="text-align: center;">
-        <p id="estado" style="padding: 50px;">Conectando con el Excel...</p>
+        <p id="estado" style="padding: 50px;">Buscando datos meteorológicos actualizados...</p>
     </div>
 
     <script>
-        // ENLACE CORREGIDO: He reemplazado la 'O' por '0' donde correspondía
-        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+        // Enlace con 'cache breaker' para evitar que se quede pegado
+        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv&x=" + Math.random();
 
         async function cargarClima() {
             const estado = document.getElementById('estado');
             try {
                 const respuesta = await fetch(enlaceCSV);
-                if (!respuesta.ok) throw new Error("No se pudo leer el archivo");
+                if (!respuesta.ok) throw new Error();
                 
                 const texto = await respuesta.text();
-                const filas = texto.split('\n').map(f => f.split(',')).filter(f => f.length > 3);
+                // Separamos filas y limpiamos espacios y comillas
+                const filas = texto.split('\n').map(f => f.split(',').map(c => c.trim().replace(/^"|"$/g, '')));
 
                 const main = document.getElementById('contenido-principal');
                 main.innerHTML = ""; 
@@ -43,9 +44,10 @@
                 let diaActual = "";
                 let contenedorActual = null;
 
+                // Empezamos en i=1 para saltar los títulos (Día, Horario...)
                 for (let i = 1; i < filas.length; i++) {
-                    const col = filas[i].map(c => c.trim().replace(/"/g, ''));
-                    if (!col[0]) continue;
+                    const col = filas[i];
+                    if (col.length < 5 || !col[0]) continue;
 
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
@@ -61,7 +63,7 @@
 
                     contenedorActual.innerHTML += `
                         <div class="tarjeta">
-                            <h2>${col[1] || 'Horario'}</h2>
+                            <h2>${col[1] || '---'}</h2>
                             <p class="dato">☁️ <strong>Cielo:</strong> ${col[2] || '-'}</p>
                             <p class="dato">👁️ <strong>Vis:</strong> ${col[3] || '-'}</p>
                             <p class="dato">🌬️ <strong>Viento:</strong> ${col[4] || '-'}</p>
@@ -72,7 +74,7 @@
                     `;
                 }
             } catch (error) {
-                estado.innerHTML = "<b>Error:</b> No se puede acceder al Excel.<br>Asegúrate de que en Google Sheets hayas ido a:<br><i>Archivo > Compartir > Publicar en la web > CSV</i>";
+                estado.innerHTML = "<b>Aviso:</b> No se detectan datos. <br>Revisa que el Excel esté 'Publicado en la web' como CSV.";
             }
         }
         cargarClima();

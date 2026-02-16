@@ -1,45 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Prat | Dashboard</title>
-    <link href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv" rel="stylesheet">
-    <style>
-        :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 20px; text-align: center; }
-        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; }
-        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .dia-grupo { margin-bottom: 30px; text-align: center; }
-        .dia-titulo { background: var(--navy); color: white; padding: 8px 20px; border-radius: 5px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 10px; padding: 15px; border-left: 6px solid var(--green); text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card h3 { margin: 0 0 10px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; border-bottom: 1px solid #f9f9f9; }
-        .label { color: #666; } .val { font-weight: bold; color: #111; }
-        .temps { background: #f8f9fa; border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; text-align: center; }
-        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; }
-        .t-lbl { font-size: 0.65rem; color: #888; }
-        #status { text-align: center; padding: 20px; color: #666; font-size: 0.8rem; }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
-    <p>Pronóstico Meteorológico Oficial</p>
-</header>
-
-<div id="dashboard">
-    <p style="text-align:center; padding:50px;">📡 Conectando con la nueva base de datos...</p>
-</div>
-<div id="status">Iniciando...</div>
-
 <script>
-    // USANDO TU NUEVO ID DE PLANILLA PERSONAL
     const SHEET_ID = '186HJEbrDHelhKLu0jRCfXNX3XIVJpHfvkepO5Zm6MI';
-    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    // Accedemos específicamente a la "Hoja 1"
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hoja%201`;
 
     async function cargarClima() {
         const dash = document.getElementById('dashboard');
@@ -49,17 +11,23 @@
             const resp = await fetch(URL + "&v=" + Date.now());
             const text = await resp.text();
             
-            // Procesar JSON de Google
+            // Esto extrae los datos puros del JSON de Google
             const jsonData = JSON.parse(text.substring(47, text.length - 2));
             const rows = jsonData.table.rows;
+
+            if (!rows || rows.length <= 1) {
+                stat.innerHTML = "⏳ Esperando datos válidos de la planilla...";
+                return;
+            }
 
             dash.innerHTML = "";
             let diaActual = "";
             let gridActual = null;
 
             rows.forEach((r, index) => {
-                if (index === 0) return; // Saltar encabezados
-                const col = r.c.map(cell => cell ? cell.v : "");
+                if (index === 0) return; // Saltamos la fila de títulos (Día, Tramo, etc.)
+                
+                const col = r.c.map(cell => cell ? (cell.f || cell.v) : "");
                 if (!col[0]) return;
 
                 if (col[0] !== diaActual) {
@@ -87,16 +55,14 @@
                     </div>`;
             });
 
-            stat.innerHTML = `✅ Datos actualizados: ${new Date().toLocaleTimeString()}`;
+            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
 
         } catch (e) {
-            console.error(e);
-            stat.innerHTML = "⚠️ Error al leer la nueva planilla. Verifica los permisos de compartir.";
+            console.error("Error:", e);
+            stat.innerHTML = "⚠️ Error de conexión. Revisa que el botón 'Compartir' esté en 'Cualquier persona con el enlace'.";
         }
     }
 
     cargarClima();
     setInterval(cargarClima, 300000); 
 </script>
-</body>
-</html>

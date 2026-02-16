@@ -7,136 +7,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-base: #0a2540; /* Azul Marino Oscuro */
-            --color-secundario: #004e92;
-            --bg-body: #f0f2f5;
-            --riesgo-bajo: #2ecc71;
-            --riesgo-medio: #f1c40f;
-            --riesgo-alto: #e74c3c;
+            --color-base: #0a2540; --color-secundario: #004e92;
+            --bg-body: #f0f2f5; --riesgo-bajo: #2ecc71;
+            --riesgo-medio: #f1c40f; --riesgo-alto: #e74c3c;
         }
-
-        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); margin: 0; padding: 0; color: #333; }
-        
-        /* HEADER */
-        header { 
-            background: linear-gradient(135deg, var(--color-base), var(--color-secundario)); 
-            color: white; 
-            padding: 1.5rem; 
-            text-align: center; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        header p { margin: 5px 0 0; opacity: 0.8; font-size: 0.9rem; }
-
-        /* CONTENEDOR PRINCIPAL */
-        #dashboard {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        /* SECCIONES POR DÍA */
-        .seccion-dia { margin-bottom: 40px; }
-        
-        .titulo-dia {
-            background: var(--color-base);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        /* GRID DE TARJETAS */
-        .grid-tarjetas {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        /* TARJETA INDIVIDUAL */
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-left: 6px solid var(--riesgo-bajo); /* Por defecto verde */
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-        
+        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); margin: 0; padding: 0; }
+        header { background: linear-gradient(135deg, var(--color-base), var(--color-secundario)); color: white; padding: 1.5rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; }
+        #dashboard { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        .seccion-dia { margin-bottom: 40px; text-align: center; }
+        .titulo-dia { background: var(--color-base); color: white; padding: 8px 20px; border-radius: 4px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
+        .grid-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 10px; padding: 20px; border-left: 6px solid var(--riesgo-bajo); text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         .card-header h3 { margin: 0; color: var(--color-base); font-size: 1.1rem; }
-        .badge-riesgo {
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        /* DATOS DE LA TARJETA */
-        .fila-dato {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        .fila-dato i { width: 25px; text-align: center; }
-        .label { color: #666; }
-        .valor { font-weight: 500; text-align: right; }
-
-        /* SECCIÓN TEMPERATURA DESTACADA */
-        .bloque-temp {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 15px;
-            text-align: center;
-            display: flex;
-            justify-content: space-around;
-        }
-        .temp-item { display: flex; flex-direction: column; }
-        .temp-val { font-size: 1.2rem; font-weight: bold; color: var(--color-secundario); }
-        .temp-lbl { font-size: 0.75rem; color: #777; }
-
-        /* ESTILOS DE RIESGO (Clases dinámicas) */
-        .border-bajo { border-left-color: var(--riesgo-bajo); }
-        .border-medio { border-left-color: var(--riesgo-medio); }
-        .border-alto { border-left-color: var(--riesgo-alto); }
-        
+        .badge-riesgo { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; color: white; font-weight: bold; text-transform: uppercase; }
+        .fila-dato { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        .label { color: #666; } .valor { font-weight: 500; text-align: right; }
+        .bloque-temp { background: #f8f9fa; border-radius: 8px; padding: 10px; margin-top: 15px; display: flex; justify-content: space-around; }
+        .temp-item { display: flex; flex-direction: column; text-align: center; }
+        .temp-val { font-size: 1.1rem; font-weight: bold; color: var(--color-secundario); }
+        .temp-lbl { font-size: 0.7rem; color: #777; }
         .bg-bajo { background-color: var(--riesgo-bajo); }
-        .bg-medio { background-color: var(--riesgo-medio); color: #333; }
-        .bg-alto { background-color: var(--riesgo-alto); }
-
-        /* FOOTER DE ESTADO */
-        #footer-status {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-            font-size: 0.8rem;
-        }
-        
-        /* LOADER */
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--color-secundario); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 50px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #footer-status { text-align: center; padding: 20px; color: #777; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -146,132 +39,82 @@
         <p>Pronóstico Meteorológico Oficial</p>
     </header>
 
-    <div id="dashboard">
-        <div class="loader" id="loader"></div>
-    </div>
-
-    <div id="footer-status">
-        Esperando datos...
-    </div>
+    <div id="dashboard"></div>
+    <div id="footer-status">Cargando datos...</div>
 
     <script>
-        // URL del CSV (Asegúrate de que este sea tu enlace correcto)
-        const URL_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+        // TU ENLACE DE GOOGLE SHEETS
+        const URL_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
         async function actualizarDatos() {
-            const dashboard = document.getElementById('dashboard');
-            const footer = document.getElementById('footer-status');
-            
-            // Timestamp para evitar caché del navegador
-            const urlConCache = URL_BASE + "&cache=" + new Date().getTime();
-
             try {
-                const response = await fetch(urlConCache);
-                const data = await response.text();
+                const response = await fetch(URL_BASE + "&cache=" + new Date().getTime());
+                const csvText = await response.text();
                 
-                // Parsear CSV
-                const filas = data.split(/\r?\n/).map(linea => 
-                    linea.split(/,(?=(?:(?:[^"]"){2})[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''))
-                ).filter(f => f.length > 5);
+                // --- PROCESADOR DE CSV MEJORADO PARA TU PLANILLA ---
+                // Esta función separa correctamente aunque haya comas dentro de las celdas
+                const filas = csvText.split(/\r?\n/).map(line => {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    for (let char of line) {
+                        if (char === '"') inQuotes = !inQuotes;
+                        else if (char === ',' && !inQuotes) {
+                            result.push(current.trim());
+                            current = '';
+                        } else current += char;
+                    }
+                    result.push(current.trim());
+                    return result;
+                }).filter(f => f.length >= 8); 
 
-                dashboard.innerHTML = ""; // Limpiar dashboard
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = "";
                 
                 let diaActual = "";
                 let gridActual = null;
 
-                // Empezar desde i=1 (saltando encabezados)
                 for (let i = 1; i < filas.length; i++) {
                     const col = filas[i];
                     if (!col[0]) continue;
 
-                    // Detectar cambio de día
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
-                        
                         const seccion = document.createElement('div');
                         seccion.className = 'seccion-dia';
                         seccion.innerHTML = `<div class="titulo-dia">📅 ${diaActual}</div>`;
-                        
                         gridActual = document.createElement('div');
                         gridActual.className = 'grid-tarjetas';
-                        
                         seccion.appendChild(gridActual);
                         dashboard.appendChild(seccion);
                     }
 
-                    // --- Lógica de Riesgo y Colores ---
-                    let riesgoTexto = col[8] || 'Bajo';
-                    let claseBorde = 'border-bajo';
-                    let claseBadge = 'bg-bajo';
-
-                    if (riesgoTexto.toLowerCase().includes('medio')) {
-                        claseBorde = 'border-medio';
-                        claseBadge = 'bg-medio';
-                    } else if (riesgoTexto.toLowerCase().includes('alto')) {
-                        claseBorde = 'border-alto';
-                        claseBadge = 'bg-alto';
-                    }
-
-                    // --- Renderizar Tarjeta ---
                     if (gridActual) {
                         gridActual.innerHTML += `
-                            <div class="card ${claseBorde}">
+                            <div class="card">
                                 <div class="card-header">
                                     <h3>🕒 ${col[1]}</h3>
-                                    <span class="badge-riesgo ${claseBadge}">${riesgoTexto}</span>
+                                    <span class="badge-riesgo bg-bajo">${col[8] || 'Bajo'}</span>
                                 </div>
-                                
-                                <div class="cuerpo-datos">
-                                    <div class="fila-dato">
-                                        <span class="label">☁️ Nubosidad</span>
-                                        <span class="valor">${col[2]}</span>
-                                    </div>
-                                    <div class="fila-dato">
-                                        <span class="label">👁️ Visibilidad</span>
-                                        <span class="valor">${col[3]}</span>
-                                    </div>
-                                    <div class="fila-dato">
-                                        <span class="label">🌬️ Viento</span>
-                                        <span class="valor">${col[4]}</span>
-                                    </div>
-                                    <div class="fila-dato">
-                                        <span class="label">🌊 Mar</span>
-                                        <span class="valor">${col[5]}</span>
-                                    </div>
-                                </div>
-
+                                <div class="fila-dato"><span class="label">☁️ Nubes</span><span class="valor">${col[2]}</span></div>
+                                <div class="fila-dato"><span class="label">👁️ Visib.</span><span class="valor">${col[3]}</span></div>
+                                <div class="fila-dato"><span class="label">🌬️ Viento</span><span class="valor">${col[4]}</span></div>
+                                <div class="fila-dato"><span class="label">🌊 Mar</span><span class="valor">${col[5]}</span></div>
                                 <div class="bloque-temp">
-                                    <div class="temp-item">
-                                        <span class="temp-val">${col[6]}</span>
-                                        <span class="temp-lbl">T° Aire</span>
-                                    </div>
-                                    <div style="border-right: 1px solid #ddd;"></div>
-                                    <div class="temp-item">
-                                        <span class="temp-val">${col[7]}</span>
-                                        <span class="temp-lbl">S. Térmica</span>
-                                    </div>
+                                    <div class="temp-item"><span class="temp-val">${col[6]}</span><span class="temp-lbl">T° Aire</span></div>
+                                    <div class="temp-item"><span class="temp-val">${col[7]}</span><span class="temp-lbl">S. Térmica</span></div>
                                 </div>
-                            </div>
-                        `;
+                            </div>`;
                     }
                 }
-
-                // Actualizar hora del footer
-                const ahora = new Date();
-                footer.innerHTML = `✅ Última actualización: ${ahora.toLocaleTimeString()} - Próxima recarga en 5 min.`;
-
-            } catch (error) {
-                console.error(error);
-                footer.innerHTML = `❌ Error de conexión. Intentando reconectar...`;
+                document.getElementById('footer-status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
+            } catch (e) {
+                document.getElementById('footer-status').innerHTML = "❌ Error al cargar datos.";
             }
         }
 
-        // Ejecutar al inicio
         actualizarDatos();
-
-        // Auto-refresh cada 5 minutos (300,000 milisegundos)
         setInterval(actualizarDatos, 300000);
-
     </script>
 </body>
 </html>

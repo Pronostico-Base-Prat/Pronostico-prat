@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clima Base Arturo Prat</title>
+    <title>Pronóstico Meteorológico - Base Prat</title>
     <style>
         body { font-family: sans-serif; background: #e3effb; margin: 0; padding: 0; }
-        header { background: #003366; color: white; text-align: center; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        header { background: #003366; color: white; text-align: center; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .seccion-dia { width: 100%; text-align: center; margin-top: 30px; }
         .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; display: inline-block; }
         .contenedor-clima { 
@@ -16,7 +16,7 @@
         }
         .tarjeta { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
         h2 { margin: 0; color: #003366; border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center; }
-        .dato { margin: 10px 0; color: #333; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .dato { margin: 10px 0; color: #333; font-size: 0.95rem; }
         .temp { font-size: 1.1rem; color: #d35400; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
     </style>
 </head>
@@ -25,10 +25,13 @@
         <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
-    <div id="contenido-principal"></div>
+    <div id="contenido-principal">
+        <p style="text-align:center; padding:50px;">Conectando con el servidor de datos...</p>
+    </div>
 
     <script>
-        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+        // PEGA AQUÍ EL LINK QUE COPIASTE EN EL PASO 1 (debe terminar en output=csv)
+        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
         async function cargarDatos() {
             try {
@@ -69,7 +72,7 @@
                     `;
                 });
             } catch (e) {
-                document.getElementById('contenido-principal').innerHTML = "<p style='text-align:center'>Error al conectar con los datos.</p>";
+                document.getElementById('contenido-principal').innerHTML = "<p style='text-align:center'>Error de conexión. Verifica la publicación del Excel.</p>";
             }
         }
         cargarDatos();

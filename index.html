@@ -9,10 +9,9 @@
         :root {
             --color-base: #0a2540; --color-secundario: #004e92;
             --bg-body: #f0f2f5; --riesgo-bajo: #2ecc71;
-            --riesgo-medio: #f1c40f; --riesgo-alto: #e74c3c;
         }
         body { font-family: 'Roboto', sans-serif; background: var(--bg-body); margin: 0; padding: 0; }
-        header { background: linear-gradient(135deg, var(--color-base), var(--color-secundario)); color: white; padding: 1.5rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header { background: linear-gradient(135deg, var(--color-base), var(--color-secundario)); color: white; padding: 1.5rem; text-align: center; }
         header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; }
         #dashboard { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         .seccion-dia { margin-bottom: 40px; text-align: center; }
@@ -21,14 +20,13 @@
         .card { background: white; border-radius: 10px; padding: 20px; border-left: 6px solid var(--riesgo-bajo); text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         .card-header h3 { margin: 0; color: var(--color-base); font-size: 1.1rem; }
-        .badge-riesgo { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; color: white; font-weight: bold; text-transform: uppercase; }
-        .fila-dato { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
-        .label { color: #666; } .valor { font-weight: 500; text-align: right; }
+        .badge-riesgo { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; color: white; background: var(--riesgo-bajo); font-weight: bold; }
+        .fila-dato { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #f9f9f9; }
+        .label { color: #666; } .valor { font-weight: 500; text-align: right; color: #111; }
         .bloque-temp { background: #f8f9fa; border-radius: 8px; padding: 10px; margin-top: 15px; display: flex; justify-content: space-around; }
         .temp-item { display: flex; flex-direction: column; text-align: center; }
         .temp-val { font-size: 1.1rem; font-weight: bold; color: var(--color-secundario); }
         .temp-lbl { font-size: 0.7rem; color: #777; }
-        .bg-bajo { background-color: var(--riesgo-bajo); }
         #footer-status { text-align: center; padding: 20px; color: #777; font-size: 0.8rem; }
     </style>
 </head>
@@ -40,33 +38,20 @@
     </header>
 
     <div id="dashboard"></div>
-    <div id="footer-status">Cargando datos...</div>
+    <div id="footer-status">Cargando pronóstico...</div>
 
     <script>
-        // TU ENLACE DE GOOGLE SHEETS
         const URL_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
         async function actualizarDatos() {
             try {
-                const response = await fetch(URL_BASE + "&cache=" + new Date().getTime());
-                const csvText = await response.text();
+                const response = await fetch(URL_BASE + "&nocache=" + Date.now());
+                const rawData = await response.text();
                 
-                // --- PROCESADOR DE CSV MEJORADO PARA TU PLANILLA ---
-                // Esta función separa correctamente aunque haya comas dentro de las celdas
-                const filas = csvText.split(/\r?\n/).map(line => {
-                    const result = [];
-                    let current = '';
-                    let inQuotes = false;
-                    for (let char of line) {
-                        if (char === '"') inQuotes = !inQuotes;
-                        else if (char === ',' && !inQuotes) {
-                            result.push(current.trim());
-                            current = '';
-                        } else current += char;
-                    }
-                    result.push(current.trim());
-                    return result;
-                }).filter(f => f.length >= 8); 
+                // Limpiador: Solo procesamos líneas que empiecen con texto real (como "Lunes" o "Martes")
+                const filas = rawData.split(/\r?\n/)
+                    .map(linea => linea.split(',').map(celda => celda.replace(/"/g, '').trim()))
+                    .filter(f => f.length >= 8 && (f[0].includes("unes") || f[0].includes("artes") || f[0].includes("iércoles") || f[0].includes("ueves") || f[0].includes("iernes") || f[0].includes("ábado") || f[0].includes("omingo")));
 
                 const dashboard = document.getElementById('dashboard');
                 dashboard.innerHTML = "";
@@ -74,10 +59,8 @@
                 let diaActual = "";
                 let gridActual = null;
 
-                for (let i = 1; i < filas.length; i++) {
-                    const col = filas[i];
-                    if (!col[0]) continue;
-
+                filas.forEach(col => {
+                    // Crear sección de día
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
                         const seccion = document.createElement('div');
@@ -89,32 +72,33 @@
                         dashboard.appendChild(seccion);
                     }
 
-                    if (gridActual) {
-                        gridActual.innerHTML += `
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3>🕒 ${col[1]}</h3>
-                                    <span class="badge-riesgo bg-bajo">${col[8] || 'Bajo'}</span>
-                                </div>
-                                <div class="fila-dato"><span class="label">☁️ Nubes</span><span class="valor">${col[2]}</span></div>
-                                <div class="fila-dato"><span class="label">👁️ Visib.</span><span class="valor">${col[3]}</span></div>
-                                <div class="fila-dato"><span class="label">🌬️ Viento</span><span class="valor">${col[4]}</span></div>
-                                <div class="fila-dato"><span class="label">🌊 Mar</span><span class="valor">${col[5]}</span></div>
-                                <div class="bloque-temp">
-                                    <div class="temp-item"><span class="temp-val">${col[6]}</span><span class="temp-lbl">T° Aire</span></div>
-                                    <div class="temp-item"><span class="temp-val">${col[7]}</span><span class="temp-lbl">S. Térmica</span></div>
-                                </div>
-                            </div>`;
-                    }
-                }
-                document.getElementById('footer-status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
+                    // Renderizar tarjeta
+                    gridActual.innerHTML += `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>🕒 ${col[1]}</h3>
+                                <span class="badge-riesgo">${col[8] || 'Bajo'}</span>
+                            </div>
+                            <div class="fila-dato"><span class="label">☁️ Nubes</span><span class="valor">${col[2]}</span></div>
+                            <div class="fila-dato"><span class="label">👁️ Visib.</span><span class="valor">${col[3]}</span></div>
+                            <div class="fila-dato"><span class="label">🌬️ Viento</span><span class="valor">${col[4]}</span></div>
+                            <div class="fila-dato"><span class="label">🌊 Mar</span><span class="valor">${col[5]}</span></div>
+                            <div class="bloque-temp">
+                                <div class="temp-item"><span class="temp-val">${col[6]}</span><span class="temp-lbl">T° Aire</span></div>
+                                <div class="temp-item"><span class="temp-val">${col[7]}</span><span class="temp-lbl">S. Térmica</span></div>
+                            </div>
+                        </div>`;
+                });
+
+                document.getElementById('footer-status').innerHTML = `✅ Última actualización: ${new Date().toLocaleTimeString()}`;
             } catch (e) {
-                document.getElementById('footer-status').innerHTML = "❌ Error al cargar datos.";
+                console.error(e);
+                document.getElementById('footer-status').innerHTML = "⚠️ Error de datos. Reintentando...";
             }
         }
 
         actualizarDatos();
-        setInterval(actualizarDatos, 300000);
+        setInterval(actualizarDatos, 60000); // Actualiza cada minuto para mayor frescura
     </script>
 </body>
 </html>

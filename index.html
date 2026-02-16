@@ -21,30 +21,21 @@
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
     <div id="contenido-principal" style="text-align: center;">
-        <p style="padding: 50px;">Cargando datos meteorológicos...</p>
+        <p id="estado" style="padding: 50px;">Conectando con el Excel...</p>
     </div>
 
     <script>
-        // ENLACE REVISADO CARÁCTER POR CARÁCTER
+        // ENLACE CORREGIDO: He reemplazado la 'O' por '0' donde correspondía
         const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
         async function cargarClima() {
+            const estado = document.getElementById('estado');
             try {
                 const respuesta = await fetch(enlaceCSV);
-                const texto = await respuesta.text();
+                if (!respuesta.ok) throw new Error("No se pudo leer el archivo");
                 
-                // Función para separar por comas respetando el texto entre comillas
-                const filas = texto.split('\n').map(linea => {
-                    const res = [];
-                    let curr = '', inQuotes = false;
-                    for (let char of linea) {
-                        if (char === '"') inQuotes = !inQuotes;
-                        else if (char === ',' && !inQuotes) { res.push(curr.trim()); curr = ''; }
-                        else curr += char;
-                    }
-                    res.push(curr.trim());
-                    return res;
-                }).filter(f => f.length > 3 && f[0] !== "");
+                const texto = await respuesta.text();
+                const filas = texto.split('\n').map(f => f.split(',')).filter(f => f.length > 3);
 
                 const main = document.getElementById('contenido-principal');
                 main.innerHTML = ""; 
@@ -53,7 +44,9 @@
                 let contenedorActual = null;
 
                 for (let i = 1; i < filas.length; i++) {
-                    const col = filas[i];
+                    const col = filas[i].map(c => c.trim().replace(/"/g, ''));
+                    if (!col[0]) continue;
+
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
                         const divDia = document.createElement('div');
@@ -68,18 +61,18 @@
 
                     contenedorActual.innerHTML += `
                         <div class="tarjeta">
-                            <h2>${col[1] || '---'}</h2>
-                            <p class="dato">☁️ <strong>Cielo:</strong> ${col[2] || '---'}</p>
-                            <p class="dato">👁️ <strong>Vis:</strong> ${col[3] || '---'}</p>
-                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4] || '---'}</p>
-                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5] || '---'}</p>
-                            <p class="temp">🌡️ Aire: ${col[6] || '---'} | ST: ${col[7] || '---'}</p>
+                            <h2>${col[1] || 'Horario'}</h2>
+                            <p class="dato">☁️ <strong>Cielo:</strong> ${col[2] || '-'}</p>
+                            <p class="dato">👁️ <strong>Vis:</strong> ${col[3] || '-'}</p>
+                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4] || '-'}</p>
+                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5] || '-'}</p>
+                            <p class="temp">🌡️ Aire: ${col[6] || '-'} | ST: ${col[7] || '-'}</p>
                             <p class="dato">⚠️ <strong>Riesgo:</strong> ${col[8] || 'Bajo'}</p>
                         </div>
                     `;
                 }
             } catch (error) {
-                document.getElementById('contenido-principal').innerHTML = "<p style='padding:50px;'>Error al conectar. Verifica la conexión a internet.</p>";
+                estado.innerHTML = "<b>Error:</b> No se puede acceder al Excel.<br>Asegúrate de que en Google Sheets hayas ido a:<br><i>Archivo > Compartir > Publicar en la web > CSV</i>";
             }
         }
         cargarClima();

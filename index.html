@@ -7,21 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; }
-        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .dia-grupo { margin-bottom: 30px; text-align: center; }
-        .dia-titulo { background: var(--navy); color: white; padding: 8px 20px; border-radius: 5px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 10px; padding: 15px; border-left: 6px solid var(--green); text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card h3 { margin: 0 0 10px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; border-bottom: 1px solid #f9f9f9; }
-        .label { color: #666; } .val { font-weight: bold; color: #111; }
-        .temps { background: #f8f9fa; border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; text-align: center; }
-        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; }
-        .t-lbl { font-size: 0.65rem; color: #888; }
-        #status { text-align: center; padding: 20px; color: #666; font-size: 0.8rem; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; min-height: 300px; }
+        .dia-grupo { margin-bottom: 35px; text-align: center; }
+        .dia-titulo { background: var(--navy); color: white; padding: 10px 25px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 18px; border-left: 6px solid var(--green); text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-3px); }
+        .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        .dato { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        .label { color: #777; } .val { font-weight: bold; color: #111; }
+        .temps { background: #f8faff; border-radius: 8px; padding: 12px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
+        .t-val { font-size: 1.1rem; font-weight: bold; color: var(--blue); display: block; }
+        .t-lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        #status { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
+        .error-msg { background: #fff5f5; color: #c0392b; padding: 20px; border-radius: 8px; border: 1px solid #feb2b2; display: inline-block; }
     </style>
 </head>
 <body>
@@ -32,12 +34,14 @@
 </header>
 
 <div id="dashboard">
-    <p style="text-align:center; padding:50px;">📡 Sincronizando datos con la base...</p>
+    <div style="text-align:center; padding:80px;">
+        <p>📡 Conectando con la base de datos...</p>
+    </div>
 </div>
-<div id="status">Iniciando...</div>
+<div id="status">Sincronizando...</div>
 
 <script>
-    // Configuración de tu nueva planilla personal
+    // ID de tu planilla personal confirmada
     const SHEET_ID = '186HJEbrDHelhKLu0jRCfXNX3XIVJpHfvkepO5Zm6MI';
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hoja%201`;
 
@@ -46,15 +50,18 @@
         const stat = document.getElementById('status');
 
         try {
-            const resp = await fetch(URL + "&v=" + Date.now());
+            const resp = await fetch(URL + "&nocache=" + Date.now());
             const text = await resp.text();
             
-            // Extraer y procesar los datos de Google
-            const jsonData = JSON.parse(text.substring(47, text.length - 2));
-            const rows = jsonData.table.rows;
+            // Limpieza del formato JSONP de Google
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}') + 1;
+            const jsonStr = text.substring(start, end);
+            const data = JSON.parse(jsonStr);
+            const rows = data.table.rows;
 
             if (!rows || rows.length <= 1) {
-                stat.innerHTML = "⏳ La planilla está conectada pero no tiene datos aún.";
+                dash.innerHTML = `<div class="error-msg">⚠️ Planilla vacía o sin datos detectados.</div>`;
                 return;
             }
 
@@ -63,9 +70,14 @@
             let gridActual = null;
 
             rows.forEach((r, index) => {
-                if (index === 0) return; // Saltar encabezados
+                if (index === 0) return; // Saltamos encabezados
                 
-                const col = r.c.map(cell => cell ? (cell.f || cell.v) : "");
+                // Extraer valores de forma segura
+                const col = r.c.map(cell => {
+                    if (!cell) return "";
+                    return cell.f ? cell.f : (cell.v !== null ? cell.v : "");
+                });
+
                 if (!col[0]) return;
 
                 if (col[0] !== diaActual) {
@@ -82,10 +94,10 @@
                 gridActual.innerHTML += `
                     <div class="card">
                         <h3>🕒 ${col[1]}</h3>
-                        <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${col[2]}</span></div>
-                        <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${col[3]}</span></div>
+                        <div class="dato"><span class="label">☁️ Nubosidad</span><span class="val">${col[2]}</span></div>
+                        <div class="dato"><span class="label">👁️ Visibilidad</span><span class="val">${col[3]}</span></div>
                         <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${col[4]}</span></div>
-                        <div class="dato"><span class="label">🌊 Mar</span><span class="val">${col[5]}</span></div>
+                        <div class="dato"><span class="label">🌊 Estado Mar</span><span class="val">${col[5]}</span></div>
                         <div class="temps">
                             <div style="text-align:center"><span class="t-val">${col[6]}</span><span class="t-lbl">T° Aire</span></div>
                             <div style="text-align:center"><span class="t-val">${col[7]}</span><span class="t-lbl">S. Térmica</span></div>
@@ -93,16 +105,22 @@
                     </div>`;
             });
 
-            stat.innerHTML = `✅ Datos actualizados: ${new Date().toLocaleTimeString()}`;
+            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} (Auto-refresco en 5 min)`;
 
         } catch (e) {
-            console.error("Error de carga:", e);
-            stat.innerHTML = "⚠️ Error al leer la planilla. Revisa que esté compartida correctamente.";
+            console.error("Error detallado:", e);
+            dash.innerHTML = `
+                <div style="text-align:center; padding:50px;">
+                    <div class="error-msg">
+                        <h3>⚠️ Error de Acceso</h3>
+                        <p>Google sigue bloqueando los datos. Por favor, asegúrate de haber dado clic en <b>Compartir</b> y cambiar a <b>Cualquier persona con el enlace</b>.</p>
+                    </div>
+                </div>`;
         }
     }
 
     cargarClima();
-    setInterval(cargarClima, 300000); // Actualización automática cada 5 min
+    setInterval(cargarClima, 300000); 
 </script>
 </body>
 </html>

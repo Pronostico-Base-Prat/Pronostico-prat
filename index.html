@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima Base Arturo Prat</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e3effb; margin: 0; padding: 0; }
+        header { background: #003366; color: white; text-align: center; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .contenedor-clima { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 30px; }
+        .tarjeta { background: white; border-radius: 15px; padding: 20px; width: 260px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #3498db; }
+        .titulo-hora { margin: 0; color: #003366; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 1.5rem; }
+        .dato { margin: 12px 0; color: #333; font-size: 0.95rem; }
+        .temp { font-size: 1.2rem; color: #d35400; font-weight: bold; }
+        .sensacion { color: #0077be; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
+        <p>Pronóstico Meteorológico - Puerto Soberanía</p>
+    </header>
+
+    <div id="contenedor-clima" class="contenedor-clima">
+        <p>Conectando con la Antártica...</p>
+    </div>
+
+    <script>
+        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+
+        async function cargarDatos() {
+            try {
+                const respuesta = await fetch(enlaceCSV);
+                const texto = await respuesta.text();
+                const filas = texto.split('\n').slice(1); 
+                const contenedor = document.getElementById('contenedor-clima');
+                contenedor.innerHTML = ""; 
+
+                filas.forEach(f => {
+                    const c = f.split(','); 
+                    if(c.length < 5) return; 
+
+                    contenedor.innerHTML += `
+                        <div class="tarjeta">
+                            <h2 class="titulo-hora">${c[1]}</h2>
+                            <p class="dato"><strong>☁️ Cielo:</strong> ${c[2]}</p>
+                            <p class="dato"><strong>👁️ Vis:</strong> ${c[3]}</p>
+                            <p class="dato"><strong>🌬️ Viento:</strong> ${c[4]}</p>
+                            <p class="dato"><strong>🌊 Mar:</strong> ${c[5]}</p>
+                            <p class="temp">🌡️ Aire: ${c[6]}</p>
+                            <p class="sensacion">❄️ S. Térmica: ${c[7]}</p>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                document.getElementById('contenedor-clima').innerHTML = "Error al conectar con los datos.";
+            }
+        }
+        cargarDatos();
+    </script>
+</body>
+</html>

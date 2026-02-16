@@ -5,56 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima Base Arturo Prat</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e3effb; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background: #e3effb; margin: 0; padding: 0; }
         header { background: #003366; color: white; text-align: center; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .contenedor-clima { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 30px; }
-        .tarjeta { background: white; border-radius: 15px; padding: 20px; width: 260px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #3498db; }
-        .titulo-hora { margin: 0; color: #003366; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 1.5rem; }
-        .dato { margin: 12px 0; color: #333; font-size: 0.95rem; }
-        .temp { font-size: 1.2rem; color: #d35400; font-weight: bold; }
-        .sensacion { color: #0077be; font-weight: bold; }
+        .seccion-dia { width: 100%; text-align: center; margin-top: 30px; }
+        .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; font-size: 1.2rem; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .contenedor-clima { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            padding: 20px 30px 40px 30px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        .tarjeta { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
+        h2 { margin: 0; color: #003366; border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center; }
+        .dato { margin: 10px 0; color: #333; font-size: 0.9rem; }
+        .temp { font-size: 1.1rem; color: #d35400; font-weight: bold; }
     </style>
 </head>
 <body>
-
     <header>
         <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
 
-    <div id="contenedor-clima" class="contenedor-clima">
-        <p>Conectando con la Antártica...</p>
+    <div id="contenido-principal">
+        <p style="text-align:center; padding:50px;">Cargando datos del clima...</p>
     </div>
 
     <script>
-        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
         async function cargarDatos() {
             try {
                 const respuesta = await fetch(enlaceCSV);
                 const texto = await respuesta.text();
-                const filas = texto.split('\n').slice(1); 
-                const contenedor = document.getElementById('contenedor-clima');
-                contenedor.innerHTML = ""; 
+                const filas = texto.split('\n').map(f => f.split(',')).slice(1); 
+                const main = document.getElementById('contenido-principal');
+                main.innerHTML = ""; 
 
-                filas.forEach(f => {
-                    const c = f.split(','); 
-                    if(c.length < 5) return; 
+                let diaActual = "";
+                let contenedorActual = null;
 
-                    contenedor.innerHTML += `
+                filas.forEach(col => {
+                    if(col.length < 3 || !col[0]) return; 
+
+                    // Si el día cambia, creamos un nuevo título y un nuevo contenedor
+                    if (col[0] !== diaActual) {
+                        diaActual = col[0];
+                        
+                        const seccion = document.createElement('div');
+                        seccion.className = 'seccion-dia';
+                        seccion.innerHTML = <div class="etiqueta-dia">${diaActual}</div>;
+                        main.appendChild(seccion);
+
+                        contenedorActual = document.createElement('div');
+                        contenedorActual.className = 'contenedor-clima';
+                        main.appendChild(contenedorActual);
+                    }
+
+                    // Agregamos la tarjeta al contenedor del día correspondiente
+                    contenedorActual.innerHTML += `
                         <div class="tarjeta">
-                            <h2 class="titulo-hora">${c[1]}</h2>
-                            <p class="dato"><strong>☁️ Cielo:</strong> ${c[2]}</p>
-                            <p class="dato"><strong>👁️ Vis:</strong> ${c[3]}</p>
-                            <p class="dato"><strong>🌬️ Viento:</strong> ${c[4]}</p>
-                            <p class="dato"><strong>🌊 Mar:</strong> ${c[5]}</p>
-                            <p class="temp">🌡️ Aire: ${c[6]}</p>
-                            <p class="sensacion">❄️ S. Térmica: ${c[7]}</p>
+                            <h2>${col[1] || 'Horario'}</h2>
+                            <p class="dato"><strong>☁️ Cielo:</strong> ${col[2] || 'N/A'}</p>
+                            <p class="dato"><strong>👁️ Vis:</strong> ${col[3] || 'N/A'}</p>
+                            <p class="dato"><strong>🌬️ Viento:</strong> ${col[4] || 'N/A'}</p>
+                            <p class="dato"><strong>🌊 Mar:</strong> ${col[5] || 'N/A'}</p>
+                            <p class="temp">🌡️ Aire: ${col[6] || 'N/A'}</p>
+                            <p style="color:#0077be" class="dato"><strong>❄️ S. Térmica:</strong> ${col[7] || 'N/A'}</p>
                         </div>
                     `;
                 });
             } catch (e) {
-                document.getElementById('contenedor-clima').innerHTML = "Error al conectar con los datos.";
+                console.error("Error cargando datos:", e);
             }
         }
         cargarDatos();

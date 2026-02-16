@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pronóstico Meteorológico - Base Prat</title>
+    <title>Pronóstico Base Prat</title>
     <style>
         body { font-family: sans-serif; background: #e3effb; margin: 0; padding: 0; }
-        header { background: #003366; color: white; text-align: center; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; display: inline-block; margin: 20px auto; }
+        header { background: #003366; color: white; text-align: center; padding: 20px; }
+        .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; display: inline-block; margin: 20px; }
         .contenedor-clima { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 10px; }
-        .tarjeta { background: white; border-radius: 12px; padding: 20px; width: 280px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
+        .tarjeta { background: white; border-radius: 12px; padding: 20px; width: 280px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; text-align: left; }
         h2 { margin: 0 0 10px 0; color: #003366; border-bottom: 2px solid #eee; padding-bottom: 5px; text-align: center; }
-        .dato { margin: 8px 0; color: #333; font-size: 0.95rem; }
-        .temp { font-size: 1.1rem; color: #d35400; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
+        .dato { margin: 8px 0; color: #333; font-size: 0.9rem; }
+        .temp { font-size: 1rem; color: #d35400; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
     </style>
 </head>
 <body>
@@ -21,22 +21,21 @@
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
     <div id="contenido-principal" style="text-align: center;">
-        <p id="estado" style="padding: 50px;">Buscando datos meteorológicos actualizados...</p>
+        <p id="estado" style="padding: 50px;">Cargando pronóstico actualizado...</p>
     </div>
 
     <script>
-        // Enlace con 'cache breaker' para evitar que se quede pegado
-        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv&x=" + Math.random();
+        const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZu0MWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv&cache=" + new Date().getTime();
 
         async function cargarClima() {
-            const estado = document.getElementById('estado');
             try {
                 const respuesta = await fetch(enlaceCSV);
-                if (!respuesta.ok) throw new Error();
-                
                 const texto = await respuesta.text();
-                // Separamos filas y limpiamos espacios y comillas
-                const filas = texto.split('\n').map(f => f.split(',').map(c => c.trim().replace(/^"|"$/g, '')));
+                
+                // Procesar filas de forma segura
+                const filas = texto.split('\n').map(linea => {
+                    return linea.split(/,(?=(?:(?:[^"]"){2})[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''));
+                }).filter(f => f.length > 5);
 
                 const main = document.getElementById('contenido-principal');
                 main.innerHTML = ""; 
@@ -44,18 +43,15 @@
                 let diaActual = "";
                 let contenedorActual = null;
 
-                // Empezamos en i=1 para saltar los títulos (Día, Horario...)
                 for (let i = 1; i < filas.length; i++) {
                     const col = filas[i];
-                    if (col.length < 5 || !col[0]) continue;
+                    if (!col[0]) continue;
 
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
                         const divDia = document.createElement('div');
-                        divDia.style.width = "100%";
                         divDia.innerHTML = <div class="etiqueta-dia">${diaActual}</div>;
                         main.appendChild(divDia);
-
                         contenedorActual = document.createElement('div');
                         contenedorActual.className = 'contenedor-clima';
                         main.appendChild(contenedorActual);
@@ -63,18 +59,18 @@
 
                     contenedorActual.innerHTML += `
                         <div class="tarjeta">
-                            <h2>${col[1] || '---'}</h2>
-                            <p class="dato">☁️ <strong>Cielo:</strong> ${col[2] || '-'}</p>
-                            <p class="dato">👁️ <strong>Vis:</strong> ${col[3] || '-'}</p>
-                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4] || '-'}</p>
-                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5] || '-'}</p>
-                            <p class="temp">🌡️ Aire: ${col[6] || '-'} | ST: ${col[7] || '-'}</p>
+                            <h2>${col[1]}</h2>
+                            <p class="dato">☁️ <strong>Nubosidad:</strong> ${col[2]}</p>
+                            <p class="dato">👁️ <strong>Visibilidad:</strong> ${col[3]}</p>
+                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4]}</p>
+                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5]}</p>
+                            <p class="temp">🌡️ T° Aire: ${col[6]}<br>❄️ S. Térmica: ${col[7]}</p>
                             <p class="dato">⚠️ <strong>Riesgo:</strong> ${col[8] || 'Bajo'}</p>
                         </div>
                     `;
                 }
-            } catch (error) {
-                estado.innerHTML = "<b>Aviso:</b> No se detectan datos. <br>Revisa que el Excel esté 'Publicado en la web' como CSV.";
+            } catch (e) {
+                document.getElementById('estado').innerHTML = "Error al conectar con el servidor.";
             }
         }
         cargarClima();

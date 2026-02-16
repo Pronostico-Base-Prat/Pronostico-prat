@@ -15,7 +15,6 @@
         .dia-titulo { background: var(--navy); color: white; padding: 10px 25px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; padding: 18px; border-left: 6px solid var(--green); text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); }
         .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
         .dato { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
         .label { color: #777; } .val { font-weight: bold; color: #111; }
@@ -23,7 +22,6 @@
         .t-val { font-size: 1.1rem; font-weight: bold; color: var(--blue); display: block; }
         .t-lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; }
         #status { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
-        .error-msg { background: #fff5f5; color: #c0392b; padding: 20px; border-radius: 8px; border: 1px solid #feb2b2; display: inline-block; }
     </style>
 </head>
 <body>
@@ -41,27 +39,24 @@
 <div id="status">Sincronizando...</div>
 
 <script>
-    // ID de tu planilla personal confirmada
-    const SHEET_ID = '186HJEbrDHelhKLu0jRCfXNX3XIVJpHfvkepO5Zm6MI';
-    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hoja%201`;
+    // URL de exportación CSV de tu hoja publicada
+    const URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv';
 
     async function cargarClima() {
         const dash = document.getElementById('dashboard');
         const stat = document.getElementById('status');
 
         try {
-            const resp = await fetch(URL + "&nocache=" + Date.now());
-            const text = await resp.text();
+            const resp = await fetch(URL + "&v=" + Date.now());
+            const data = await resp.text();
             
-            // Limpieza del formato JSONP de Google
-            const start = text.indexOf('{');
-            const end = text.lastIndexOf('}') + 1;
-            const jsonStr = text.substring(start, end);
-            const data = JSON.parse(jsonStr);
-            const rows = data.table.rows;
+            // Procesar el CSV
+            const filas = data.split(/\r?\n/).map(row => {
+                return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
+            });
 
-            if (!rows || rows.length <= 1) {
-                dash.innerHTML = `<div class="error-msg">⚠️ Planilla vacía o sin datos detectados.</div>`;
+            if (filas.length <= 1) {
+                stat.innerHTML = "⏳ Esperando datos válidos...";
                 return;
             }
 
@@ -69,16 +64,10 @@
             let diaActual = "";
             let gridActual = null;
 
-            rows.forEach((r, index) => {
-                if (index === 0) return; // Saltamos encabezados
-                
-                // Extraer valores de forma segura
-                const col = r.c.map(cell => {
-                    if (!cell) return "";
-                    return cell.f ? cell.f : (cell.v !== null ? cell.v : "");
-                });
-
-                if (!col[0]) return;
+            // Empezamos en 1 para saltar el encabezado del Excel
+            for (let i = 1; i < filas.length; i++) {
+                const col = filas[i];
+                if (!col[0]) continue;
 
                 if (col[0] !== diaActual) {
                     diaActual = col[0];
@@ -103,24 +92,19 @@
                             <div style="text-align:center"><span class="t-val">${col[7]}</span><span class="t-lbl">S. Térmica</span></div>
                         </div>
                     </div>`;
-            });
+            }
 
-            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} (Auto-refresco en 5 min)`;
+            stat.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
 
         } catch (e) {
-            console.error("Error detallado:", e);
-            dash.innerHTML = `
-                <div style="text-align:center; padding:50px;">
-                    <div class="error-msg">
-                        <h3>⚠️ Error de Acceso</h3>
-                        <p>Google sigue bloqueando los datos. Por favor, asegúrate de haber dado clic en <b>Compartir</b> y cambiar a <b>Cualquier persona con el enlace</b>.</p>
-                    </div>
-                </div>`;
+            console.error(e);
+            stat.innerHTML = "⚠️ Error de red. Reintentando...";
+            setTimeout(cargarClima, 10000);
         }
     }
 
     cargarClima();
-    setInterval(cargarClima, 300000); 
+    setInterval(cargarClima, 300000); // Auto-refresco cada 5 minutos
 </script>
 </body>
 </html>

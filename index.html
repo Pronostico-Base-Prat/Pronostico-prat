@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Prat | Dashboard Integrado</title>
+    <title>Meteo Prat | SITREP Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; }
@@ -12,37 +12,39 @@
         header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
         
         #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .dia-grupo { margin-bottom: 35px; text-align: center; }
-        .dia-titulo { background: var(--navy); color: white; padding: 10px 25px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; }
+        .dia-grupo { margin-bottom: 40px; text-align: center; }
+        .dia-titulo { background: var(--navy); color: white; padding: 10px 30px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         
-        /* Tarjetas con Colores de Riesgo */
-        .card { background: white; border-radius: 12px; padding: 18px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 8px solid #ccc; }
+        /* Sistema de Alertas por Riesgo */
+        .card { background: white; border-radius: 12px; padding: 18px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 8px solid #ccc; transition: 0.3s; }
         .card.riesgo-bajo { border-left-color: var(--green); }
         .card.riesgo-medio { border-left-color: var(--yellow); background: #fffdf5; }
         .card.riesgo-alto { border-left-color: var(--red); background: #fff5f5; }
 
         .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .badge-riesgo { font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; color: white; }
+        .badge-riesgo { font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; color: white; text-transform: uppercase; }
         .riesgo-bajo .badge-riesgo { background: var(--green); }
         .riesgo-medio .badge-riesgo { background: var(--yellow); color: #000; }
         .riesgo-alto .badge-riesgo { background: var(--red); }
 
-        .dato { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
-        .label { color: #777; } .val { font-weight: bold; }
-        .temps { background: rgba(255,255,255,0.5); border-radius: 8px; padding: 12px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
-        .t-val { font-size: 1.1rem; font-weight: bold; color: var(--blue); display: block; text-align: center; }
+        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; }
+        .val { font-weight: bold; color: #111; }
+        .label { color: #666; }
         
-        /* Estilos Tabla de Mareas */
+        .temps { background: rgba(255,255,255,0.6); border-radius: 8px; padding: 10px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
+        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; text-align: center; }
+        
+        /* Tabla de Mareas */
         .seccion-mareas { background: white; margin-top: 50px; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; }
-        .seccion-mareas h2 { color: var(--navy); text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--blue); display: inline-block; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
-        th { background: var(--navy); color: white; padding: 12px; font-size: 0.85rem; }
-        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.85rem; }
-        .p-mareas { color: #d35400; font-weight: bold; } .b-mareas { color: #2980b9; font-weight: bold; }
-        #status { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
+        .seccion-mareas h2 { color: var(--navy); text-align: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: var(--navy); color: white; padding: 12px; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.85rem; }
+        .p-mareas { color: #d35400; font-weight: bold; }
+        .b-mareas { color: #2980b9; font-weight: bold; }
+        #status { text-align: center; padding: 30px; color: #888; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -72,7 +74,7 @@
     </div>
 </div>
 
-<div id="status">Sincronizando datos...</div>
+<div id="status">Actualizando información de la base...</div>
 
 <script>
     const SHEET_ID = '186HJEbrDHelhKLu0jRCfXNX3XIVJpHfvkepO5Zm6MI';
@@ -80,18 +82,18 @@
     const URL_MAREAS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2017374824`;
 
     async function cargarTodo() {
-        const status = document.getElementById('status');
+        const stat = document.getElementById('status');
         
-        // --- CARGAR CLIMA ---
+        // 1. CARGAR PRONÓSTICO (Hoja 1)
         try {
-            const resC = await fetch(URL_CLIMA + "&v=" + Date.now());
-            const csvC = await resC.text();
-            const filasC = csvC.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            const res = await fetch(URL_CLIMA + "&cache=" + Date.now());
+            const data = await res.text();
+            const filas = data.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
             
             let html = ""; let diaAct = "";
-            for(let i=1; i<filasC.length; i++) {
-                const c = filasC[i].map(x => x.replace(/"/g, '').trim());
-                if(!c[0]) continue;
+            for(let i=1; i < filas.length; i++) {
+                const c = filas[i].map(v => v.replace(/"/g, '').trim());
+                if(!c[0] || c[0] === "Día") continue;
 
                 if(c[0] !== diaAct) {
                     if(diaAct !== "") html += '</div></div>';
@@ -99,32 +101,32 @@
                     html += `<div class="dia-grupo"><div class="dia-titulo">📅 ${diaAct}</div><div class="grid">`;
                 }
 
-                const riesgo = (c[8] || "Bajo").toLowerCase();
+                const r = (c[8] || "Bajo").toLowerCase();
                 html += `
-                    <div class="card riesgo-${riesgo}">
-                        <h3>🕒 ${c[1]} <span class="badge-riesgo">${c[8]}</span></h3>
-                        <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${c[2]}</span></div>
-                        <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${c[3]}</span></div>
-                        <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${c[4]}</span></div>
-                        <div class="dato"><span class="label">🌊 Mar</span><span class="val">${c[5]}</span></div>
-                        <div class="temps">
-                            <div><span class="t-val">${c[6]}</span><small>T° AIRE</small></div>
-                            <div><span class="t-val">${c[7]}</span><small>S. TÉRMICA</small></div>
-                        </div>
-                    </div>`;
+                <div class="card riesgo-${r}">
+                    <h3>🕒 ${c[1]} <span class="badge-riesgo">${c[8]}</span></h3>
+                    <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${c[2]}</span></div>
+                    <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${c[3]}</span></div>
+                    <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${c[4]}</span></div>
+                    <div class="dato"><span class="label">🌊 Mar</span><span class="val">${c[5]}</span></div>
+                    <div class="temps">
+                        <div><span class="t-val">${c[6]}</span><small>AIRE</small></div>
+                        <div><span class="t-val">${c[7]}</span><small>S.TÉRMICA</small></div>
+                    </div>
+                </div>`;
             }
-            document.getElementById('clima-container').innerHTML = html;
+            document.getElementById('clima-container').innerHTML = html + '</div></div>';
         } catch(e) { console.error("Error Clima:", e); }
 
-        // --- CARGAR MAREAS ---
+        // 2. CARGAR MAREAS (Hoja 2)
         try {
-            const resM = await fetch(URL_MAREAS + "&v=" + Date.now());
-            const csvM = await resM.text();
-            const filasM = csvM.split('\n').map(r => r.split(','));
+            const resM = await fetch(URL_MAREAS + "&cache=" + Date.now());
+            const dataM = await resM.text();
+            const filasM = dataM.split('\n').map(r => r.split(','));
             
             let mHtml = "";
-            for(let i=2; i<filasM.length; i++) {
-                const m = filasM[i].map(x => x.replace(/"/g, '').trim());
+            for(let i=2; i < filasM.length; i++) {
+                const m = filasM[i].map(v => v.replace(/"/g, '').trim());
                 if(!m[0]) continue;
                 mHtml += `<tr>
                     <td><b>${m[0]}</b></td>
@@ -135,12 +137,12 @@
                 </tr>`;
             }
             document.getElementById('cuerpo-mareas').innerHTML = mHtml;
-            status.innerHTML = "✅ Actualizado: " + new Date().toLocaleTimeString();
+            stat.innerHTML = "✅ Última sincronización: " + new Date().toLocaleTimeString();
         } catch(e) { console.error("Error Mareas:", e); }
     }
 
     cargarTodo();
-    setInterval(cargarTodo, 300000);
+    setInterval(cargarTodo, 300000); // 5 min
 </script>
 </body>
 </html>

@@ -1,84 +1,125 @@
-<script>
-    // Usamos el enlace directo pero con un parámetro para forzar la descarga limpia
-    const URL_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteo Prat | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --color-base: #0a2540; --color-secundario: #004e92; --bg-body: #f0f2f5; --riesgo-bajo: #2ecc71; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); margin: 0; padding: 0; }
+        header { background: linear-gradient(135deg, var(--color-base), var(--color-secundario)); color: white; padding: 1.5rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; }
+        #dashboard { max-width: 1200px; margin: 20px auto; padding: 0 15px; min-height: 200px; }
+        .seccion-dia { margin-bottom: 40px; text-align: center; }
+        .titulo-dia { background: var(--color-base); color: white; padding: 8px 20px; border-radius: 4px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
+        .grid-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 10px; padding: 15px; border-left: 6px solid var(--riesgo-bajo); text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
+        .card-header h3 { margin: 0; color: var(--color-base); font-size: 1rem; }
+        .badge-riesgo { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; color: white; background: var(--riesgo-bajo); font-weight: bold; }
+        .fila-dato { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem; border-bottom: 1px solid #fcfcfc; }
+        .label { color: #777; } .valor { font-weight: 500; color: #111; text-align: right; }
+        .bloque-temp { background: #f8f9fa; border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-around; }
+        .temp-item { display: flex; flex-direction: column; text-align: center; }
+        .temp-val { font-size: 1rem; font-weight: bold; color: var(--color-secundario); }
+        .temp-lbl { font-size: 0.65rem; color: #888; }
+        #footer-status { text-align: center; padding: 20px; color: #666; font-size: 0.8rem; }
+        .msg-error { padding: 40px; color: #c0392b; background: white; border-radius: 8px; display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
 
-    async function actualizarDatos() {
-        const dashboard = document.getElementById('dashboard');
-        const footer = document.getElementById('footer-status');
+    <header>
+        <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
+        <p>Pronóstico Meteorológico Oficial</p>
+    </header>
 
-        try {
-            // El truco está en pedirlo como texto plano y limpiar caracteres de control
-            const response = await fetch(URL_BASE + "&t=" + Date.now());
-            let rawData = await response.text();
-            
-            // Si Google manda su script de error, lo detectamos aquí
-            if (rawData.includes("google-base-scripts") || rawData.includes("<script")) {
-                footer.innerHTML = "⚠️ Google está demorando la entrega. Reintentando en 10 segundos...";
-                setTimeout(actualizarDatos, 10000);
-                return;
-            }
+    <div id="dashboard" style="text-align: center;">
+        <p id="cargando" style="margin-top: 50px;">⏳ Obteniendo datos desde la base...</p>
+    </div>
 
-            // Procesamos las filas ignorando comas internas (especial para tu planilla)
-            const filas = rawData.split(/\r?\n/).map(line => {
-                const res = []; let curr = ''; let q = false;
-                for (let c of line) {
-                    if (c === '"') q = !q;
-                    else if (c === ',' && !q) { res.push(curr.trim()); curr = ''; }
-                    else curr += c;
+    <div id="footer-status">Iniciando sistema...</div>
+
+    <script>
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+
+        async function cargarClima() {
+            const dash = document.getElementById('dashboard');
+            const foot = document.getElementById('footer-status');
+
+            try {
+                // Añadimos un número aleatorio para que Google no nos mande el mismo error guardado
+                const resp = await fetch(CSV_URL + "&cache=" + Math.random());
+                const texto = await resp.text();
+
+                // Validación: Si lo que recibimos empieza con "function" o "<", es basura de seguridad de Google
+                if (texto.trim().startsWith("function") || texto.trim().startsWith("<")) {
+                    throw new Error("Google está bloqueando la conexión. Reintentando...");
                 }
-                res.push(curr.trim());
-                return res;
-            }).filter(f => f.length >= 8 && f[0] !== "" && !f[0].includes("function"));
 
-            if (filas.length <= 1) {
-                footer.innerHTML = "⏳ Esperando que Google Sheets libere los datos...";
-                return;
-            }
+                // Procesador de CSV ultra-resistente
+                const filas = texto.split(/\r?\n/).map(linea => {
+                    const celdas = []; let actual = ''; let entreComillas = false;
+                    for (let char of linea) {
+                        if (char === '"') entreComillas = !entreComillas;
+                        else if (char === ',' && !entreComillas) { celdas.push(actual.trim()); actual = ''; }
+                        else actual += char;
+                    }
+                    celdas.push(actual.trim());
+                    return celdas;
+                }).filter(f => f.length >= 8 && (f[0].toLowerCase().includes("lunes") || f[0].toLowerCase().includes("martes") || f[0].toLowerCase().includes("miércoles") || f[0].toLowerCase().includes("jueves") || f[0].toLowerCase().includes("viernes") || f[0].toLowerCase().includes("sábado") || f[0].toLowerCase().includes("domingo")));
 
-            dashboard.innerHTML = "";
-            let diaActual = "";
-            let gridActual = null;
-
-            // Saltamos la fila de encabezado (i=1)
-            for (let i = 1; i < filas.length; i++) {
-                const col = filas[i];
-                if (!col[0]) continue;
-
-                if (col[0] !== diaActual) {
-                    diaActual = col[0];
-                    const seccion = document.createElement('div');
-                    seccion.className = 'seccion-dia';
-                    seccion.innerHTML = `<div class="titulo-dia">📅 ${diaActual}</div>`;
-                    gridActual = document.createElement('div');
-                    gridActual.className = 'grid-tarjetas';
-                    seccion.appendChild(gridActual);
-                    dashboard.appendChild(seccion);
+                if (filas.length === 0) {
+                    dash.innerHTML = `<div class="msg-error"><h3>⚠️ No se encontraron datos</h3><p>Verifica que la planilla tenga información del clima.</p></div>`;
+                    return;
                 }
 
-                gridActual.innerHTML += `
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>🕒 ${col[1]}</h3>
-                            <span class="badge-riesgo">${col[8] || 'Bajo'}</span>
-                        </div>
-                        <div class="fila-dato"><span class="label">☁️ Nubes</span><span class="valor">${col[2]}</span></div>
-                        <div class="fila-dato"><span class="label">👁️ Visib.</span><span class="valor">${col[3]}</span></div>
-                        <div class="fila-dato"><span class="label">🌬️ Viento</span><span class="valor">${col[4]}</span></div>
-                        <div class="fila-dato"><span class="label">🌊 Mar</span><span class="valor">${col[5]}</span></div>
-                        <div class="bloque-temp">
-                            <div class="temp-item"><span class="temp-val">${col[6].replace(/"/g, '')}</span><span class="temp-lbl">T° Aire</span></div>
-                            <div class="temp-item"><span class="temp-val">${col[7].replace(/"/g, '')}</span><span class="temp-lbl">S. Térmica</span></div>
-                        </div>
-                    </div>`;
-            }
-            footer.innerHTML = `✅ Datos actualizados: ${new Date().toLocaleTimeString()}`;
+                dash.innerHTML = "";
+                let diaActual = "";
+                let gridActual = null;
 
-        } catch (e) {
-            console.error(e);
-            footer.innerHTML = "❌ Error de conexión con la planilla.";
+                filas.forEach(col => {
+                    if (col[0] !== diaActual) {
+                        diaActual = col[0];
+                        const divDia = document.createElement('div');
+                        divDia.className = 'seccion-dia';
+                        divDia.innerHTML = `<div class="titulo-dia">📅 ${diaActual}</div>`;
+                        gridActual = document.createElement('div');
+                        gridActual.className = 'grid-tarjetas';
+                        divDia.appendChild(gridActual);
+                        dash.appendChild(divDia);
+                    }
+
+                    gridActual.innerHTML += `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>🕒 ${col[1]}</h3>
+                                <span class="badge-riesgo">${col[8] || 'Bajo'}</span>
+                            </div>
+                            <div class="fila-dato"><span class="label">☁️ Nubes</span><span class="valor">${col[2]}</span></div>
+                            <div class="fila-dato"><span class="label">👁️ Visib.</span><span class="valor">${col[3]}</span></div>
+                            <div class="fila-dato"><span class="label">🌬️ Viento</span><span class="valor">${col[4]}</span></div>
+                            <div class="fila-dato"><span class="label">🌊 Mar</span><span class="valor">${col[5]}</span></div>
+                            <div class="bloque-temp">
+                                <div class="temp-item"><span class="temp-val">${col[6].replace(/"/g, '')}</span><span class="temp-lbl">T° Aire</span></div>
+                                <div class="temp-item"><span class="temp-val">${col[7].replace(/"/g, '')}</span><span class="temp-lbl">S. Térmica</span></div>
+                            </div>
+                        </div>`;
+                });
+
+                foot.innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
+
+            } catch (err) {
+                console.warn(err.message);
+                foot.innerHTML = `⏳ Google demorando... Reintentando en breve.`;
+                // Si falla, reintenta automáticamente en 10 segundos
+                setTimeout(cargarClima, 10000);
+            }
         }
-    }
 
-    actualizarDatos();
-    setInterval(actualizarDatos, 300000); // 5 minutos
-</script>
+        cargarClima();
+        setInterval(cargarClima, 300000); // Refresco normal cada 5 min
+    </script>
+</body>
+</html>

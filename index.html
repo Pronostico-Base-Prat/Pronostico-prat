@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pronóstico Meteorológico - Base Prat</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e3effb; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background: #e3effb; margin: 0; padding: 0; }
         header { background: #003366; color: white; text-align: center; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .seccion-dia { width: 100%; text-align: center; margin-top: 30px; }
-        .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; display: inline-block; }
-        .contenedor-clima { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; }
-        .tarjeta { background: white; border-radius: 15px; padding: 20px; width: 280px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
-        h2 { margin: 0 0 10px 0; color: #003366; border-bottom: 2px solid #eee; padding-bottom: 10px; text-align: center; }
-        .dato { margin: 10px 0; color: #333; font-size: 0.95rem; line-height: 1.4; }
+        .etiqueta-dia { background: #3498db; color: white; padding: 10px 30px; border-radius: 50px; font-weight: bold; display: inline-block; margin: 20px auto; }
+        .contenedor-clima { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 10px; }
+        .tarjeta { background: white; border-radius: 12px; padding: 20px; width: 280px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
+        h2 { margin: 0 0 10px 0; color: #003366; border-bottom: 2px solid #eee; padding-bottom: 5px; text-align: center; }
+        .dato { margin: 8px 0; color: #333; font-size: 0.95rem; }
         .temp { font-size: 1.1rem; color: #d35400; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
     </style>
 </head>
@@ -21,44 +20,44 @@
         <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
         <p>Pronóstico Meteorológico - Puerto Soberanía</p>
     </header>
-    <div id="contenido-principal">
-        <p style="text-align:center; padding:50px;">Conectando con la base de datos...</p>
+    <div id="contenido-principal" style="text-align: center;">
+        <p style="padding: 50px;">Cargando datos meteorológicos...</p>
     </div>
 
     <script>
+        // ENLACE REVISADO CARÁCTER POR CARÁCTER
         const enlaceCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrxJhBvpk3JZuOMWpKPZ2PMi2DYFEjxhSTWMbx4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
-
-        // Función especial para leer CSV con comas internas
-        function parsearCSV(text) {
-            const regex = /(".?"|[^",\s]+)(?=\s,|\s*$)/g;
-            const filas = text.split('\n');
-            return filas.map(fila => {
-                const coincidencias = fila.match(/(".*?"|[^,]+)/g);
-                return coincidencias ? coincidencias.map(c => c.replace(/"/g, '').trim()) : [];
-            });
-        }
 
         async function cargarClima() {
             try {
                 const respuesta = await fetch(enlaceCSV);
                 const texto = await respuesta.text();
-                const filas = parsearCSV(texto).filter(f => f.length > 5);
                 
+                // Función para separar por comas respetando el texto entre comillas
+                const filas = texto.split('\n').map(linea => {
+                    const res = [];
+                    let curr = '', inQuotes = false;
+                    for (let char of linea) {
+                        if (char === '"') inQuotes = !inQuotes;
+                        else if (char === ',' && !inQuotes) { res.push(curr.trim()); curr = ''; }
+                        else curr += char;
+                    }
+                    res.push(curr.trim());
+                    return res;
+                }).filter(f => f.length > 3 && f[0] !== "");
+
                 const main = document.getElementById('contenido-principal');
                 main.innerHTML = ""; 
 
                 let diaActual = "";
                 let contenedorActual = null;
 
-                // Saltamos encabezado
                 for (let i = 1; i < filas.length; i++) {
                     const col = filas[i];
-                    if (!col[0]) continue;
-
                     if (col[0] !== diaActual) {
                         diaActual = col[0];
                         const divDia = document.createElement('div');
-                        divDia.className = 'seccion-dia';
+                        divDia.style.width = "100%";
                         divDia.innerHTML = <div class="etiqueta-dia">${diaActual}</div>;
                         main.appendChild(divDia);
 
@@ -69,18 +68,18 @@
 
                     contenedorActual.innerHTML += `
                         <div class="tarjeta">
-                            <h2>${col[1]}</h2>
-                            <p class="dato">☁️ <strong>Cielo:</strong> ${col[2]}</p>
-                            <p class="dato">👁️ <strong>Vis:</strong> ${col[3]}</p>
-                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4]}</p>
-                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5]}</p>
-                            <p class="temp">🌡️ Aire: ${col[6]} | ST: ${col[7]}</p>
+                            <h2>${col[1] || '---'}</h2>
+                            <p class="dato">☁️ <strong>Cielo:</strong> ${col[2] || '---'}</p>
+                            <p class="dato">👁️ <strong>Vis:</strong> ${col[3] || '---'}</p>
+                            <p class="dato">🌬️ <strong>Viento:</strong> ${col[4] || '---'}</p>
+                            <p class="dato">🌊 <strong>Mar:</strong> ${col[5] || '---'}</p>
+                            <p class="temp">🌡️ Aire: ${col[6] || '---'} | ST: ${col[7] || '---'}</p>
                             <p class="dato">⚠️ <strong>Riesgo:</strong> ${col[8] || 'Bajo'}</p>
                         </div>
                     `;
                 }
-            } catch (e) {
-                document.getElementById('contenido-principal').innerHTML = "<p style='text-align:center; padding:50px;'>Error al cargar. Revisa que el Excel esté publicado como CSV.</p>";
+            } catch (error) {
+                document.getElementById('contenido-principal').innerHTML = "<p style='padding:50px;'>Error al conectar. Verifica la conexión a internet.</p>";
             }
         }
         cargarClima();

@@ -3,97 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Prat | SITREP Oficial</title>
+    <title>SITREP Meteorológico | Base Prat</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; }
-        header h1 { margin: 0; font-size: 1.6rem; text-transform: uppercase; }
+        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
         
         #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
         .dia-grupo { margin-bottom: 40px; text-align: center; }
-        .dia-titulo { background: var(--navy); color: white; padding: 10px 30px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; font-size: 1.1rem; }
+        .dia-titulo { background: var(--navy); color: white; padding: 10px 30px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         
-        /* Tarjetas con Colores de Alerta */
-        .card { background: white; border-radius: 12px; padding: 20px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 10px solid #ccc; transition: 0.3s; position: relative; }
-        .riesgo-bajo { border-left-color: var(--green); }
-        .riesgo-medio { border-left-color: var(--yellow); background: #fffdf5; }
-        .riesgo-alto { border-left-color: var(--red); background: #fff5f5; }
+        /* Sistema de Alertas por Riesgo */
+        .card { background: white; border-radius: 12px; padding: 18px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 8px solid #ccc; transition: 0.3s; }
+        .card.riesgo-bajo { border-left-color: var(--green); }
+        .card.riesgo-medio { border-left-color: var(--yellow); background: #fffdf5; }
+        .card.riesgo-alto { border-left-color: var(--red); background: #fff5f5; }
 
-        .card h3 { margin: 0 0 15px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .badge-riesgo { font-size: 0.65rem; padding: 3px 10px; border-radius: 5px; text-transform: uppercase; font-weight: bold; color: white; }
+        .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .badge-riesgo { font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; color: white; text-transform: uppercase; font-weight: bold; }
         .riesgo-bajo .badge-riesgo { background: var(--green); }
         .riesgo-medio .badge-riesgo { background: var(--yellow); color: #000; }
         .riesgo-alto .badge-riesgo { background: var(--red); }
 
-        .dato { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px dotted #eee; padding-bottom: 4px; }
-        .label { color: #666; } .val { font-weight: bold; }
+        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px dotted #eee; padding-bottom: 4px; }
+        .val { font-weight: bold; color: #111; }
+        .label { color: #666; }
         
-        .temps { background: rgba(255,255,255,0.8); border-radius: 10px; padding: 12px; margin-top: 15px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
-        .t-val { font-size: 1.1rem; font-weight: bold; color: var(--blue); display: block; text-align: center; }
-        
-        /* Estilos de la Tabla de Mareas */
-        .seccion-mareas { background: white; margin-top: 50px; padding: 30px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); overflow-x: auto; }
-        .seccion-mareas h2 { color: var(--navy); text-align: center; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
-        th { background: var(--navy); color: white; padding: 15px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.9rem; }
-        .p-mareas { color: #d35400; font-weight: bold; }
-        .b-mareas { color: #2980b9; font-weight: bold; }
-        
-        #status { text-align: center; padding: 30px; color: #888; font-size: 0.85rem; }
+        .temps { background: rgba(255,255,255,0.8); border-radius: 8px; padding: 10px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
+        .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; text-align: center; }
+        #status { text-align: center; padding: 30px; color: #888; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
-    <p>Pronóstico Meteorológico y Régimen de Mareas</p>
+    <p>SITREP Meteorológico Oficial</p>
 </header>
 
 <div id="dashboard">
     <div id="clima-container"></div>
-    
-    <div class="seccion-mareas">
-        <h2>🌊 Tabla de Mareas - Febrero 2026</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th><th>Alt.</th>
-                    <th>Hora</th><th>Alt.</th>
-                    <th>Hora</th><th>Alt.</th>
-                    <th>Hora</th><th>Alt.</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpo-mareas">
-                <tr><td colspan="9">Cargando datos de mareas...</td></tr>
-            </tbody>
-        </table>
-    </div>
 </div>
 
-<div id="status">📡 Sincronizando con la base...</div>
+<div id="status">📡 Sincronizando datos con la base...</div>
 
 <script>
     const URL_CLIMA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
-    const URL_MAREAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=2017374824&output=csv";
 
-    async function cargar() {
+    async function cargarClima() {
         const stat = document.getElementById('status');
-
-        // 1. CARGAR CLIMA
         try {
-            const rC = await fetch(URL_CLIMA + "&v=" + Date.now());
-            const dC = await rC.text();
-            const filasC = dC.split('\n').map(l => l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            const res = await fetch(URL_CLIMA + "&cache=" + Date.now());
+            const data = await res.text();
+            const filas = data.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
             
             let html = ""; let diaAct = "";
-            for(let i=1; i<filasC.length; i++) {
-                const c = filasC[i].map(v => v.replace(/"/g, '').trim());
+            for(let i=1; i < filas.length; i++) {
+                const c = filas[i].map(v => v.replace(/"/g, '').trim());
                 if(!c[0] || c[0] === "Día") continue;
 
                 if(c[0] !== diaAct) {
@@ -102,48 +72,30 @@
                     html += `<div class="dia-grupo"><div class="dia-titulo">📅 ${diaAct}</div><div class="grid">`;
                 }
 
-                const riesgo = (c[8] || "Bajo").toLowerCase();
+                const r = (c[8] || "Bajo").toLowerCase();
                 html += `
-                <div class="card riesgo-${riesgo}">
+                <div class="card riesgo-${r}">
                     <h3>🕒 ${c[1]} <span class="badge-riesgo">${c[8]}</span></h3>
-                    <div class="dato"><span class="label">☁️ Nubosidad</span><span class="val">${c[2]}</span></div>
-                    <div class="dato"><span class="label">👁️ Visibilidad</span><span class="val">${c[3]}</span></div>
+                    <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${c[2]}</span></div>
+                    <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${c[3]}</span></div>
                     <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${c[4]}</span></div>
-                    <div class="dato"><span class="label">🌊 Estado Mar</span><span class="val">${c[5]}</span></div>
+                    <div class="dato"><span class="label">🌊 Mar</span><span class="val">${c[5]}</span></div>
                     <div class="temps">
-                        <div><small>T° AIRE</small><span class="t-val">${c[6]}</span></div>
-                        <div><small>S. TÉRMICA</small><span class="t-val">${c[7]}</span></div>
+                        <div><small>AIRE</small><span class="t-val">${c[6]}</span></div>
+                        <div><small>S.TÉRM</small><span class="t-val">${c[7]}</span></div>
                     </div>
                 </div>`;
             }
-            document.getElementById('clima-container').innerHTML = html + "</div></div>";
-        } catch(e) { console.error("Error Clima:", e); }
-
-        // 2. CARGAR MAREAS
-        try {
-            const rM = await fetch(URL_MAREAS + "&v=" + Date.now());
-            const dM = await rM.text();
-            const filasM = dM.split('\n').map(l => l.split(','));
-            
-            let mHtml = "";
-            for(let i=2; i<filasM.length; i++) {
-                const m = filasM[i].map(v => v.replace(/"/g, '').trim());
-                if(!m[0]) continue;
-                mHtml += `<tr>
-                    <td><b>${m[0]}</b></td>
-                    <td>${m[1]}</td><td class="${m[2].includes('P')?'p-mareas':'b-mareas'}">${m[2]}</td>
-                    <td>${m[3]}</td><td class="${m[4].includes('P')?'p-mareas':'b-mareas'}">${m[4]}</td>
-                    <td>${m[5]}</td><td class="${m[6].includes('P')?'p-mareas':'b-mareas'}">${m[6]}</td>
-                    <td>${m[7]}</td><td class="${m[8].includes('P')?'p-mareas':'b-mareas'}">${m[8]}</td>
-                </tr>`;
-            }
-            document.getElementById('cuerpo-mareas').innerHTML = mHtml;
-            stat.innerHTML = "✅ Actualizado: " + new Date().toLocaleTimeString();
-        } catch(e) { console.error("Error Mareas:", e); }
+            document.getElementById('clima-container').innerHTML = html + '</div></div>';
+            stat.innerHTML = "✅ Última actualización: " + new Date().toLocaleTimeString();
+        } catch(e) { 
+            console.error(e);
+            stat.innerHTML = "⚠️ Error al conectar con la base de datos.";
+        }
     }
 
-    cargar();
-    setInterval(cargar, 300000);
+    cargarClima();
+    setInterval(cargarClima, 300000); // Actualiza cada 5 min
 </script>
 </body>
 </html>

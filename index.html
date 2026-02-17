@@ -54,7 +54,7 @@
         .links-container, .social-container { max-width: 1150px; margin: 20px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
         
         .btn-link { 
-            background: white; 
+            background: grey; 
             color: var(--navy); 
             text-decoration: none; 
             padding: 10px 16px; 
@@ -71,7 +71,7 @@
 
         .btn-link:hover { 
             background: var(--navy); 
-            color: white; 
+            color: grey; 
             transform: translateY(-3px); 
             border-color: var(--navy); 
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
@@ -118,16 +118,18 @@
 <header>
     <img src="ESCUDO.png" alt="Escudo Armada de Chile" class="logo-superior">
     <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
-    <p>Pronóstico Meteorológico de la Bahía Chile (Puerto Soberanía)</p>
+    <p>Pronóstico Meteorológico Marítimo para la Bahía Chile (Puerto Soberanía)</p>
 </header>
 
 <div class="links-container">
-    <a href="https://www.armada.cl/" target="_blank" class="btn-link">⚓ Armada de Chile</a>
-    <a href="https://www.directemar.cl/directemar/" target="_blank" class="btn-link">🛡️ Directemar</a>
-    <a href="https://meteoarmada.directemar.cl/" target="_blank" class="btn-link">🌤️ Servimet</a>
-    <a href="https://www.shoa.cl/php/mareas.php" target="_blank" class="btn-link">🌊 Tabla de Mareas (Pto. Soberanía)</a>
-    <a href="https://www.sismologia.cl/" target="_blank" class="btn-link">🌋 Sismología</a>
-    <a href="https://www.horaoficial.cl/" target="_blank" class="btn-link">🕒 Hora Oficial</a>
+    <a href="https://www.armada.cl/" target="_blank" class="btn-link">⚓ ARMADA DE CHILE</a>
+    <a href="https://www.directemar.cl" target="_blank" class="btn-link">🛡️ DIRECTEMAR</a>
+    <a href="https://meteoarmada.directemar.cl/pronostico-antartico" target="_blank" class="btn-link">🌤️ SERVICIO METEOROLÓGICO DE LA ARMADA</a>
+    <a href="https://www.shoa.cl/php/mareas.php" target="_blank" class="btn-link">🌊 TABLA DE MAREAS (Pto. Soberanía)</a>
+    <a href="https://www.sismologia.cl/" target="_blank" class="btn-link">🌋 SISMOLOGÍA</a>
+    <a href="https://www.horaoficial.cl/" target="_blank" class="btn-link">🕒 HORA OFICIAL</a>
+    <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="btn-link">⚓ INFORME GLACIOLÓGICO BASES ANTÁRTICAS CHILENAS</a>
+    <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="btn-link"> IMAGEN SATELITAL</a>
 </div>
 
 <div class="social-container">
@@ -181,10 +183,10 @@
                 const r = (c[8] || "Bajo").toLowerCase();
                 html += `<div class="card riesgo-${r}">
                     <h3>🕒 ${c[1]} <span class="badge-riesgo">${c[8]}</span></h3>
-                    <div class="dato"><span>☁️ Nubosidad</span><b>${c[2]}</b></div>
-                    <div class="dato"><span>👁️ Visibilidad</span><b>${c[3]}</b></div>
-                    <div class="dato"><span>🌬️ Viento</span><b>${c[4]}</b></div>
-                    <div class="dato"><span>🌊 Estado Mar</span><b>${c[5]}</b></div>
+                    <div class="dato"><span>🌤️ CIELO:</span><b>${c[2]}</b></div>
+                    <div class="dato"><span>👁️ VIS:</span><b>${c[3]}</b></div>
+                    <div class="dato"><span>🌬️ VIENTO:</span><b>${c[4]}</b></div>
+                    <div class="dato"><span>🌊 MAR:</span><b>${c[5]}</b></div>
                     <div class="temps">
                         <div><small>T° AIRE</small><span class="t-val t-aire">${c[6]}</span></div>
                         <div><small style="color:#e74c3c; font-weight:bold;">S. TÉRMICA</small><span class="t-val t-termica">${c[7]}</span></div>

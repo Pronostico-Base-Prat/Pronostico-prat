@@ -3,38 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SITREP Meteorológico | Base Prat</title>
+    <title>Base Prat | Puerto Soberanía</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --navy: #0a2540; --blue: #004e92; --bg: #f0f2f5; --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; }
+        :root { --navy: #0a2540; --blue: #004e92; --sky: #3498db; --bg: #f0f2f5; --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; --insta: #e1306c; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
-        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
         
-        #dashboard { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        header { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 30px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        header h1 { margin: 0; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        header p { margin: 10px 0 0 0; font-size: 1.1rem; opacity: 0.9; font-weight: bold; }
+        
+        .links-container { max-width: 1150px; margin: 20px auto 10px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 0 15px; }
+        .social-container { max-width: 1150px; margin: 0 auto 20px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 0 15px; }
+
+        .btn-link { background: white; color: var(--navy); text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 1px solid #ced4da; transition: 0.3s; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-link:hover { background: var(--navy); color: white; transform: translateY(-2px); border-color: var(--navy); }
+        
+        /* Estilo para redes sociales */
+        .btn-social { background: #e8f4fd; color: #1da1f2; border-color: #1da1f2; }
+        .btn-social:hover { background: #1da1f2; color: white; }
+        .btn-insta { background: #fff0f5; color: var(--insta); border-color: var(--insta); }
+        .btn-insta:hover { background: var(--insta); color: white; }
+
+        #dashboard { max-width: 1100px; margin: 10px auto; padding: 0 15px; }
         .dia-grupo { margin-bottom: 40px; text-align: center; }
         .dia-titulo { background: var(--navy); color: white; padding: 10px 30px; border-radius: 50px; display: inline-block; margin-bottom: 20px; font-weight: bold; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        
-        /* Sistema de Alertas por Riesgo */
-        .card { background: white; border-radius: 12px; padding: 18px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 8px solid #ccc; transition: 0.3s; }
-        .card.riesgo-bajo { border-left-color: var(--green); }
-        .card.riesgo-medio { border-left-color: var(--yellow); background: #fffdf5; }
-        .card.riesgo-alto { border-left-color: var(--red); background: #fff5f5; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; border-left: 8px solid #ccc; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .riesgo-bajo { border-left-color: var(--green); }
+        .riesgo-medio { border-left-color: var(--yellow); background: #fffdf5; }
+        .riesgo-alto { border-left-color: var(--red); background: #fff5f5; }
 
-        .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .badge-riesgo { font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; color: white; text-transform: uppercase; font-weight: bold; }
+        .card h3 { margin: 0 0 12px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; display: flex; justify-content: space-between; }
+        .badge-riesgo { font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; color: white; text-transform: uppercase; }
         .riesgo-bajo .badge-riesgo { background: var(--green); }
-        .riesgo-medio .badge-riesgo { background: var(--yellow); color: #000; }
+        .riesgo-medio .badge-riesgo { background: var(--yellow); color: black; }
         .riesgo-alto .badge-riesgo { background: var(--red); }
 
-        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px dotted #eee; padding-bottom: 4px; }
-        .val { font-weight: bold; color: #111; }
-        .label { color: #666; }
-        
+        .dato { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px dotted #eee; }
         .temps { background: rgba(255,255,255,0.8); border-radius: 8px; padding: 10px; margin-top: 12px; display: flex; justify-content: space-around; border: 1px solid #eef2f7; }
         .t-val { font-size: 1rem; font-weight: bold; color: var(--blue); display: block; text-align: center; }
+        
+        #contenedor-mareas { background: white; margin-top: 30px; padding: 25px; border-radius: 15px; display: none; overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 0.85rem; }
+        th { background: var(--navy); color: white; padding: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .p-mareas { color: #d35400; font-weight: bold; }
+        .b-mareas { color: #2980b9; font-weight: bold; }
+
         #status { text-align: center; padding: 30px; color: #888; font-size: 0.8rem; }
     </style>
 </head>
@@ -42,60 +59,99 @@
 
 <header>
     <h1>Base Naval Antártica "Capitán Arturo Prat"</h1>
-    <p>SITREP Meteorológico Oficial</p>
+    <p>Pronóstico Meteorológico de la Bahía Chile (Puerto Soberanía)</p>
 </header>
+
+<div class="links-container">
+    <a href="https://www.armada.cl/" target="_blank" class="btn-link">⚓ Armada de Chile</a>
+    <a href="https://www.directemar.cl/" target="_blank" class="btn-link">🛡️ Directemar</a>
+    <a href="https://meteoarmada.directemar.cl/" target="_blank" class="btn-link">🌤️ Servimet</a>
+    <a href="https://www.shoa.cl/php/mareas.php" target="_blank" class="btn-link">🌊 Tabla de Mareas (Pto. Soberanía)</a>
+    <a href="https://www.sismologia.cl/" target="_blank" class="btn-link">🌋 Sismología</a>
+    <a href="https://www.horaoficial.cl/" target="_blank" class="btn-link">🕒 Hora Oficial</a>
+</div>
+
+<div class="social-container">
+    <a href="https://x.com/armada_chile" target="_blank" class="btn-link btn-social">🐦 @armada_chile</a>
+    <a href="https://x.com/MetArmada_mag" target="_blank" class="btn-link btn-social">🐦 @MetArmada_mag</a>
+    <a href="https://x.com/Servimet_Armada" target="_blank" class="btn-link btn-social">🐦 @Servimet_Armada</a>
+    <a href="https://www.instagram.com/armada_chile/" target="_blank" class="btn-link btn-insta">📸 @armada_chile</a>
+    <a href="https://www.instagram.com/dgpa_chile/" target="_blank" class="btn-link btn-insta">📸 @dgpa_chile</a>
+</div>
 
 <div id="dashboard">
     <div id="clima-container"></div>
+
+    <div id="contenedor-mareas">
+        <center><h2 style="color:var(--navy)">🌊 Régimen de Mareas - Puerto Soberanía</h2></center>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                    <th>Hora</th><th>Alt.</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-mareas"></tbody>
+        </table>
+    </div>
 </div>
 
-<div id="status">📡 Sincronizando datos con la base...</div>
+<div id="status">📡 Sincronizando datos de la base...</div>
 
 <script>
     const URL_CLIMA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
+    const URL_MAREAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=2017374824&output=csv";
 
-    async function cargarClima() {
+    async function cargarTodo() {
         const stat = document.getElementById('status');
         try {
-            const res = await fetch(URL_CLIMA + "&cache=" + Date.now());
-            const data = await res.text();
-            const filas = data.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
-            
+            const resC = await fetch(URL_CLIMA + "&v=" + Date.now());
+            const csvC = await resC.text();
+            const filasC = csvC.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
             let html = ""; let diaAct = "";
-            for(let i=1; i < filas.length; i++) {
-                const c = filas[i].map(v => v.replace(/"/g, '').trim());
+            for(let i=1; i < filasC.length; i++) {
+                const c = filasC[i].map(v => v.replace(/"/g, '').trim());
                 if(!c[0] || c[0] === "Día") continue;
-
                 if(c[0] !== diaAct) {
                     if(diaAct !== "") html += '</div></div>';
                     diaAct = c[0];
                     html += `<div class="dia-grupo"><div class="dia-titulo">📅 ${diaAct}</div><div class="grid">`;
                 }
-
                 const r = (c[8] || "Bajo").toLowerCase();
-                html += `
-                <div class="card riesgo-${r}">
+                html += `<div class="card riesgo-${r}">
                     <h3>🕒 ${c[1]} <span class="badge-riesgo">${c[8]}</span></h3>
-                    <div class="dato"><span class="label">☁️ Nubes</span><span class="val">${c[2]}</span></div>
-                    <div class="dato"><span class="label">👁️ Visib.</span><span class="val">${c[3]}</span></div>
-                    <div class="dato"><span class="label">🌬️ Viento</span><span class="val">${c[4]}</span></div>
-                    <div class="dato"><span class="label">🌊 Mar</span><span class="val">${c[5]}</span></div>
+                    <div class="dato"><span>☁️ Nubosidad</span><b>${c[2]}</b></div>
+                    <div class="dato"><span>👁️ Visibilidad</span><b>${c[3]}</b></div>
+                    <div class="dato"><span>🌬️ Viento</span><b>${c[4]}</b></div>
+                    <div class="dato"><span>🌊 Estado Mar</span><b>${c[5]}</b></div>
                     <div class="temps">
-                        <div><small>AIRE</small><span class="t-val">${c[6]}</span></div>
-                        <div><small>S.TÉRM</small><span class="t-val">${c[7]}</span></div>
+                        <div><small>T° AIRE</small><span class="t-val">${c[6]}</span></div>
+                        <div><small>S. TÉRMICA</small><span class="t-val">${c[7]}</span></div>
                     </div>
                 </div>`;
             }
             document.getElementById('clima-container').innerHTML = html + '</div></div>';
-            stat.innerHTML = "✅ Última actualización: " + new Date().toLocaleTimeString();
-        } catch(e) { 
-            console.error(e);
-            stat.innerHTML = "⚠️ Error al conectar con la base de datos.";
-        }
-    }
 
-    cargarClima();
-    setInterval(cargarClima, 300000); // Actualiza cada 5 min
+            const resM = await fetch(URL_MAREAS + "&v=" + Date.now());
+            if(resM.ok) {
+                const csvM = await resM.text();
+                const filasM = csvM.split('\n').map(r => r.split(','));
+                let mHtml = "";
+                for(let i=2; i<filasM.length; i++) {
+                    const m = filasM[i].map(v => v.replace(/"/g, '').trim());
+                    if(!m[0]) continue;
+                    mHtml += `<tr><td><b>${m[0]}</b></td><td>${m[1]}</td><td class="${m[2].includes('P')?'p-mareas':'b-mareas'}">${m[2]}</td><td>${m[3]}</td><td class="${m[4].includes('P')?'p-mareas':'b-mareas'}">${m[4]}</td><td>${m[5]}</td><td class="${m[6].includes('P')?'p-mareas':'b-mareas'}">${m[6]}</td><td>${m[7]}</td><td class="${m[8].includes('P')?'p-mareas':'b-mareas'}">${m[8]}</td></tr>`;
+                }
+                document.getElementById('cuerpo-mareas').innerHTML = mHtml;
+                document.getElementById('contenedor-mareas').style.display = "block";
+            }
+            stat.innerHTML = "✅ Actualizado: " + new Date().toLocaleTimeString();
+        } catch(e) { stat.innerHTML = "⚠️ Error de conexión con la base de datos."; }
+    }
+    cargarTodo();
 </script>
 </body>
 </html>

@@ -8,198 +8,250 @@
     <style>
         :root { 
             --navy: #0a2540; --blue: #004e92; --sky: #3498db; --bg: #f0f2f5; 
-            --green: #92d050; --yellow: #ffc000; --orange: #ed7d31; --red: #ff0000;
-            --bg-bajo: rgba(146, 208, 80, 0.12);
-            --bg-moderado: rgba(255, 192, 0, 0.12);
-            --bg-alto: rgba(237, 125, 49, 0.12);
-            --bg-extremo: rgba(255, 0, 0, 0.08);
-            --insta-color: #E1306C;
+            --green: #92d050;    /* BAJO */
+            --yellow: #ffc000;   /* MODERADO */
+            --orange: #ed7d31;   /* ALTO */
+            --red: #ff0000;      /* EXTREMO */
+            
+            --bg-low: rgba(146, 208, 80, 0.15);
+            --bg-mod: rgba(255, 192, 0, 0.15);
+            --bg-high: rgba(237, 125, 49, 0.15);
+            --bg-ext: rgba(255, 0, 0, 0.1);
         }
         
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; scroll-behavior: smooth; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; scroll-behavior: smooth; }
         
         header { 
-            position: relative; min-height: 350px;
-            /* SECCIÓN DE IMAGEN DE ENCABEZADO */
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(10, 37, 64, 0.8)), url('fondo.jpg');
+            position: relative; min-height: 400px;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(10, 37, 64, 0.8)), url('fondo.jpg');
             background-size: cover; background-position: center; color: white; 
             padding: 20px; text-align: center; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; padding-bottom: 40px;
+            justify-content: flex-end; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); padding-bottom: 40px;
         }
 
         .logo-superior { position: absolute; top: 25px; width: 90px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5)); }
-
-        .header-controls { background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; padding-bottom: 10px; }
-
-        .herramientas-top { 
-            display: flex; justify-content: center; gap: 12px; padding: 15px 10px 10px 10px; 
-            flex-wrap: wrap;
-        }
-        .btn-tool {
-            background: white; color: var(--blue); text-decoration: none; padding: 10px 18px;
-            border-radius: 8px; font-size: 0.85rem; font-weight: bold; border: 2.5px solid var(--blue);
-            transition: 0.3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-tool:hover { background: var(--blue); color: white; transform: translateY(-2px); }
-
-        #nav-dias { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 5px 10px; }
-        .nav-btn {
-            background: var(--navy); color: white; border: none; padding: 8px 15px;
-            border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: bold;
-            transition: 0.3s; text-decoration: none; text-transform: uppercase;
-        }
-        .nav-btn:hover { background: var(--sky); transform: scale(1.05); }
-
-        #dashboard { max-width: 1250px; margin: 30px auto; padding: 0 15px; }
-        .dia-grupo { margin-bottom: 50px; text-align: center; scroll-margin-top: 180px; }
-        .dia-titulo { background: var(--navy); color: white; padding: 10px 35px; border-radius: 50px; display: inline-block; margin-bottom: 25px; font-weight: bold; }
+        header h1 { margin: 0; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 1px; text-shadow: 3px 3px 10px rgba(0,0,0,0.9); }
+        header p { margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9; font-weight: bold; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
         
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .links-container { max-width: 1150px; margin: 20px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
+        .btn-link { background: white; color: var(--navy); text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 2px solid #d1d5db; transition: 0.3s; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-transform: uppercase; }
+        .btn-link:hover { background: var(--navy); color: white; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: var(--navy); }
+        
+        .nav-dias-wrapper { background: #f8f9fa; border-bottom: 2px solid #e9ecef; padding: 20px 0; text-align: center; }
+        .nav-dias { max-width: 1250px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
+        .btn-nav-dia { background: #1a3a5a; color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; font-size: 0.75rem; font-weight: 700; transition: 0.3s; text-transform: uppercase; display: inline-block; }
+        .btn-nav-dia:hover { background: var(--sky); transform: translateY(-2px); }
+
+        #dashboard { max-width: 1250px; margin: 10px auto; padding: 0 15px; flex: 1; }
+        .dia-grupo { margin-bottom: 50px; text-align: center; scroll-margin-top: 20px; }
+        .dia-titulo { background: var(--navy); color: white; padding: 12px 40px; border-radius: 50px; display: inline-block; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; justify-content: center; }
         @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 
         .card { 
             border-radius: 12px; padding: 20px; border-top: 8px solid #ccc; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; display: flex; flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column;
+            background: white; height: 100%; transition: all 0.3s ease;
         }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); border-top-width: 14px; }
-
-        .card h3 { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-top: 0; }
-
-        .riesgo-bajo { border-top-color: var(--green); background-color: var(--bg-bajo); }
-        .riesgo-moderado { border-top-color: var(--yellow); background-color: var(--bg-moderado); }
-        .riesgo-alto { border-top-color: var(--orange); background-color: var(--bg-alto); }
-        .riesgo-extremo { border-top-color: var(--red); background-color: var(--bg-extremo); }
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15); 
+            filter: brightness(1.02); 
+        }
+        
+        .riesgo-bajo { border-top-color: var(--green); background-color: var(--bg-low); }
+        .riesgo-moderado { border-top-color: var(--yellow); background-color: var(--bg-mod); }
+        .riesgo-alto { border-top-color: var(--orange); background-color: var(--bg-high); }
+        .riesgo-extremo { border-top-color: var(--red); background-color: var(--bg-ext); }
+        
+        .card h3 { margin: 0 0 15px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .badge-riesgo { font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; color: white; text-transform: uppercase; font-weight: bold; }
+        .bg-bajo { background-color: var(--green); color: #000 !important; }
+        .bg-moderado { background-color: var(--yellow); color: #000 !important; }
+        .bg-alto { background-color: var(--orange); }
+        .bg-extremo { background-color: var(--red); }
 
         .dato { 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px; font-size: 0.85rem; padding: 6px 10px; 
-            background: rgba(255,255,255,0.4); border-radius: 4px;
-            transition: 0.2s; border-bottom: 1px dotted rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px dotted rgba(0,0,0,0.1); 
+            padding-bottom: 6px; transition: 0.2s ease; cursor: default;
         }
-        .dato:hover { background: white; border-left: 5px solid var(--navy); padding-left: 15px; }
-        
-        .temps-box { background: white; border-radius: 8px; margin-top: auto; display: flex; border: 1px solid #eee; overflow: hidden; }
-        .temp-item { flex: 1; padding: 10px 2px; text-align: center; }
-        .temp-val { font-size: 1.3rem; font-weight: bold; display: block; }
+        .dato:hover { 
+            color: var(--blue);
+            font-weight: bold;
+            transform: translateX(8px);
+            border-bottom-color: var(--blue);
+        }
 
-        .seccion-final-links { background: white; padding: 50px 0; border-top: 1px solid #ddd; text-align: center; }
-        .seccion-final-links h2 { color: var(--navy); font-size: 1.5rem; margin-bottom: 25px; letter-spacing: 1px; }
-        
-        .links-container, .social-container { max-width: 1150px; margin: 0 auto 15px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
+        .txt-bajo { color: #40612a !important; }
+        .txt-moderado { color: #916d00 !important; }
+        .txt-alto { color: #a04a0c !important; }
+        .txt-extremo { color: #d00000 !important; font-weight: 900; }
 
-        .btn-link { background: white; color: var(--navy); text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 2px solid #d1d5db; transition: 0.3s; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-        .btn-link:hover { background: var(--navy); color: white; transform: translateY(-2px); border-color: var(--navy); }
-        
-        .btn-social { border-color: #000; color: #000; }
-        .btn-social:hover { background: #000; color: #fff; }
-        
-        .btn-insta { border-color: var(--insta-color); color: var(--insta-color); }
-        .btn-insta:hover { background: var(--insta-color); color: #fff; }
+        .temps-box { background: white; border-radius: 10px; margin-top: auto; display: flex; border: 1px solid rgba(0,0,0,0.1); overflow: hidden; }
+        .temp-item { flex: 1; padding: 10px 2px; text-align: center; transition: 0.3s; }
+        .temp-item:hover { background: #e3f2fd; }
+        .temp-item:first-child { border-right: 1px solid rgba(0,0,0,0.1); }
+        .temp-label { display: block; font-size: 0.58rem; font-weight: bold; color: #666; margin-bottom: 4px; }
+        .temp-val { font-size: 1.3rem; font-weight: 700; display: block; }
 
-        .badge-riesgo { font-size: 0.6rem; padding: 4px 10px; border-radius: 10px; color: white; font-weight: bold; text-transform: uppercase; }
-        .bg-bajo { background: var(--green); color: black !important; }
-        .bg-moderado { background: var(--yellow); color: black !important; }
-        .bg-alto { background: var(--orange); }
-        .bg-extremo { background: var(--red); }
+        @keyframes parpadeo { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+        .icono-alerta-superior { animation: parpadeo 0.8s infinite; font-size: 1.6rem; }
 
-        footer { background: var(--navy); color: white; padding: 40px; text-align: center; border-top: 4px solid var(--sky); }
+        #contenedor-mareas { background: white; margin-top: 40px; padding: 25px; border-radius: 15px; display: none; overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: var(--navy); color: white; padding: 12px; font-size: 0.9rem; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.85rem; transition: 0.2s; }
+
+        tbody tr:hover td { 
+            background-color: #f1f8ff;
+            color: var(--blue);
+            font-weight: bold;
+        }
+
+        .sitios-interes-container { text-align: center; padding: 40px 20px; background: white; }
+        .sitios-interes-container h2 { color: var(--navy); font-size: 1.6rem; margin-bottom: 30px; letter-spacing: 1px; }
+        .sitios-botones { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 25px; }
+        .btn-sitio-footer { border: 1px solid #d1d5db; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
+        .redes-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .btn-red { border: 2px solid #000; padding: 10px 20px; border-radius: 12px; text-decoration: none; color: #000; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .btn-red.insta { border-color: #d62976; color: #d62976; }
+
+        footer { background: var(--navy); color: white; padding: 40px 20px; text-align: center; border-top: 4px solid var(--sky); }
+        #status { text-align: center; padding: 20px; color: #888; font-size: 0.75rem; }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="ESCUDO.png" alt="Escudo" class="logo-superior">
-    <h1 style="margin-bottom:5px;">Pronóstico Meteorológico Marítimo</h1>
-    <p style="margin:0; font-weight:bold;">Base Naval Antártica Chilena "Capitán Arturo Prat"</p>
-    <p style="margin:0; font-weight:bold;">Bahía Chile - Puerto Soberanía</p>
+    <img src="ESCUDO.png" alt="Escudo Armada de Chile" class="logo-superior">
+    <h1>Pronóstico Meteorológico Marítimo</h1>
+    <p>Base Naval Antártica "Capitán Arturo Prat"</p>
+    <p>Bahía Chile - Puerto Soberanía</p>
 </header>
 
-<div class="header-controls">
-    <div class="herramientas-top">
-        <a href="https://www.shoa.cl/php/mareas.php" target="_blank" class="btn-tool">📊 TABLA DE MAREAS</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="btn-tool">🛰️ IMAGEN SATELITAL</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="btn-tool">❄️ INFORME GLACIOLÓGICO</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="btn-tool"> CARTA DE SUPERFICIE</a>
-    </div>
-    <nav id="nav-dias"></nav>
+<div class="links-container">
+    <a href="#contenedor-mareas" class="btn-link">📊 TABLA DE MAREAS</a>
+    <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="btn-link">🛰️ IMAGEN SATELITAL</a>
+    <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="btn-link">❄️ INFORME GLACIOLÓGICO</a>
+    <a href="#" target="_blank" class="btn-link"> CARTA DE SUPERFICIE</a>
+</div>
+
+<div class="nav-dias-wrapper">
+    <div id="nav-dias-container" class="nav-dias"></div>
 </div>
 
 <div id="dashboard">
     <div id="clima-container"></div>
+    <div id="contenedor-mareas">
+        <center><h2 style="color:var(--navy)">🌊 Régimen de Mareas - Puerto Soberanía</h2></center>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-mareas"></tbody>
+        </table>
+    </div>
 </div>
 
-<section class="seccion-final-links">
-    <h2>SITIOS DE INTERÉS</h2>
-    
-    <div class="links-container">
-        <a href="https://www.armada.cl/" target="_blank" class="btn-link"> ARMADA DE CHILE</a>
-        <a href="https://www.directemar.cl" target="_blank" class="btn-link"> DIRECTEMAR</a>
-        <a href="https://meteoarmada.directemar.cl/pronostico-antartico" target="_blank" class="btn-link"> SERVICIO METEOROLÓGICO</a>
-        <a href="https://www.sismologia.cl/" target="_blank" class="btn-link"> SISMOLOGÍA</a>
-        <a href="https://www.horaoficial.cl/" target="_blank" class="btn-link"> HORA OFICIAL</a>
-    </div>
+<div id="status">📡 Sincronizando datos...</div>
 
-    <div class="social-container">
-    <a href="https://x.com/armada_chile" target="_blank" class="btn-link btn-social">🐦 @armada_chile</a>
-    <a href="https://x.com/MetArmada_mag" target="_blank" class="btn-link btn-social">🐦 @MetArmada_mag</a>
-    <a href="https://x.com/Servimet_Armada" target="_blank" class="btn-link btn-social">🐦 @Servimet_Armada</a>
-    <a href="https://www.instagram.com/armada_chile/" target="_blank" class="btn-link btn-insta">📸 @armada_chile</a>
-    <a href="https://www.instagram.com/dgpa_chile/" target="_blank" class="btn-link btn-insta">📸 @dgpa_chile</a>
+<section class="sitios-interes-container">
+    <h2>SITIOS DE INTERÉS</h2>
+    <div class="sitios-botones">
+        <a href="https://www.armada.cl/" class="btn-sitio-footer">ARMADA DE CHILE</a>
+        <a href="https://www.directemar.cl" class="btn-sitio-footer">DIRECTEMAR</a>
+        <a href="https://meteoarmada.directemar.cl/" class="btn-sitio-footer">SERVICIO METEOROLÓGICO</a>
+        <a href="https://www.sismologia.cl/" class="btn-sitio-footer">SISMOLOGÍA</a>
+        <a href="https://www.horaoficial.cl/" class="btn-sitio-footer">HORA OFICIAL</a>
+    </div>
+    <div class="redes-grid">
+        <a href="#" class="btn-red">𝕏 @ARMADA_CHILE</a>
+        <a href="#" class="btn-red">𝕏 @METARMADA_MAG</a>
+        <a href="#" class="btn-red">𝕏 @SERVIMET_ARMADA</a>
+        <a href="#" class="btn-red insta">📷 @ARMADA_CHILE</a>
+        <a href="#" class="btn-red insta">📷 @DGPA_CHILE</a>
     </div>
 </section>
 
 <footer>
-    <b style="font-size:1.2rem; display:block; margin-bottom:5px;">Angelo Campos Rivera</b>
-    <span style="color:var(--sky); font-weight:bold;">@angelo_meteo "METEOCAM"</span>
-    <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">CHILE - 2026</p>
+    <span style="font-size: 0.85rem; opacity: 0.8; display: block;">© 2026 Todos los derechos reservados.</span>
+    <span style="font-size: 1.25rem; font-weight: 700; display: block; margin: 5px 0;">Angelo Campos Rivera</span>
+    <span style="font-size: 1rem; color: var(--sky);">@angelo_meteo "METEOCAM"</span>
 </footer>
 
 <script>
     const URL_CLIMA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
+    const URL_MAREAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=2017374824&output=csv";
 
     async function cargarTodo() {
+        const stat = document.getElementById('status');
+        const navContainer = document.getElementById('nav-dias-container');
         try {
-            const res = await fetch(URL_CLIMA + "&v=" + Date.now());
-            const csv = await res.text();
-            const filas = csv.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            const resC = await fetch(URL_CLIMA + "&v=" + Date.now());
+            const csvC = await resC.text();
+            const filasC = csvC.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
             let html = ""; let navHtml = ""; let diaAct = "";
             
-            for(let i=1; i < filas.length; i++) {
-                const c = filas[i].map(v => v.replace(/"/g, '').trim());
+            for(let i=1; i < filasC.length; i++) {
+                const c = filasC[i].map(v => v.replace(/"/g, '').trim());
                 if(!c[0] || c[0] === "Día") continue;
                 
                 if(c[0] !== diaAct) {
                     if(diaAct !== "") html += '</div></div>';
                     diaAct = c[0];
-                    const diaID = "dia-" + i;
-                    navHtml += `<a href="#${diaID}" class="nav-btn">${diaAct}</a>`;
-                    html += `<div class="dia-grupo" id="${diaID}"><div class="dia-titulo">📅 ${diaAct}</div><div class="grid">`;
+                    const safeID = "dia-" + i;
+                    navHtml += `<a href="#${safeID}" class="btn-nav-dia">${diaAct}</a>`;
+                    html += `<div class="dia-grupo" id="${safeID}"><div class="dia-header"><div class="dia-titulo">📅 ${diaAct}</div></div><div class="grid">`;
                 }
 
-                let nudos = parseInt((c[4].match(/\d+/g) || [0]).pop());
-                let rText = "BAJO", rClass = "bajo";
-                if(nudos >= 30) { rText = "EXTREMO"; rClass = "extremo"; }
-                else if(nudos >= 21) { rText = "ALTO"; rClass = "alto"; }
-                else if(nudos >= 16) { rText = "MODERADO"; rClass = "moderado"; }
+                let vientoStr = c[4].toUpperCase();
+                let nudos = 0;
+                let match = vientoStr.match(/(\d+)\/(\d+)/) || vientoStr.match(/(\d+)/);
+                if(match) nudos = parseInt(match[match.length - 1]);
 
-                html += `<div class="card riesgo-${rClass}">
-                    <h3><span>${c[1]}</span><span class="badge-riesgo bg-${rClass}">${rText}</span></h3>
+                let riesgoT = "RIESGO BAJO"; let riesgoC = "bajo";
+                let iconoSup = "";
+
+                if (nudos >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "extremo"; iconoSup = "<span class='icono-alerta-superior'>🚫</span>"; }
+                else if (nudos >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "alto"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
+                else if (nudos >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "moderado"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
+
+                html += `<div class="card riesgo-${riesgoC}">
+                    <h3> ${c[1]} <div class="badge-container">${iconoSup}<span class="badge-riesgo bg-${riesgoC}">${riesgoT}</span></div></h3>
                     <div class="dato"><span>🌤️ CIELO:</span><b>${c[2]}</b></div>
                     <div class="dato"><span>👁️ VIS:</span><b>${c[3]}</b></div>
-                    <div class="dato"><span>💨 VIENTO:</span><b>${c[4]}</b></div>
+                    <div class="dato"><span>💨 VIENTO:</span><b class="txt-${riesgoC}">${c[4]}</b></div>
                     <div class="dato"><span>🌊 MAR:</span><b>${c[5]}</b></div>
                     <div class="temps-box">
-                        <div class="temp-item"><span style="font-size:0.6rem; font-weight:bold;">AIRE</span><span class="temp-val" style="color:#1a73e8">${c[6]}</span></div>
-                        <div class="temp-item"><span style="font-size:0.6rem; font-weight:bold;">S. TÉRMICA</span><span class="temp-val" style="color:#e63946">${c[7]}</span></div>
+                        <div class="temp-item"><span class="temp-label">Temp. Aire</span><span class="temp-val" style="color:#1a73e8">${c[6]}</span></div>
+                        <div class="temp-item"><span class="temp-label">S. Térmica</span><span class="temp-val" style="color:#e63946">${c[7]}</span></div>
                     </div>
                 </div>`;
             }
+            
+            navContainer.innerHTML = navHtml;
             document.getElementById('clima-container').innerHTML = html + '</div></div>';
-            // ELIMINADO EL BOTÓN EXTRA DE PROYECCIÓN SEMANAL
-            document.getElementById('nav-dias').innerHTML = navHtml;
-        } catch(e) { console.error(e); }
+
+            const resM = await fetch(URL_MAREAS + "&v=" + Date.now());
+            if(resM.ok) {
+                const csvM = await resM.text();
+                const filasM = csvM.split('\n').map(r => r.split(','));
+                let mHtml = "";
+                for(let i=2; i<filasM.length; i++) {
+                    const m = filasM[i].map(v => v.replace(/"/g, '').trim());
+                    if(!m[0]) continue;
+                    mHtml += `<tr><td><b>${m[0]}</b></td><td>${m[1]}</td><td>${m[2]}</td><td>${m[3]}</td><td>${m[4]}</td><td>${m[5]}</td><td>${m[6]}</td><td>${m[7]}</td><td>${m[8]}</td></tr>`;
+                }
+                document.getElementById('cuerpo-mareas').innerHTML = mHtml;
+                document.getElementById('contenedor-mareas').style.display = "block";
+            }
+            stat.innerHTML = "✅ Actualizado: " + new Date().toLocaleTimeString();
+        } catch(e) { stat.innerHTML = "⚠️ Error de conexión."; }
     }
     cargarTodo();
 </script>

@@ -3,258 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Prat | Puerto Soberanía</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Base Prat | Sistema Meteorológico Autónomo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --navy: #0a2540; --blue: #004e92; --sky: #3498db; --bg: #f0f2f5; 
-            --green: #92d050;    /* BAJO */
-            --yellow: #ffc000;   /* MODERADO */
-            --orange: #ed7d31;   /* ALTO */
-            --red: #ff0000;      /* EXTREMO */
-            
-            --bg-low: rgba(146, 208, 80, 0.15);
-            --bg-mod: rgba(255, 192, 0, 0.15);
-            --bg-high: rgba(237, 125, 49, 0.15);
-            --bg-ext: rgba(255, 0, 0, 0.1);
+        :root {
+            --navy: #1a3a5a; --bg: #f4f7f9;
+            --color-bajo: #92d050; --color-mod: #ffc000;
+            --color-alto: #ed7d31; --color-peligro: #ff0000;
         }
+
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; scroll-behavior: smooth; }
-        
+        /* --- SIDEBAR --- */
+        .sidebar { width: 250px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
+        .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 20px; }
+        .sidebar img { width: 140px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
+        .sidebar h2 { font-size: 0.82rem; text-align: center; text-transform: uppercase; margin: 0 0 25px 0; line-height: 1.5; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; color: #ecf0f1; }
+
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-nav-title { font-size: 0.7rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
+        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.85rem; padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
         header { 
-            position: relative; min-height: 400px;
-            background: linear-gradient(rgba(0,0,0,0.2), rgba(10, 37, 64, 0.8)), url('fondo.jpg');
-            background-size: cover; background-position: center; color: white; 
-            padding: 20px; text-align: center; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); padding-bottom: 40px;
+            position: relative;
+            background: linear-gradient(to right, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0) 80%), url('fondo.jpg'); 
+            background-size: cover; background-position: center 40%; height: 220px; padding: 40px 45px; display: flex; flex-direction: column; border-bottom: 1px solid #d1d9e0;
         }
 
-        .logo-superior { position: absolute; top: 25px; width: 90px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5)); }
-        header h1 { margin: 0; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 1px; text-shadow: 3px 3px 10px rgba(0,0,0,0.9); }
-        header p { margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9; font-weight: bold; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
+        .location-title { font-size: 2.8rem; font-weight: 900; color: #0d1b2a; margin: 0; letter-spacing: -1.5px; line-height: 1.1; }
+
+        .current-metrics { 
+            position: absolute; bottom: 15px; left: 45px; display: flex; gap: 18px; align-items: center; 
+            background: rgba(255,255,255,0.65); padding: 10px 28px; border-radius: 40px; backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .metric-item { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
+        .metric-val { font-size: 1.25rem; font-weight: 900; color: #1a1a1a; }
+        .metric-label { font-size: 0.65rem; color: #444; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .sep { color: rgba(0,0,0,0.1); font-size: 1.5rem; font-weight: 200; }
+
+        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 45px; border-bottom: 1px solid #edf2f7; }
+        .astro-item { display: flex; flex-direction: column; }
+        .astro-item label { font-size: 0.65rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
+        .astro-item span { font-size: 1rem; color: #2d3748; font-weight: 700; }
+
+        .days-nav { padding: 20px 45px; display: flex; gap: 10px; }
+        .day-tab { padding: 10px 22px; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; }
+        .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+        .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .card-header h3 { margin: 0; font-size: 1.3rem; color: var(--navy); font-weight: 800; }
+        .badge { padding: 4px 12px; border-radius: 15px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; margin-top: 5px;}
+        .icono-alerta-superior { font-size: 1.5rem; }
+
+        .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
+        .data-row span { font-weight: 700; color: #718096; width: 100px; }
+        .data-row b { margin-left: auto; color: #2d3748; }
+
+        .temp-box { display: flex; margin-top: 15px; gap: 10px; }
+        .temp-item { flex: 1; background: #f8fafc; padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
+        .temp-item small { display: block; font-size: 0.6rem; color: #a0aec0; font-weight: 800; }
+        .temp-item div { font-weight: 900; font-size: 1.2rem; }
+
+        .card-bajo { border-top-color: var(--color-bajo); } .card-bajo .badge { background: var(--color-bajo); color: #2d4a1a; }
+        .card-mod { border-top-color: var(--color-mod); } .card-mod .badge { background: var(--color-mod); color: #5f4900; }
+        .card-alto { border-top-color: var(--color-alto); } .card-alto .badge { background: var(--color-alto); color: #6b3412; }
+        .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
+
+        /* --- SECCIÓN: SITIOS DE INTERÉS Y FOOTER --- */
+        .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
+        .footer-section h2 { color: var(--navy); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
         
-        .links-container { max-width: 1150px; margin: 20px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
-        .btn-link { background: white; color: var(--navy); text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; border: 2px solid #d1d5db; transition: 0.3s; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-transform: uppercase; }
-        .btn-link:hover { background: var(--navy); color: white; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: var(--navy); }
-        
-        .nav-dias-wrapper { background: #f8f9fa; border-bottom: 2px solid #e9ecef; padding: 20px 0; text-align: center; }
-        .nav-dias { max-width: 1250px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 15px; }
-        .btn-nav-dia { background: #1a3a5a; color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; font-size: 0.75rem; font-weight: 700; transition: 0.3s; text-transform: uppercase; display: inline-block; }
-        .btn-nav-dia:hover { background: var(--sky); transform: translateY(-2px); }
+        .interest-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; }
+        .btn-interest { padding: 10px 20px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; transition: 0.3s; }
+        .btn-interest:hover { background: #f8fafc; border-color: var(--navy); }
 
-        #dashboard { max-width: 1250px; margin: 10px auto; padding: 0 15px; flex: 1; }
-        .dia-grupo { margin-bottom: 50px; text-align: center; scroll-margin-top: 20px; }
-        .dia-titulo { background: var(--navy); color: white; padding: 12px 40px; border-radius: 50px; display: inline-block; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; justify-content: center; }
-        @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        .social-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+        .social-btn { padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; border: 1px solid #000; color: #000; transition: 0.3s; }
+        .social-btn:hover { background: #eee; }
+        .social-btn.ig { border-color: #e1306c; color: #e1306c; }
+        .social-btn.ig:hover { background: #fff5f8; }
 
-        .card { 
-            border-radius: 12px; padding: 20px; border-top: 8px solid #ccc; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column;
-            background: white; height: 100%; transition: all 0.3s ease;
-        }
-
-        .card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15); 
-            filter: brightness(1.02); 
-        }
-        
-        .riesgo-bajo { border-top-color: var(--green); background-color: var(--bg-low); }
-        .riesgo-moderado { border-top-color: var(--yellow); background-color: var(--bg-mod); }
-        .riesgo-alto { border-top-color: var(--orange); background-color: var(--bg-high); }
-        .riesgo-extremo { border-top-color: var(--red); background-color: var(--bg-ext); }
-        
-        .card h3 { margin: 0 0 15px 0; color: var(--navy); font-size: 1.1rem; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .badge-riesgo { font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; color: white; text-transform: uppercase; font-weight: bold; }
-        .bg-bajo { background-color: var(--green); color: #000 !important; }
-        .bg-moderado { background-color: var(--yellow); color: #000 !important; }
-        .bg-alto { background-color: var(--orange); }
-        .bg-extremo { background-color: var(--red); }
-
-        .dato { 
-            display: flex; justify-content: space-between; align-items: center; 
-            font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px dotted rgba(0,0,0,0.1); 
-            padding-bottom: 6px; transition: 0.2s ease; cursor: default;
-        }
-        .dato:hover { 
-            color: var(--blue);
-            font-weight: bold;
-            transform: translateX(8px);
-            border-bottom-color: var(--blue);
-        }
-
-        .txt-bajo { color: #40612a !important; }
-        .txt-moderado { color: #916d00 !important; }
-        .txt-alto { color: #a04a0c !important; }
-        .txt-extremo { color: #d00000 !important; font-weight: 900; }
-
-        .temps-box { background: white; border-radius: 10px; margin-top: auto; display: flex; border: 1px solid rgba(0,0,0,0.1); overflow: hidden; }
-        .temp-item { flex: 1; padding: 10px 2px; text-align: center; transition: 0.3s; }
-        .temp-item:hover { background: #e3f2fd; }
-        .temp-item:first-child { border-right: 1px solid rgba(0,0,0,0.1); }
-        .temp-label { display: block; font-size: 0.58rem; font-weight: bold; color: #666; margin-bottom: 4px; }
-        .temp-val { font-size: 1.3rem; font-weight: 700; display: block; }
-
-        @keyframes parpadeo { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-        .icono-alerta-superior { animation: parpadeo 0.8s infinite; font-size: 1.6rem; }
-
-        #contenedor-mareas { background: white; margin-top: 40px; padding: 25px; border-radius: 15px; display: none; overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: var(--navy); color: white; padding: 12px; font-size: 0.9rem; }
-        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.85rem; transition: 0.2s; }
-
-        tbody tr:hover td { 
-            background-color: #f1f8ff;
-            color: var(--blue);
-            font-weight: bold;
-        }
-
-        .sitios-interes-container { text-align: center; padding: 40px 20px; background: white; }
-        .sitios-interes-container h2 { color: var(--navy); font-size: 1.6rem; margin-bottom: 30px; letter-spacing: 1px; }
-        .sitios-botones { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 25px; }
-        .btn-sitio-footer { border: 1px solid #d1d5db; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
-        .redes-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .btn-red { border: 2px solid #000; padding: 10px 20px; border-radius: 12px; text-decoration: none; color: #000; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
-        .btn-red.insta { border-color: #d62976; color: #d62976; }
-
-        footer { background: var(--navy); color: white; padding: 40px 20px; text-align: center; border-top: 4px solid var(--sky); }
-        #status { text-align: center; padding: 20px; color: #888; font-size: 0.75rem; }
+        .credits-bar { background: var(--navy); color: white; padding: 30px; text-align: center; }
+        .credits-bar p { margin: 5px 0; font-size: 0.85rem; opacity: 0.8; }
+        .credits-bar h3 { margin: 10px 0; font-size: 1.4rem; font-weight: 900; }
+        .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="ESCUDO.png" alt="Escudo Armada de Chile" class="logo-superior">
-    <h1>Pronóstico Meteorológico Marítimo</h1>
-    <p>Base Naval Antártica "Capitán Arturo Prat"</p>
-    <p>Bahía Chile - Puerto Soberanía</p>
-</header>
+<aside class="sidebar">
+    <div class="logo-container"><img src="ESCUDO.PNG" alt="Escudo"></div>
+    <h2>Armada de Chile<br>Base Naval Antártica<br>"Capitán Arturo Prat"</h2>
+    <nav class="sidebar-nav">
+        <div class="sidebar-nav-title">Fuentes de Datos</div>
+        <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="external-link"> IMAGEN SATELITAL</a>
+        <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="external-link"> CARTA PRONOSTICADA</a>
+        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE VIENTO</a>
+        <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS</a>
+        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="external-link"> INFORME GLACIOLÓGICO</a>
+        <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA PRAT</a>
+        <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> Tabla de Mareas</a>
+    </nav>
+</aside>
 
-<div class="links-container">
-    <a href="https://www.shoa.cl/php/mareas?idioma=es" class="btn-link"> TABLA DE MAREAS</a>
-    <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="btn-link"> IMAGEN SATELITAL</a>
-    <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="btn-link">❄️ INFORME GLACIOLÓGICO</a>
-    <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="btn-link"> CARTA SINÓPTICA PRONOSTICADA</a>
-</div>
+<main class="main-content">
+    <header>
+        <h1 class="location-title">Bahía Chile<br>Puerto Soberanía</h1>
+        <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
+    </header>
 
-<div class="nav-dias-wrapper">
-    <div id="nav-dias-container" class="nav-dias"></div>
-</div>
+    <section class="astro-bar">
+        <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
+        <div class="astro-item"><label>🌇 Puesta de Sol</label><span>20:50</span></div>
+        <div class="astro-item"><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div>
+        <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
+    </section>
 
-<div id="dashboard">
-    <div id="clima-container"></div>
-    <div id="contenedor-mareas">
-        <center><h2 style="color:var(--navy)">🌊 Régimen de Mareas - Puerto Soberanía</h2></center>
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th><th>Hora</th><th>Alt.</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpo-mareas"></tbody>
-        </table>
-    </div>
-</div>
+    <nav id="days-nav" class="days-nav"></nav>
+    <section class="grid-container" id="grid-pronostico"></section>
 
-<div id="status">📡 Sincronizando datos...</div>
+    <section class="footer-section">
+        <h2>Sitios de Interés</h2>
+        <div class="interest-links">
+            <a href="https://www.armada.cl/" target="_blank" class="btn-interest">ARMADA DE CHILE</a>
+            <a href="https://www.directemar.cl" target="_blank" class="btn-interest">DIRECTEMAR</a>
+            <a href="https://meteoarmada.directemar.cl/" target="_blank" class="btn-interest">SERVICIO METEOROLÓGICO</a>
+            <a href="https://www.sismologia.cl/" target="_blank" class="btn-interest">SISMOLOGÍA</a>
+            <a href="https://www.horaoficial.cl/" target="_blank" class="btn-interest">HORA OFICIAL</a>
+        </div>
+        <div class="social-links">
+            <a href="https://x.com/Armada_Chile" target="_blank" class="social-btn">𝕏 @ARMADA_CHILE</a>
+            <a href="https://x.com/dgtm_chile" target="_blank" class="social-btn">𝕏 @DIRECTEMAR</a>
+            <a href="https://x.com/MetArmada_Mag" target="_blank" class="social-btn">𝕏 @METARMADA_MAG</a>
+            <a href="https://x.com/servimet_armada" target="_blank" class="social-btn">𝕏 @SERVIMET_ARMADA</a>
+            <a href="https://www.instagram.com/armada_chile/" target="_blank" class="social-btn ig">📷 @ARMADA_CHILE</a>
+            <a href="https://www.instagram.com/dgpa_chile/" target="_blank" class="social-btn ig">📷 @DGPA_CHILE</a>
+        </div>
+    </section>
 
-<section class="sitios-interes-container">
-    <h2>SITIOS DE INTERÉS</h2>
-    <div class="sitios-botones">
-        <a href="https://www.armada.cl/" class="btn-sitio-footer">ARMADA DE CHILE</a>
-        <a href="https://www.directemar.cl" class="btn-sitio-footer">DIRECTEMAR</a>
-        <a href="https://meteoarmada.directemar.cl/" class="btn-sitio-footer">SERVICIO METEOROLÓGICO</a>
-        <a href="https://www.sismologia.cl/" class="btn-sitio-footer">SISMOLOGÍA</a>
-        <a href="https://www.horaoficial.cl/" class="btn-sitio-footer">HORA OFICIAL</a>
-    </div>
-    <div class="redes-grid">
-        <a href="#" class="btn-red">𝕏 @ARMADA_CHILE</a>
-        <a href="#" class="btn-red">𝕏 @METARMADA_MAG</a>
-        <a href="#" class="btn-red">𝕏 @SERVIMET_ARMADA</a>
-        <a href="#" class="btn-red insta">📷 @ARMADA_CHILE</a>
-        <a href="#" class="btn-red insta">📷 @DGPA_CHILE</a>
-    </div>
-</section>
-
-<footer>
-    <span style="font-size: 0.85rem; opacity: 0.8; display: block;">© 2026 Todos los derechos reservados.</span>
-    <span style="font-size: 1.25rem; font-weight: 700; display: block; margin: 5px 0;">Angelo Campos Rivera</span>
-    <span style="font-size: 1rem; color: var(--sky);">@angelo_meteo "METEOCAM"</span>
-</footer>
+    <footer class="credits-bar">
+        <p>© 2026 Todos los derechos reservados.</p>
+        <h3>Angelo Campos Rivera</h3>
+        <a href="https://instagram.com/angelo_meteo" target="_blank">@angelo_meteo "METEOCAM"</a>
+    </footer>
+</main>
 
 <script>
-    const URL_CLIMA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
-    const URL_MAREAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=2017374824&output=csv";
+    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
 
-    async function cargarTodo() {
-        const stat = document.getElementById('status');
-        const navContainer = document.getElementById('nav-dias-container');
-        try {
-            const resC = await fetch(URL_CLIMA + "&v=" + Date.now());
-            const csvC = await resC.text();
-            const filasC = csvC.split('\n').map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
-            let html = ""; let navHtml = ""; let diaAct = "";
-            
-            for(let i=1; i < filasC.length; i++) {
-                const c = filasC[i].map(v => v.replace(/"/g, '').trim());
-                if(!c[0] || c[0] === "Día") continue;
-                
-                if(c[0] !== diaAct) {
-                    if(diaAct !== "") html += '</div></div>';
-                    diaAct = c[0];
-                    const safeID = "dia-" + i;
-                    navHtml += `<a href="#${safeID}" class="btn-nav-dia">${diaAct}</a>`;
-                    html += `<div class="dia-grupo" id="${safeID}"><div class="dia-header"><div class="dia-titulo">📅 ${diaAct}</div></div><div class="grid">`;
-                }
-
-                let vientoStr = c[4].toUpperCase();
-                let nudos = 0;
-                let match = vientoStr.match(/(\d+)\/(\d+)/) || vientoStr.match(/(\d+)/);
-                if(match) nudos = parseInt(match[match.length - 1]);
-
-                let riesgoT = "RIESGO BAJO"; let riesgoC = "bajo";
-                let iconoSup = "";
-
-                if (nudos >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "extremo"; iconoSup = "<span class='icono-alerta-superior'>🚫</span>"; }
-                else if (nudos >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "alto"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
-                else if (nudos >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "moderado"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
-
-                html += `<div class="card riesgo-${riesgoC}">
-                    <h3> ${c[1]} <div class="badge-container">${iconoSup}<span class="badge-riesgo bg-${riesgoC}">${riesgoT}</span></div></h3>
-                    <div class="dato"><span>🌤️ CIELO:</span><b>${c[2]}</b></div>
-                    <div class="dato"><span>👁️ VIS:</span><b>${c[3]}</b></div>
-                    <div class="dato"><span>💨 VIENTO:</span><b class="txt-${riesgoC}">${c[4]}</b></div>
-                    <div class="dato"><span>🌊 MAR:</span><b>${c[5]}</b></div>
-                    <div class="temps-box">
-                        <div class="temp-item"><span class="temp-label">Temp. Aire</span><span class="temp-val" style="color:#1a73e8">${c[6]}</span></div>
-                        <div class="temp-item"><span class="temp-label">S. Térmica</span><span class="temp-val" style="color:#e63946">${c[7]}</span></div>
-                    </div>
-                </div>`;
-            }
-            
-            navContainer.innerHTML = navHtml;
-            document.getElementById('clima-container').innerHTML = html + '</div></div>';
-
-            const resM = await fetch(URL_MAREAS + "&v=" + Date.now());
-            if(resM.ok) {
-                const csvM = await resM.text();
-                const filasM = csvM.split('\n').map(r => r.split(','));
-                let mHtml = "";
-                for(let i=2; i<filasM.length; i++) {
-                    const m = filasM[i].map(v => v.replace(/"/g, '').trim());
-                    if(!m[0]) continue;
-                    mHtml += `<tr><td><b>${m[0]}</b></td><td>${m[1]}</td><td>${m[2]}</td><td>${m[3]}</td><td>${m[4]}</td><td>${m[5]}</td><td>${m[6]}</td><td>${m[7]}</td><td>${m[8]}</td></tr>`;
-                }
-                document.getElementById('cuerpo-mareas').innerHTML = mHtml;
-                document.getElementById('contenedor-mareas').style.display = "block";
-            }
-            stat.innerHTML = "✅ Actualizado: " + new Date().toLocaleTimeString();
-        } catch(e) { stat.innerHTML = "⚠️ Error de conexión."; }
+    function updateClock() {
+        const now = new Date();
+        const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
+        document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', options) + " (UTC -3)";
     }
-    cargarTodo();
+
+    async function fetchBirdseyeWeather() {
+        try {
+            const lat = -62.48, lon = -59.63;
+            // Se añade "wind_gusts_10m" a la solicitud de la API
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,relative_humidity_2m,wind_gusts_10m&wind_speed_unit=kn&cache_buster=${new Date().getTime()}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const c = data.current;
+            const getDirText = (deg) => {
+                const sections = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+                return sections[Math.round(deg / 45) % 8];
+            };
+            document.getElementById('header-metrics').innerHTML = `
+                <div class="metric-item"><div class="metric-val">${Math.round(c.wind_speed_10m)} kts <small style="font-size:0.7rem; color:#666;">(R ${Math.round(c.wind_gusts_10m)})</small></div><div class="metric-label">Viento (${getDirText(c.wind_direction_10m)})</div></div>
+                <div class="sep">|</div>
+                <div class="metric-item"><div class="metric-val" style="color:#2980b9">${Math.round(c.temperature_2m)}°C</div><div class="metric-label">T° Aire</div></div>
+                <div class="sep">|</div>
+                <div class="metric-item"><div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div><div class="metric-label">S. Térmica</div></div>
+                <div class="sep">|</div>
+                <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>`;
+        } catch (e) { console.error("Error Birdseye Fetch"); }
+    }
+
+    async function fetchSheetsData() {
+        try {
+            const response = await fetch(`${URL_CSV}&cache_buster=${new Date().getTime()}`);
+            const data = await response.text();
+            const rows = data.split('\n').slice(1).map(row => row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            const cleanData = rows.map(r => r.map(c => c.replace(/"/g, '').trim())).filter(r => r[0]);
+            window.allWeather = cleanData;
+            const dias = [...new Set(cleanData.map(r => r[0]))];
+            const diaActual = document.querySelector('.day-tab.active')?.innerText || dias[0];
+            const nav = document.getElementById('days-nav');
+            nav.innerHTML = dias.map(dia => `<div class="day-tab ${dia === diaActual ? 'active' : ''}" onclick="renderDia('${dia}', this)">${dia}</div>`).join('');
+            renderDia(diaActual);
+        } catch (e) { console.error("Error Sheets Fetch"); }
+    }
+
+    function renderDia(dia, element) {
+        if(element) {
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        }
+        const filtered = window.allWeather.filter(r => r[0] === dia);
+        const grid = document.getElementById('grid-pronostico');
+        grid.innerHTML = filtered.map(r => {
+            let vientoStr = r[4].toUpperCase();
+            let nudos = 0;
+            let match = vientoStr.match(/(\d+)\/(\d+)/) || vientoStr.match(/(\d+)/);
+            if(match) nudos = parseInt(match[match.length - 1]);
+            let riesgoT = "RIESGO BAJO"; let riesgoC = "card-bajo"; let iconoSup = "";
+            if (nudos >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "<span class='icono-alerta-superior'>🚫</span>"; }
+            else if (nudos >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
+            else if (nudos >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
+            return `
+            <div class="card ${riesgoC}">
+                <div class="card-header"><div><h3>${r[1]}</h3><span class="badge">${riesgoT}</span></div>${iconoSup}</div>
+                <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
+                <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>
+                <div class="data-row"><span>💨 VIENTO:</span><b>${r[4]}</b></div>
+                <div class="data-row"><span>🌊 MAR:</span><b>${r[5]}</b></div>
+                <div class="temp-box">
+                    <div class="temp-item"><small>Aire</small><div style="color: #2980b9">${r[6]}</div></div>
+                    <div class="temp-item"><small>S. Térmica</small><div style="color: #e67e22">${r[7]}</div></div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    updateClock();
+    fetchBirdseyeWeather();
+    fetchSheetsData();
+    setInterval(updateClock, 1000);
+    setInterval(fetchBirdseyeWeather, 120000);
+    setInterval(fetchSheetsData, 120000);
 </script>
 </body>
 </html>

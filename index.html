@@ -77,19 +77,51 @@
         .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
 
-        /* --- SECCIÓN: SITIOS DE INTERÉS Y FOOTER --- */
+        /* --- SECCIÓN: SITIOS DE INTERÉS Y FOOTER (Ajustado para una sola fila) --- */
         .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer-section h2 { color: var(--navy); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
         
-        .interest-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; }
-        .btn-interest { padding: 10px 20px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; transition: 0.3s; }
+        .interest-links, .social-links { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-wrap: nowrap; /* Evita que salten a otra línea si hay espacio */
+            gap: 15px; 
+            margin-bottom: 20px; 
+            overflow-x: auto; /* Permite scroll horizontal en móviles si es muy ancho */
+            padding-bottom: 10px;
+        }
+
+        .btn-interest { 
+            padding: 10px 15px; 
+            border: 1px solid #cbd5e0; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            color: var(--navy); 
+            font-weight: 700; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            transition: 0.3s; 
+            white-space: nowrap; 
+        }
         .btn-interest:hover { background: #f8fafc; border-color: var(--navy); }
 
-        .social-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
-        .social-btn { padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; border: 1px solid #000; color: #000; transition: 0.3s; }
-        .social-btn:hover { background: #eee; }
+        .social-btn { 
+            padding: 8px 15px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 0.75rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            border: 1.5px solid #000; 
+            color: #000; 
+            transition: 0.3s; 
+            white-space: nowrap;
+        }
+        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .social-btn.ig { border-color: #e1306c; color: #e1306c; }
-        .social-btn.ig:hover { background: #fff5f8; }
 
         .credits-bar { background: var(--navy); color: white; padding: 30px; text-align: center; }
         .credits-bar p { margin: 5px 0; font-size: 0.85rem; opacity: 0.8; }
@@ -100,7 +132,7 @@
 <body>
 
 <aside class="sidebar">
-    <div class="logo-container"><img src="ESCUDO.PNG" alt="Escudo"></div>
+    <div class="logo-container"><img src="ESCUDO.png" alt="Escudo"></div>
     <h2>Armada de Chile<br>Base Naval Antártica<br>"Capitán Arturo Prat"</h2>
     <nav class="sidebar-nav">
         <div class="sidebar-nav-title">Fuentes de Datos</div>
@@ -168,7 +200,6 @@
     async function fetchBirdseyeWeather() {
         try {
             const lat = -62.48, lon = -59.63;
-            // Se añade "wind_gusts_10m" a la solicitud de la API
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,relative_humidity_2m,wind_gusts_10m&wind_speed_unit=kn&cache_buster=${new Date().getTime()}`;
             const res = await fetch(url);
             const data = await res.json();

@@ -12,7 +12,8 @@
             --color-alto: #ed7d31; --color-peligro: #ff0000;
         }
 
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        /* CAMBIO CLAVE: Cambiado de hidden a auto para permitir scroll en móviles */
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: auto; }
         
         /* --- SIDEBAR --- */
         .sidebar { width: 250px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
@@ -27,49 +28,50 @@
 
         /* --- CONTENIDO PRINCIPAL --- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        
         header { 
             position: relative;
-            background: linear-gradient(to right, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0) 80%), url('fondo.jpg'); 
-            background-size: cover; background-position: center 40%; height: 220px; padding: 40px 45px; display: flex; flex-direction: column; border-bottom: 1px solid #d1d9e0;
+            background: linear-gradient(to right, rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.3) 90%), url('fondo.jpg'); 
+            background-size: cover; background-position: center 40%; height: 200px; 
+            padding: 30px 45px; display: flex; flex-direction: column; justify-content: flex-start; 
+            border-bottom: 1px solid #d1d9e0;
         }
 
-        .location-title { font-size: 2.8rem; font-weight: 900; color: #0d1b2a; margin: 0; letter-spacing: -1.5px; line-height: 1.1; }
+        .location-title { font-size: 2.6rem; font-weight: 900; color: #0d1b2a; margin: 0 0 15px 0; letter-spacing: -1px; white-space: nowrap; }
 
         .current-metrics { 
-            position: absolute; bottom: 15px; left: 45px; display: flex; gap: 18px; align-items: center; 
-            background: rgba(255,255,255,0.65); padding: 10px 28px; border-radius: 40px; backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex; gap: 20px; align-items: center; width: max-content;
+            background: rgba(255,255,255,0.7); padding: 10px 25px; border-radius: 40px; backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        .metric-item { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
-        .metric-val { font-size: 1.25rem; font-weight: 900; color: #1a1a1a; }
-        .metric-label { font-size: 0.65rem; color: #444; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
-        .sep { color: rgba(0,0,0,0.1); font-size: 1.5rem; font-weight: 200; }
+        .metric-item { display: flex; flex-direction: column; line-height: 1.1; }
+        .metric-val { font-size: 1.2rem; font-weight: 900; color: #1a1a1a; }
+        .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
+        .sep { color: rgba(0,0,0,0.15); font-size: 1.4rem; font-weight: 300; }
 
-        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 45px; border-bottom: 1px solid #edf2f7; }
+        .astro-bar { background: white; padding: 12px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
         .astro-item { display: flex; flex-direction: column; }
-        .astro-item label { font-size: 0.65rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
-        .astro-item span { font-size: 1rem; color: #2d3748; font-weight: 700; }
+        .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
+        .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
 
-        .days-nav { padding: 20px 45px; display: flex; gap: 10px; }
-        .day-tab { padding: 10px 22px; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; }
+        .days-nav { padding: 15px 45px; display: flex; gap: 10px; }
+        .day-tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.8rem; }
         .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
 
-        .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .card-header h3 { margin: 0; font-size: 1.3rem; color: var(--navy); font-weight: 800; }
-        .badge { padding: 4px 12px; border-radius: 15px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; margin-top: 5px;}
-        .icono-alerta-superior { font-size: 1.5rem; }
-
-        .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
-        .data-row span { font-weight: 700; color: #718096; width: 100px; }
+        .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 12px; padding: 18px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 800; }
+        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-top: 5px;}
+        
+        .data-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #f8fafc; font-size: 0.85rem; }
+        .data-row span { font-weight: 700; color: #718096; width: 90px; }
         .data-row b { margin-left: auto; color: #2d3748; }
 
-        .temp-box { display: flex; margin-top: 15px; gap: 10px; }
-        .temp-item { flex: 1; background: #f8fafc; padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
-        .temp-item small { display: block; font-size: 0.6rem; color: #a0aec0; font-weight: 800; }
-        .temp-item div { font-weight: 900; font-size: 1.2rem; }
+        .temp-box { display: flex; margin-top: 12px; gap: 8px; }
+        .temp-item { flex: 1; background: #f8fafc; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
+        .temp-item small { display: block; font-size: 0.55rem; color: #a0aec0; font-weight: 800; }
+        .temp-item div { font-weight: 900; font-size: 1.1rem; }
 
         .card-bajo { border-top-color: var(--color-bajo); } .card-bajo .badge { background: var(--color-bajo); color: #2d4a1a; }
         .card-mod { border-top-color: var(--color-mod); } .card-mod .badge { background: var(--color-mod); color: #5f4900; }
@@ -77,56 +79,28 @@
         .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
 
-        /* --- SECCIÓN: SITIOS DE INTERÉS Y FOOTER (Ajustado para una sola fila) --- */
-        .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
-        .footer-section h2 { color: var(--navy); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
-        
-        .interest-links, .social-links { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            flex-wrap: nowrap; /* Evita que salten a otra línea si hay espacio */
-            gap: 15px; 
-            margin-bottom: 20px; 
-            overflow-x: auto; /* Permite scroll horizontal en móviles si es muy ancho */
-            padding-bottom: 10px;
-        }
-
-        .btn-interest { 
-            padding: 10px 15px; 
-            border: 1px solid #cbd5e0; 
-            border-radius: 8px; 
-            text-decoration: none; 
-            color: var(--navy); 
-            font-weight: 700; 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            transition: 0.3s; 
-            white-space: nowrap; 
-        }
-        .btn-interest:hover { background: #f8fafc; border-color: var(--navy); }
-
-        .social-btn { 
-            padding: 8px 15px; 
-            border-radius: 10px; 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 0.75rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            border: 1.5px solid #000; 
-            color: #000; 
-            transition: 0.3s; 
-            white-space: nowrap;
-        }
-        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        /* --- SECCIÓN INFERIOR --- */
+        .footer-section { background: white; padding: 30px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
+        .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
+        .row-container { display: flex; justify-content: center; flex-wrap: nowrap; gap: 12px; margin-bottom: 15px; overflow-x: auto; padding: 5px; }
+        .btn-interest { padding: 8px 15px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; white-space: nowrap; }
+        .social-btn { padding: 7px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; border: 1.5px solid #000; color: #000; white-space: nowrap; }
         .social-btn.ig { border-color: #e1306c; color: #e1306c; }
 
-        .credits-bar { background: var(--navy); color: white; padding: 30px; text-align: center; }
-        .credits-bar p { margin: 5px 0; font-size: 0.85rem; opacity: 0.8; }
-        .credits-bar h3 { margin: 10px 0; font-size: 1.4rem; font-weight: 900; }
+        .credits-bar { background: var(--navy); color: white; padding: 25px; text-align: center; }
+        .credits-bar h3 { margin: 5px 0; font-size: 1.3rem; font-weight: 900; }
         .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
+
+        /* --- AJUSTE PARA CELULARES (RESPONSIVE) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; height: auto; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+            header { height: auto; padding: 20px; }
+            .location-title { font-size: 1.6rem; white-space: normal; }
+            .current-metrics { position: static; margin-top: 10px; flex-wrap: wrap; }
+            .astro-bar { flex-wrap: wrap; gap: 20px; padding: 20px; }
+            .grid-container { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -148,8 +122,8 @@
 
 <main class="main-content">
     <header>
-        <h1 class="location-title">Bahía Chile<br>Puerto Soberanía</h1>
-        <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
+        <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
+        <div class="current-metrics" id="header-metrics">Sincronizando...</div>
     </header>
 
     <section class="astro-bar">
@@ -164,14 +138,14 @@
 
     <section class="footer-section">
         <h2>Sitios de Interés</h2>
-        <div class="interest-links">
+        <div class="row-container">
             <a href="https://www.armada.cl/" target="_blank" class="btn-interest">ARMADA DE CHILE</a>
             <a href="https://www.directemar.cl" target="_blank" class="btn-interest">DIRECTEMAR</a>
             <a href="https://meteoarmada.directemar.cl/" target="_blank" class="btn-interest">SERVICIO METEOROLÓGICO</a>
             <a href="https://www.sismologia.cl/" target="_blank" class="btn-interest">SISMOLOGÍA</a>
             <a href="https://www.horaoficial.cl/" target="_blank" class="btn-interest">HORA OFICIAL</a>
         </div>
-        <div class="social-links">
+        <div class="row-container">
             <a href="https://x.com/Armada_Chile" target="_blank" class="social-btn">𝕏 @ARMADA_CHILE</a>
             <a href="https://x.com/dgtm_chile" target="_blank" class="social-btn">𝕏 @DIRECTEMAR</a>
             <a href="https://x.com/MetArmada_Mag" target="_blank" class="social-btn">𝕏 @METARMADA_MAG</a>
@@ -216,7 +190,7 @@
                 <div class="metric-item"><div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div><div class="metric-label">S. Térmica</div></div>
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>`;
-        } catch (e) { console.error("Error Birdseye Fetch"); }
+        } catch (e) { console.error("Error Fetch"); }
     }
 
     async function fetchSheetsData() {
@@ -265,9 +239,7 @@
         }).join('');
     }
 
-    updateClock();
-    fetchBirdseyeWeather();
-    fetchSheetsData();
+    updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000);
     setInterval(fetchBirdseyeWeather, 120000);
     setInterval(fetchSheetsData, 120000);

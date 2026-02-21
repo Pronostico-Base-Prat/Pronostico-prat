@@ -12,6 +12,7 @@
             --color-alto: #ed7d31; --color-peligro: #ff0000;
         }
 
+        /* CAMBIO CLAVE: Cambiado de hidden a auto para permitir scroll en móviles */
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: auto; }
         
         /* --- SIDEBAR --- */
@@ -60,13 +61,12 @@
 
         .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
         .card { background: white; border-radius: 12px; padding: 18px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
         .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 800; }
         .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-top: 5px;}
         
         .data-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #f8fafc; font-size: 0.85rem; }
         .data-row span { font-weight: 700; color: #718096; width: 90px; }
-        .data-row b { margin-left: auto; color: #2d3748; text-align: right; }
+        .data-row b { margin-left: auto; color: #2d3748; }
 
         .temp-box { display: flex; margin-top: 12px; gap: 8px; }
         .temp-item { flex: 1; background: #f8fafc; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
@@ -79,6 +79,7 @@
         .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
 
+        /* --- SECCIÓN INFERIOR --- */
         .footer-section { background: white; padding: 30px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
         .row-container { display: flex; justify-content: center; flex-wrap: nowrap; gap: 12px; margin-bottom: 15px; overflow-x: auto; padding: 5px; }
@@ -90,6 +91,7 @@
         .credits-bar h3 { margin: 5px 0; font-size: 1.3rem; font-weight: 900; }
         .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
 
+        /* --- AJUSTE PARA CELULARES (RESPONSIVE) --- */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; height: auto; }
             .sidebar { width: 100%; box-sizing: border-box; }
@@ -161,7 +163,6 @@
 </main>
 
 <script>
-    // URL del CSV publicado de la Hoja 1
     const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
 
     function updateClock() {
@@ -178,7 +179,7 @@
             const data = await res.json();
             const c = data.current;
             const getDirText = (deg) => {
-                const sections = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'W', 'NO'];
+                const sections = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
                 return sections[Math.round(deg / 45) % 8];
             };
             document.getElementById('header-metrics').innerHTML = `
@@ -189,33 +190,22 @@
                 <div class="metric-item"><div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div><div class="metric-label">S. Térmica</div></div>
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>`;
-        } catch (e) { console.error("Error API"); }
+        } catch (e) { console.error("Error Fetch"); }
     }
 
     async function fetchSheetsData() {
         try {
             const response = await fetch(`${URL_CSV}&cache_buster=${new Date().getTime()}`);
             const data = await response.text();
-            
-            // Procesamiento robusto del CSV contemplando comas dentro de celdas
-            const rows = data.split('\n').map(row => {
-                const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                return matches ? matches.map(m => m.replace(/^"|"$/g, '').trim()) : [];
-            });
-
-            // Limpiar y filtrar filas vacías
-            const cleanData = rows.filter(r => r.length > 0 && r[0] !== "" && r[0] !== "Día");
+            const rows = data.split('\n').slice(1).map(row => row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            const cleanData = rows.map(r => r.map(c => c.replace(/"/g, '').trim())).filter(r => r[0]);
             window.allWeather = cleanData;
-
-            // Obtener lista de días únicos para el menú
             const dias = [...new Set(cleanData.map(r => r[0]))];
-            const nav = document.getElementById('days-nav');
-            
             const diaActual = document.querySelector('.day-tab.active')?.innerText || dias[0];
+            const nav = document.getElementById('days-nav');
             nav.innerHTML = dias.map(dia => `<div class="day-tab ${dia === diaActual ? 'active' : ''}" onclick="renderDia('${dia}', this)">${dia}</div>`).join('');
-            
             renderDia(diaActual);
-        } catch (e) { console.error("Error Sheets"); }
+        } catch (e) { console.error("Error Sheets Fetch"); }
     }
 
     function renderDia(dia, element) {
@@ -223,46 +213,36 @@
             document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
         }
-        
         const filtered = window.allWeather.filter(r => r[0] === dia);
         const grid = document.getElementById('grid-pronostico');
-        
         grid.innerHTML = filtered.map(r => {
-            // Lógica de Riesgo basada en el valor máximo de nudos encontrado en el texto del viento
-            let vientoStr = (r[4] || "").toUpperCase();
-            let nudosMax = 0;
-            let nudosEncontrados = vientoStr.match(/\d+/g);
-            if(nudosEncontrados) nudosMax = Math.max(...nudosEncontrados.map(Number));
-
-            let riesgoT = "RIESGO BAJO"; let riesgoC = "card-bajo"; let icono = "";
-            if (nudosMax >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; icono = "🚫"; }
-            else if (nudosMax >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; icono = "⚠️"; }
-            else if (nudosMax >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; icono = "⚠️"; }
-
+            let vientoStr = r[4].toUpperCase();
+            let nudos = 0;
+            let match = vientoStr.match(/(\d+)\/(\d+)/) || vientoStr.match(/(\d+)/);
+            if(match) nudos = parseInt(match[match.length - 1]);
+            let riesgoT = "RIESGO BAJO"; let riesgoC = "card-bajo"; let iconoSup = "";
+            if (nudos >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "<span class='icono-alerta-superior'>🚫</span>"; }
+            else if (nudos >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
+            else if (nudos >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "<span class='icono-alerta-superior'>⚠️</span>"; }
             return `
             <div class="card ${riesgoC}">
-                <div class="card-header">
-                    <div><h3>${r[1]}</h3><span class="badge">${riesgoT}</span></div>
-                    <span style="font-size: 1.4rem;">${icono}</span>
-                </div>
+                <div class="card-header"><div><h3>${r[1]}</h3><span class="badge">${riesgoT}</span></div>${iconoSup}</div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
                 <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>
                 <div class="data-row"><span>💨 VIENTO:</span><b>${r[4]}</b></div>
                 <div class="data-row"><span>🌊 MAR:</span><b>${r[5]}</b></div>
                 <div class="temp-box">
-                    <div class="temp-item"><small>Aire</small><div style="color: #2980b9">${r[6] || '--'}</div></div>
-                    <div class="temp-item"><small>S. Térmica</small><div style="color: #e67e22">${r[7] || '--'}</div></div>
+                    <div class="temp-item"><small>Aire</small><div style="color: #2980b9">${r[6]}</div></div>
+                    <div class="temp-item"><small>S. Térmica</small><div style="color: #e67e22">${r[7]}</div></div>
                 </div>
             </div>`;
         }).join('');
     }
 
-    updateClock(); 
-    fetchBirdseyeWeather(); 
-    fetchSheetsData();
+    updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000);
-    setInterval(fetchBirdseyeWeather, 300000); // Cada 5 min
-    setInterval(fetchSheetsData, 600000); // Cada 10 min
+    setInterval(fetchBirdseyeWeather, 120000);
+    setInterval(fetchSheetsData, 120000);
 </script>
 </body>
 </html>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Prat | Sistema Meteorológico Autónomo</title>
+    <title>Base Prat | Sistema Meteorológico</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,223 +13,200 @@
             --color-alto: #ed7d31; --color-peligro: #ff0000;
         }
 
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: auto; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* --- SIDEBAR --- */
+        /* SIDEBAR */
         .sidebar { width: 250px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
-        .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 20px; }
-        .sidebar img { width: 140px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
-        .sidebar h2 { font-size: 0.82rem; text-align: center; text-transform: uppercase; margin: 0 0 25px 0; line-height: 1.5; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; color: #ecf0f1; }
+        .sidebar img { width: 140px; display: block; margin: 0 auto 15px; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
+        .sidebar h2 { font-size: 0.8rem; text-align: center; text-transform: uppercase; margin-bottom: 25px; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 5px; }
+        .sidebar-nav label { font-size: 0.65rem; color: #3498db; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.75rem; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.2s; }
+        .external-link:hover { background: rgba(255,255,255,0.15); color: white; }
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
-        .sidebar-nav-title { font-size: 0.7rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
-        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.85rem; padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 10px; }
-        .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
-
-        /* --- CONTENIDO PRINCIPAL --- */
+        /* MAIN CONTENT */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
         
         header { 
-            position: relative;
-            background: linear-gradient(to right, rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.3) 90%), url('fondo.jpg'); 
-            background-size: cover; background-position: center 40%; height: 200px; 
-            padding: 30px 45px; display: flex; flex-direction: column; justify-content: flex-start; 
-            border-bottom: 1px solid #d1d9e0;
+            background: linear-gradient(to right, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.2)), url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
+            background-size: cover; padding: 25px 45px; border-bottom: 1px solid #d1d9e0;
         }
 
-        .location-title { font-size: 2.6rem; font-weight: 900; color: #0d1b2a; margin: 0 0 15px 0; letter-spacing: -1px; white-space: nowrap; }
+        .location-title { font-size: 2.4rem; font-weight: 900; color: #0d1b2a; margin: 0 0 15px 0; line-height: 1; }
 
-        .current-metrics { 
-            display: flex; gap: 20px; align-items: center; width: max-content;
-            background: rgba(255,255,255,0.7); padding: 10px 25px; border-radius: 40px; backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
+        /* METRICAS SUPERIORES */
+        .top-stats { display: flex; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 8px 15px; border-radius: 30px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .stat-val { font-weight: 900; font-size: 1rem; }
+        .stat-label { font-size: 0.55rem; text-transform: uppercase; font-weight: 800; color: #7f8c8d; line-height: 1; }
 
-        .metric-item { display: flex; flex-direction: column; line-height: 1.1; }
-        .metric-val { font-size: 1.2rem; font-weight: 900; color: #1a1a1a; }
-        .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
-        .sep { color: rgba(0,0,0,0.15); font-size: 1.4rem; font-weight: 300; }
+        /* ASTRO BAR */
+        .astro-bar { padding: 10px 45px; display: flex; gap: 30px; background: white; border-bottom: 1px solid #eee; }
+        .astro-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: #2c3e50; }
+        .astro-item label { font-size: 0.6rem; text-transform: uppercase; color: #95a5a6; display: block; }
 
-        .astro-bar { background: white; padding: 12px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
-        .astro-item { display: flex; flex-direction: column; }
-        .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
-        .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
-
-        .days-nav { padding: 15px 45px; display: flex; gap: 10px; }
-        .day-tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.8rem; }
+        /* NAV DÍAS */
+        .days-nav { padding: 15px 45px; display: flex; gap: 10px; background: #f8fafc; }
+        .day-tab { padding: 8px 18px; background: white; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 800; color: #555; }
         .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
 
-        .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 12px; padding: 18px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
-        .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 800; }
-        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-top: 5px;}
-        
-        .data-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #f8fafc; font-size: 0.85rem; }
-        .data-row span { font-weight: 700; color: #718096; width: 90px; }
-        .data-row b { margin-left: auto; color: #2d3748; }
+        /* PRONOSTICO GRID */
+        .grid-container { padding: 20px 45px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 10px; padding: 18px; border-top: 8px solid #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
+        .card.peligro { border-top-color: var(--color-peligro); }
+        .card.alto { border-top-color: var(--color-alto); }
+        .card.moderado { border-top-color: var(--color-mod); }
+        .card.bajo { border-top-color: var(--color-bajo); }
 
-        .temp-box { display: flex; margin-top: 12px; gap: 8px; }
-        .temp-item { flex: 1; background: #f8fafc; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
-        .temp-item small { display: block; font-size: 0.55rem; color: #a0aec0; font-weight: 800; }
-        .temp-item div { font-weight: 900; font-size: 1.1rem; }
+        .card h3 { margin: 0; font-size: 1.2rem; font-weight: 900; color: var(--navy); }
+        .risk-badge { font-size: 0.55rem; font-weight: 900; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; display: inline-block; margin-top: 5px; color: white; }
+        .card.peligro .risk-badge { background: var(--color-peligro); }
+        .card.alto .risk-badge { background: var(--color-alto); }
+        .card.moderado .risk-badge { background: var(--color-mod); }
+        .card.bajo .risk-badge { background: var(--color-bajo); }
 
-        .card-bajo { border-top-color: var(--color-bajo); } .card-bajo .badge { background: var(--color-bajo); color: #2d4a1a; }
-        .card-mod { border-top-color: var(--color-mod); } .card-mod .badge { background: var(--color-mod); color: #5f4900; }
-        .card-alto { border-top-color: var(--color-alto); } .card-alto .badge { background: var(--color-alto); color: #6b3412; }
-        .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
+        .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f9f9f9; font-size: 0.85rem; align-items: center; }
+        .data-row span { font-weight: 800; color: #95a5a6; display: flex; align-items: center; gap: 5px; }
+        .data-row b { color: #2c3e50; text-align: right; }
 
-        .footer-section { background: white; padding: 30px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
-        .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
-        .row-container { display: flex; justify-content: center; flex-wrap: nowrap; gap: 12px; margin-bottom: 15px; overflow-x: auto; padding: 5px; }
-        .btn-interest { padding: 8px 15px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; white-space: nowrap; }
-        .social-btn { padding: 7px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; border: 1.5px solid #000; color: #000; white-space: nowrap; }
-        .social-btn.ig { border-color: #e1306c; color: #e1306c; }
+        .temp-section { display: flex; gap: 8px; margin-top: 15px; }
+        .temp-pill { flex: 1; background: #f8fafc; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #edf2f7; }
+        .temp-pill small { display: block; font-size: 0.5rem; font-weight: 900; color: #bdc3c7; text-transform: uppercase; margin-bottom: 2px; }
+        .temp-pill div { font-size: 1rem; font-weight: 900; }
 
-        .credits-bar { background: var(--navy); color: white; padding: 25px; text-align: center; }
-        .credits-bar h3 { margin: 5px 0; font-size: 1.3rem; font-weight: 900; }
-        .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
+        /* SITIOS DE INTERÉS */
+        .sites-section { padding: 40px; text-align: center; background: white; border-top: 1px solid #eee; }
+        .sites-section h4 { text-transform: uppercase; letter-spacing: 2px; color: var(--navy); margin-bottom: 20px; }
+        .site-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .site-btn { padding: 6px 15px; border: 1px solid #ddd; border-radius: 5px; text-decoration: none; color: #666; font-size: 0.7rem; font-weight: 700; transition: 0.2s; }
+        .site-btn:hover { background: #f8fafc; border-color: var(--navy); color: var(--navy); }
 
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow: auto; height: auto; }
-            .sidebar { width: 100%; box-sizing: border-box; }
-            header { height: auto; padding: 20px; }
-            .location-title { font-size: 1.6rem; white-space: normal; }
-            .current-metrics { position: static; margin-top: 10px; flex-wrap: wrap; }
-            .astro-bar { flex-wrap: wrap; gap: 20px; padding: 20px; }
-            .grid-container { padding: 15px; }
-        }
+        .footer { background: var(--navy); color: white; padding: 30px; text-align: center; }
+        .footer p { margin: 5px 0; font-size: 0.8rem; opacity: 0.8; }
+        .footer b { font-size: 1rem; display: block; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <aside class="sidebar">
-    <div class="logo-container"><img src="ESCUDO.png" alt="Escudo"></div>
+    <img src="https://pronostico-base-prat.github.io/Pronostico-prat/ESCUDO.png" alt="Escudo">
     <h2>Armada de Chile<br>Base Naval Antártica<br>"Capitán Arturo Prat"</h2>
     <nav class="sidebar-nav">
-        <div class="sidebar-nav-title">Fuentes de Datos</div>
-        <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="external-link"> IMAGEN SATELITAL</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="external-link"> CARTA PRONOSTICADA</a>
-        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE VIENTO</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="external-link"> INFORME GLACIOLÓGICO</a>
-        <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA PRAT</a>
-        <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> Tabla de Mareas</a>
+        <label>Fuentes de Datos</label>
+        <a href="#" class="external-link">Imagen Satelital</a>
+        <a href="#" class="external-link">Carta Pronosticada</a>
+        <a href="#" class="external-link">Carta de Viento</a>
+        <a href="#" class="external-link">Carta de Olas</a>
+        <a href="#" class="external-link">Informe Glaciológico</a>
+        <a href="#" class="external-link">Meteograma Prat</a>
+        <a href="#" class="external-link">Tabla de Mareas</a>
     </nav>
 </aside>
 
 <main class="main-content">
     <header>
-        <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
-        <div class="current-metrics" id="header-metrics">Sincronizando...</div>
+        <h1 class="location-title">Bahía Chile<br>Puerto Soberanía</h1>
+        <div class="top-stats" id="current-weather">
+            <div class="stat-card"><div class="stat-val" id="top-wind">-- kts</div><div class="stat-label">Viento<br>(NO)</div></div>
+            <div class="stat-card"><div class="stat-val" id="top-temp" style="color:#3498db">--°C</div><div class="stat-label">T° Aire</div></div>
+            <div class="stat-card"><div class="stat-val" id="top-feel" style="color:#e67e22">--°C</div><div class="stat-label">S. Térmica</div></div>
+            <div class="stat-card"><div class="stat-val" id="top-hum">--%</div><div class="stat-label">Hum</div></div>
+        </div>
     </header>
 
-    <section class="astro-bar">
-        <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
-        <div class="astro-item"><label>🌇 Puesta de Sol</label><span>20:50</span></div>
-        <div class="astro-item"><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div>
-        <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
+    <div class="astro-bar">
+        <div class="astro-item"><div><label>🌅 Amanecer</label><span>05:31</span></div></div>
+        <div class="astro-item"><div><label>🌇 Puesta de Sol</label><span>20:50</span></div></div>
+        <div class="astro-item"><div><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div></div>
+        <div class="astro-item"><div><label>🏔️ Elevación</label><span>6 m</span></div></div>
+    </div>
+
+    <nav id="nav-days" class="days-nav">Cargando días...</nav>
+    <div id="forecast-grid" class="grid-container"></div>
+
+    <section class="sites-section">
+        <h4>Sitios de Interés</h4>
+        <div class="site-btns">
+            <a href="#" class="site-btn">ARMADA DE CHILE</a>
+            <a href="#" class="site-btn">DIRECTEMAR</a>
+            <a href="#" class="site-btn">SERVICIO METEOROLÓGICO</a>
+            <a href="#" class="site-btn">SISMOLOGÍA</a>
+            <a href="#" class="site-btn">HORA OFICIAL</a>
+        </div>
     </section>
 
-    <nav id="days-nav" class="days-nav"></nav>
-    <section class="grid-container" id="grid-pronostico"></section>
-
-    <footer class="credits-bar">
+    <footer class="footer">
         <p>© 2026 Todos los derechos reservados.</p>
-        <h3>Angelo Campos Rivera</h3>
-        <a href="https://instagram.com/angelo_meteo" target="_blank">@angelo_meteo "METEOCAM"</a>
+        <b>Angelo Campos Rivera</b>
+        <p>@angelo_meteo "METEOCAM"</p>
     </footer>
 </main>
 
 <script>
-    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
+    const SHEETS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?gid=0&output=csv";
 
     function updateClock() {
         const now = new Date();
-        const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
-        document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', options) + " (UTC -3)";
+        document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', { timeZone: 'America/Punta_Arenas', hour12: false }) + " (UTC -3)";
     }
 
-    async function fetchBirdseyeWeather() {
+    async function fetchLive() {
         try {
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=-62.48&longitude=-59.63&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,relative_humidity_2m,wind_gusts_10m&wind_speed_unit=kn`;
-            const res = await fetch(url);
-            const data = await res.json();
-            const c = data.current;
-            const sections = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
-            const dir = sections[Math.round(c.wind_direction_10m / 45) % 8];
-            document.getElementById('header-metrics').innerHTML = `
-                <div class="metric-item"><div class="metric-val">${Math.round(c.wind_speed_10m)} kts <small>(R ${Math.round(c.wind_gusts_10m)})</small></div><div class="metric-label">Viento (${dir})</div></div>
-                <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val" style="color:#2980b9">${Math.round(c.temperature_2m)}°C</div><div class="metric-label">T° Aire</div></div>
-                <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div><div class="metric-label">S. Térmica</div></div>
-                <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>`;
-        } catch (e) { console.error("Error API"); }
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.48&longitude=-59.63&current=temperature_2m,apparent_temperature,wind_speed_10m,relative_humidity_2m&wind_speed_unit=kn`);
+            const d = await res.json();
+            document.getElementById('top-wind').innerText = Math.round(d.current.wind_speed_10m) + " kts";
+            document.getElementById('top-temp').innerText = Math.round(d.current.temperature_2m) + "°C";
+            document.getElementById('top-feel').innerText = Math.round(d.current.apparent_temperature) + "°C";
+            document.getElementById('top-hum').innerText = d.current.relative_humidity_2m + "%";
+        } catch(e) {}
     }
 
-    async function fetchSheetsData() {
-        try {
-            const response = await fetch(`${URL_CSV}&cache_buster=${new Date().getTime()}`);
-            const data = await response.text();
-            
-            // Filtro de seguridad para Hoja 1
-            const diasValidos = ["Lunes", "Martes", "Miércoles", "Miercoles", "Jueves", "Viernes", "Sábado", "Sabado", "Domingo"];
-            
-            const rows = data.split('\n')
-                .map(row => row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(cell => cell.replace(/"/g, '').trim()))
-                .filter(r => r.length > 3 && diasValidos.some(d => r[0].startsWith(d)));
-
-            window.allWeather = rows;
-            const dias = [...new Set(rows.map(r => r[0]))];
-            const nav = document.getElementById('days-nav');
-            const diaActual = document.querySelector('.day-tab.active')?.innerText || dias[0];
-            
-            nav.innerHTML = dias.map(dia => `<div class="day-tab ${dia === diaActual ? 'active' : ''}" onclick="renderDia('${dia}', this)">${dia}</div>`).join('');
-            renderDia(diaActual);
-        } catch (e) { console.error("Error Sheets"); }
-    }
-
-    function renderDia(dia, element) {
-        if(element) {
-            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-        }
-        const filtered = window.allWeather.filter(r => r[0] === dia);
-        const grid = document.getElementById('grid-pronostico');
+    function init() {
+        updateClock(); setInterval(updateClock, 1000); fetchLive();
         
-        grid.innerHTML = filtered.map(r => {
-            // Lógica de Alerta basada en nudos (Columna C de Hoja 1)
-            let vientoStr = r[2] || "";
-            let nudos = (vientoStr.match(/\d+/g) || [0]).map(Number);
-            let nMax = Math.max(...nudos);
-
-            let riesgoT = "RIESGO BAJO", riesgoC = "card-bajo", icono = "✅";
-            if (nMax >= 30) { riesgoT = "PELIGRO EXTREMO", riesgoC = "card-peligro", icono = "🚫"; }
-            else if (nMax >= 21) { riesgoT = "RIESGO ALTO", riesgoC = "card-alto", icono = "⚠️"; }
-            else if (nMax >= 16) { riesgoT = "RIESGO MODERADO", riesgoC = "card-mod", icono = "⚠️"; }
-
-            return `
-            <div class="card ${riesgoC}">
-                <div class="card-header">
-                    <div><h3>${r[0]}</h3><span class="badge">${riesgoT}</span></div>
-                    <span style="font-size: 1.4rem;">${icono}</span>
-                </div>
-                <div class="data-row"><span>🌤️ CIELO:</span><b>${r[1]}</b></div>
-                <div class="data-row"><span>💨 VIENTO:</span><b>${r[2]}</b></div>
-                <div class="temp-box">
-                    <div class="temp-item"><small>Temp / Sensación</small><div style="color: #2980b9">${r[3] || '--'}</div></div>
-                </div>
-            </div>`;
-        }).join('');
+        Papa.parse(SHEETS_URL, {
+            download: true,
+            complete: function(results) {
+                const rows = results.data.filter(r => r[0] && r[0] !== "Día" && r[1] !== "");
+                window.weatherData = rows;
+                const days = [...new Set(rows.map(r => r[0]))];
+                
+                const nav = document.getElementById('nav-days');
+                nav.innerHTML = days.map((d, i) => `<div class="day-tab ${i===0?'active':''}" onclick="render('${d}', this)">${d}</div>`).join('');
+                render(days[0]);
+            }
+        });
     }
 
-    updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
-    setInterval(updateClock, 1000);
-    setInterval(fetchBirdseyeWeather, 120000);
-    setInterval(fetchSheetsData, 120000);
+    function render(day, el) {
+        if(el) { document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+        const grid = document.getElementById('forecast-grid');
+        grid.innerHTML = "";
+
+        window.weatherData.filter(r => r[0] === day).forEach(r => {
+            const wind = parseInt(r[4].match(/\d+/) || 0);
+            let alert = "bajo", label = "Riesgo Bajo";
+            if(wind >= 34) { alert = "peligro"; label = "Peligro Extremo"; }
+            else if(wind >= 25) { alert = "alto"; label = "Riesgo Alto"; }
+            else if(wind >= 17) { alert = "moderado"; label = "Riesgo Moderado"; }
+
+            grid.innerHTML += `
+                <div class="card ${alert}">
+                    <h3>${r[1]}</h3>
+                    <span class="risk-badge">${label}</span>
+                    <div class="data-row" style="margin-top:15px"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
+                    <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>
+                    <div class="data-row"><span>💨 VIENTO:</span><b>${r[4]}</b></div>
+                    <div class="data-row"><span>🌊 MAR:</span><b>${r[5]}</b></div>
+                    <div class="temp-section">
+                        <div class="temp-pill"><small>Aire</small><div style="color:#3498db">${r[6]}</div></div>
+                        <div class="temp-pill"><small>S. Térmica</small><div style="color:#e67e22">${r[7]}</div></div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    init();
 </script>
 </body>
 </html>

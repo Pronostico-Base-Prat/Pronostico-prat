@@ -9,94 +9,158 @@
     <style>
         :root {
             --navy: #1a3a5a; --bg: #f4f7f9;
-            --color-bajo: #92d050; --color-mod: #ffc000;
-            --color-alto: #ed7d31; --color-peligro: #ff0000;
+            --color-bajo: #92d050;    --bg-bajo: #f2f9ec;
+            --color-mod: #ffc000;     --bg-mod: #fff9e6;
+            --color-alto: #ed7d31;    --bg-alto: #fff2e6;
+            --color-peligro: #ff0000;  --bg-peligro: #ffe6e6;
         }
 
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: auto; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 1.1rem; }
         
-        .sidebar { width: 250px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
-        .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 20px; }
-        .sidebar img { width: 140px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
-        .sidebar h2 { font-size: 0.82rem; text-align: center; text-transform: uppercase; margin: 0 0 25px 0; line-height: 1.5; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; color: #ecf0f1; }
+        /* SIDEBAR (Aumentado 20%) */
+        .sidebar { width: 312px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 24px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
+        .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 18px; }
+        .sidebar img { width: 144px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
+        .sidebar h2 { font-size: 0.96rem; text-align: center; text-transform: uppercase; margin: 0 0 24px 0; line-height: 1.4; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 18px; color: #ecf0f1; }
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
-        .sidebar-nav-title { font-size: 0.7rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
-        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.85rem; padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 7px; margin-bottom: 24px; }
+        .sidebar-nav-title { font-size: 0.78rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.96rem; padding: 10px 12px; border-radius: 7px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 10px; }
         .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .risk-legend { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; font-size: 0.84rem; margin-top: auto; }
+        .risk-legend h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #3498db; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .legend-item { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 2px 0; }
+        .l-bajo { color: var(--color-bajo); } .l-mod { color: var(--color-mod); } 
+        .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
         
+        /* HEADER MEJORADO */
         header { 
-            position: relative;
-            background: linear-gradient(to right, rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.3) 90%), url('fondo.jpg'); 
-            background-size: cover; background-position: center 40%; height: 200px; 
-            padding: 30px 45px; display: flex; flex-direction: column; justify-content: flex-start; 
-            border-bottom: 1px solid #d1d9e0;
+            background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.1) 50%, rgba(0,0,0,0.1) 100%), 
+                        url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
+            background-size: cover; 
+            background-position: center 30%; 
+            min-height: 480px; 
+            padding: 50px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            box-sizing: border-box;
         }
 
-        .location-title { font-size: 2.6rem; font-weight: 900; color: #0d1b2a; margin: 0 0 15px 0; letter-spacing: -1px; white-space: nowrap; }
+        .location-title { 
+            align-self: center; 
+            font-size: 4.8rem; 
+            font-weight: 900; 
+            color: #ffffff; 
+            margin: 0; 
+            letter-spacing: -1px; 
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 
+                -2px -2px 0 #0d1b2a,  
+                 2px -2px 0 #0d1b2a,
+                -2px  2px 0 #0d1b2a,
+                 2px  2px 0 #0d1b2a,
+                 0px  8px 20px rgba(0,0,0,0.6); 
+        }
 
-        .current-metrics { 
-            display: flex; gap: 20px; align-items: center; width: max-content;
-            background: rgba(255,255,255,0.7); padding: 10px 25px; border-radius: 40px; backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        /* PANEL DE DATOS DESTACADOS (Armónico y Estilizado) */
+        .highlight-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px 35px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: auto;
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .astro-mini-row {
+            display: flex;
+            gap: 30px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.08);
         }
 
         .metric-item { display: flex; flex-direction: column; line-height: 1.1; }
-        .metric-val { font-size: 1.2rem; font-weight: 900; color: #1a1a1a; }
-        .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
-        .sep { color: rgba(0,0,0,0.15); font-size: 1.4rem; font-weight: 300; }
+        .metric-val { font-size: 1.6rem; font-weight: 900; color: #1a1a1a; }
+        .metric-label { font-size: 0.75rem; color: #444; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .sep { color: rgba(0,0,0,0.15); font-size: 1.8rem; font-weight: 300; }
 
-        .astro-bar { background: white; padding: 12px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
-        .astro-item { display: flex; flex-direction: column; }
-        .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
-        .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
+        .astro-mini-item { display: flex; flex-direction: column; gap: 2px; }
+        .astro-mini-label { font-size: 0.65rem; color: #718096; font-weight: 800; text-transform: uppercase; }
+        .astro-mini-val { font-size: 1.05rem; color: #2d3748; font-weight: 700; }
 
-        .days-nav { padding: 15px 45px; display: flex; gap: 10px; }
-        .day-tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.8rem; }
-        .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+        /* CONTENIDO DE PRONÓSTICO */
+        .days-nav { padding: 30px 50px 15px; display: flex; gap: 12px; }
+        .day-tab { padding: 12px 26px; border-radius: 12px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 1.02rem; transition: 0.3s; }
+        .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 4px 12px rgba(26, 58, 90, 0.2); }
 
-        .grid-container { padding: 0 45px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 12px; padding: 18px; border-top: 10px solid #cbd5e0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 800; }
-        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-top: 5px;}
+        .grid-container { padding: 0 50px 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 25px; }
         
-        .data-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #f8fafc; font-size: 0.85rem; }
-        .data-row span { font-weight: 700; color: #718096; width: 90px; }
-        .data-row b { margin-left: auto; color: #2d3748; }
-
-        .temp-box { display: flex; margin-top: 12px; gap: 8px; }
-        .temp-item { flex: 1; background: #f8fafc; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #edf2f7; }
-        .temp-item small { display: block; font-size: 0.55rem; color: #a0aec0; font-weight: 800; }
-        .temp-item div { font-weight: 900; font-size: 1.1rem; }
-
-        .card-bajo { border-top-color: var(--color-bajo); } .card-bajo .badge { background: var(--color-bajo); color: #2d4a1a; }
-        .card-mod { border-top-color: var(--color-mod); } .card-mod .badge { background: var(--color-mod); color: #5f4900; }
-        .card-alto { border-top-color: var(--color-alto); } .card-alto .badge { background: var(--color-alto); color: #6b3412; }
-        .card-peligro { border-top-color: var(--color-peligro); animation: pulse-red 2s infinite; } .card-peligro .badge { background: var(--color-peligro); color: white; }
+        .card { border-radius: 18px; padding: 26px; border-top: 12px solid #cbd5e0; box-shadow: 0 8px 20px rgba(0,0,0,0.08); transition: 0.3s; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; min-height: 40px; }
+        .card-header h3 { margin: 0; font-size: 1.44rem; color: var(--navy); font-weight: 900; }
         
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
+        .risk-tag { display: flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 900; color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); }
+        .bg-bajo { background-color: var(--color-bajo); }
+        .bg-mod { background-color: var(--color-mod); }
+        .bg-alto { background-color: var(--color-alto); }
+        .bg-peligro { background-color: var(--color-peligro); color: white !important; }
 
-        .footer-section { background: white; padding: 30px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
-        .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
-        .row-container { display: flex; justify-content: center; flex-wrap: nowrap; gap: 12px; margin-bottom: 15px; overflow-x: auto; padding: 5px; }
-        .btn-interest { padding: 8px 15px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; white-space: nowrap; }
-        .social-btn { padding: 7px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; border: 1.5px solid #000; color: #000; white-space: nowrap; }
+        .data-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 1.08rem; }
+        .data-row span { font-weight: 700; color: #718096; width: 120px; }
+        .data-row b { margin-left: auto; color: #2d3748; text-align: right; }
+
+        .temp-box { display: flex; margin-top: 18px; gap: 12px; }
+        .temp-item { flex: 1; background: rgba(255,255,255,0.6); padding: 12px; border-radius: 14px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
+        .temp-item small { display: block; font-size: 0.72rem; color: #718096; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
+        .temp-item div { font-weight: 900; font-size: 1.44rem; }
+
+        .card-bajo { border-top-color: var(--color-bajo); background-color: var(--bg-bajo); }
+        .card-mod { border-top-color: var(--color-mod); background-color: var(--bg-mod); }
+        .card-alto { border-top-color: var(--color-alto); background-color: var(--bg-alto); animation: pulse-orange 2.5s infinite; }
+        .card-peligro { border-top-color: var(--color-peligro); background-color: var(--bg-peligro); animation: pulse-red 1.5s infinite; }
+
+        @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(237, 125, 49, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(237, 125, 49, 0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5); } 70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); } }
+
+        /* FOOTER */
+        .footer-section { background: white; padding: 48px 50px; border-top: 1px solid #e2e8f0; text-align: center; }
+        .footer-section h2 { color: var(--navy); font-size: 1.56rem; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; }
+        .row-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+        .btn-interest { padding: 12px 24px; border: 1px solid #cbd5e0; border-radius: 10px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
+        .social-btn { padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border: 1.5px solid #000; color: #000; transition: 0.3s; }
         .social-btn.ig { border-color: #e1306c; color: #e1306c; }
 
-        .credits-bar { background: var(--navy); color: white; padding: 25px; text-align: center; }
-        .credits-bar h3 { margin: 5px 0; font-size: 1.3rem; font-weight: 900; }
+        .credits-bar { background: var(--navy); color: white; padding: 48px 24px; text-align: center; }
+        .credits-bar h3 { margin: 6px 0; font-size: 1.92rem; font-weight: 900; }
+        .credits-bar p { font-size: 1.1rem; }
         .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; height: auto; }
-            .sidebar { width: 100%; box-sizing: border-box; }
-            header { height: auto; padding: 20px; }
-            .location-title { font-size: 1.6rem; white-space: normal; }
-            .current-metrics { position: static; margin-top: 10px; flex-wrap: wrap; }
-            .astro-bar { flex-wrap: wrap; gap: 20px; padding: 20px; }
-            .grid-container { padding: 15px; }
+            .sidebar { width: 100%; }
+            header { min-height: auto; padding: 30px; gap: 30px; }
+            .location-title { font-size: 2.2rem; }
+            .highlight-panel { width: 100%; box-sizing: border-box; }
+            .metrics-row { flex-wrap: wrap; gap: 15px; }
+            .astro-mini-row { flex-wrap: wrap; gap: 15px; }
         }
     </style>
 </head>
@@ -115,20 +179,32 @@
         <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA PRAT</a>
         <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> Tabla de Mareas</a>
     </nav>
+    <div class="risk-legend">
+        <h4>Referencia Viento (Sost.)</h4>
+        <div class="legend-item"><span class="l-bajo">● Bajo:</span> <span>1 - 15 kts</span></div>
+        <div class="legend-item"><span class="l-mod">● Moderado:</span> <span>16 - 20 kts</span></div>
+        <div class="legend-item"><span class="l-alto">● Alto:</span> <span>21 - 25 kts</span></div>
+        <div class="legend-item"><span class="l-peli">● Peligro:</span> <span>30+ kts</span></div>
+    </div>
 </aside>
 
 <main class="main-content">
     <header>
         <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
-        <div class="current-metrics" id="header-metrics">Sincronizando...</div>
+        
+        <div class="highlight-panel">
+            <div class="metrics-row" id="header-metrics">
+                Sincronizando con estación...
+            </div>
+            
+            <div class="astro-mini-row">
+                <div class="astro-mini-item"><span class="astro-mini-label">🌅 Amanecer</span><span class="astro-mini-val">05:31</span></div>
+                <div class="astro-mini-item"><span class="astro-mini-label">🌇 Puesta de Sol</span><span class="astro-mini-val">20:50</span></div>
+                <div class="astro-mini-item"><span class="astro-mini-label">⌚ Hora Local</span><span class="astro-mini-val" id="clock">--:--:--</span></div>
+                <div class="astro-mini-item"><span class="astro-mini-label">🏔️ Elevación</span><span class="astro-mini-val">6 m</span></div>
+            </div>
+        </div>
     </header>
-
-    <section class="astro-bar">
-        <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
-        <div class="astro-item"><label>🌇 Puesta de Sol</label><span>20:50</span></div>
-        <div class="astro-item"><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div>
-        <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
-    </section>
 
     <nav id="days-nav" class="days-nav"></nav>
     <section class="grid-container" id="grid-pronostico"></section>
@@ -144,9 +220,9 @@
         </div>
         <div class="row-container">
             <a href="https://x.com/Armada_Chile" target="_blank" class="social-btn">𝕏 @ARMADA_CHILE</a>
-            <a href="https://x.com/dgtm_chile" target="_blank" class="social-btn">𝕏 @DIRECTEMAR</a>
+            <a href="https://x.com/Directemar_Chile" target="_blank" class="social-btn">𝕏 @DIRECTEMAR</a>
             <a href="https://x.com/MetArmada_Mag" target="_blank" class="social-btn">𝕏 @METARMADA_MAG</a>
-            <a href="https://x.com/servimet_armada" target="_blank" class="social-btn">𝕏 @SERVIMET_ARMADA</a>
+            <a href="https://x.com/Servimet_Armada" target="_blank" class="social-btn">𝕏 @SERVIMET_ARMADA</a>
             <a href="https://www.instagram.com/armada_chile/" target="_blank" class="social-btn ig">📷 @ARMADA_CHILE</a>
             <a href="https://www.instagram.com/dgpa_chile/" target="_blank" class="social-btn ig">📷 @DGPA_CHILE</a>
         </div>
@@ -160,7 +236,6 @@
 </main>
 
 <script>
-    // URL SIN GID PARA EVITAR ERRORES DE HOJA BORRADA
     const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
 
     function updateClock() {
@@ -181,17 +256,28 @@
                 return sections[Math.round(deg / 45) % 8];
             };
             document.getElementById('header-metrics').innerHTML = `
-                <div class="metric-item"><div class="metric-val">${Math.round(c.wind_speed_10m)} kts <small style="font-size:0.7rem; color:#666;">(R ${Math.round(c.wind_gusts_10m)})</small></div><div class="metric-label">Viento (${getDirText(c.wind_direction_10m)})</div></div>
+                <div class="metric-item">
+                    <div class="metric-val">${Math.round(c.wind_speed_10m)} kts <small style="font-size:0.8rem; color:#666;">(R ${Math.round(c.wind_gusts_10m)})</small></div>
+                    <div class="metric-label">Viento (${getDirText(c.wind_direction_10m)})</div>
+                </div>
                 <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val" style="color:#2980b9">${Math.round(c.temperature_2m)}°C</div><div class="metric-label">T° Aire</div></div>
+                <div class="metric-item">
+                    <div class="metric-val" style="color:#2980b9">${Math.round(c.temperature_2m)}°C</div>
+                    <div class="metric-label">T° Aire</div>
+                </div>
                 <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div><div class="metric-label">S. Térmica</div></div>
+                <div class="metric-item">
+                    <div class="metric-val" style="color:#e67e22">${Math.round(c.apparent_temperature)}°C</div>
+                    <div class="metric-label">S. Térmica</div>
+                </div>
                 <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>`;
-        } catch (e) { console.error("Error Fetch"); }
+                <div class="metric-item">
+                    <div class="metric-val">${c.relative_humidity_2m}%</div>
+                    <div class="metric-label">Hum</div>
+                </div>`;
+        } catch (e) { console.error("Error Fetch RealTime"); }
     }
 
-    // --- CORRECCIÓN PRECISA AQUÍ ---
     async function fetchSheetsData() {
         Papa.parse(URL_CSV, {
             download: true,
@@ -216,20 +302,27 @@
         }
         const filtered = window.allWeather.filter(r => r[0] === dia);
         const grid = document.getElementById('grid-pronostico');
+        
         grid.innerHTML = filtered.map(r => {
             let vientoStr = r[4] ? r[4].toUpperCase() : "0";
-            let nudos = parseInt(vientoStr.match(/\d+/) || 0);
+            const numeros = vientoStr.match(/\d+/g); 
+            let valorEval = 0;
+            if (numeros) { valorEval = (numeros.length >= 2) ? parseInt(numeros[1]) : parseInt(numeros[0]); }
             
-            let riesgoT = "RIESGO BAJO"; let riesgoC = "card-bajo"; let iconoSup = "";
-            if (nudos >= 34) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; }
-            else if (nudos >= 25) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; }
-            else if (nudos >= 17) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "⚠️"; }
+            let riesgoT, riesgoC, iconoSup, bgClass;
+            if (valorEval >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; bgClass = "bg-peligro"; }
+            else if (valorEval >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; bgClass = "bg-alto"; }
+            else if (valorEval >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "⚠️"; bgClass = "bg-mod"; }
+            else { riesgoT = "RIESGO BAJO"; riesgoC = "card-bajo"; iconoSup = "✅"; bgClass = "bg-bajo"; }
             
             return `
             <div class="card ${riesgoC}">
-                <div class="card-header" style="display:flex; justify-content:space-between; align-items:start;">
-                    <div><h3>${r[1]}</h3><span class="badge">${riesgoT}</span></div>
-                    <span style="font-size:1.2rem">${iconoSup}</span>
+                <div class="card-header">
+                    <h3>${r[1]}</h3>
+                    <div class="risk-tag ${bgClass}">
+                        <span>${iconoSup}</span>
+                        <span>${riesgoT}</span>
+                    </div>
                 </div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
                 <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>

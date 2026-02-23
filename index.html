@@ -35,8 +35,7 @@
         .l-bajo { color: var(--color-bajo); } .l-mod { color: var(--color-mod); } 
         .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
 
-        /* CORRECCIÓN AQUÍ: Se agregó min-width: 0 para que no se desborde y mantenga el mismo porte que el header */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 0; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
         
         header { 
             background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
@@ -50,15 +49,6 @@
             justify-content: space-between; 
             box-sizing: border-box;
             position: relative;
-            width: 100%;
-        }
-
-        /* Ajuste responsivo para el título y métricas */
-        @media (max-width: 768px) {
-            header { padding: 20px; min-height: 350px; }
-            .location-title { font-size: 2.2rem !important; }
-            .current-metrics { width: calc(100% - 40px) !important; box-sizing: border-box; justify-content: center; }
-            .astro-bar, .days-nav, .grid-container, .footer-section { padding-left: 20px !important; padding-right: 20px !important; }
         }
 
         .location-title { 
@@ -84,13 +74,13 @@
         .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
         .sep { color: rgba(0,0,0,0.15); font-size: 1.5rem; }
 
-        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; overflow-x: auto; }
-        .astro-item { display: flex; flex-direction: column; flex-shrink: 0; }
+        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
+        .astro-item { display: flex; flex-direction: column; }
         .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
         .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
 
-        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; overflow-x: auto; }
-        .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; }
+        .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; }
         .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 4px 12px rgba(26, 58, 90, 0.2); }
 
         .grid-container { padding: 0 45px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }

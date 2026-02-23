@@ -303,14 +303,19 @@
 
         let gridHtml = filtered.map(r => {
             const n = (r[4] || "0").match(/\d+/g);
-            const val = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
-            let c = val >= 30 ? "card-peligro" : val >= 21 ? "card-alto" : val >= 16 ? "card-mod" : "card-bajo";
-            if(val >= 21) c += " card-titilar";
-            let t = val >= 30 ? "PELIGRO" : val >= 21 ? "ALTO" : val >= 16 ? "MODERADO" : "BAJO";
-            let bg = val >= 30 ? "bg-peligro" : val >= 21 ? "bg-alto" : val >= 16 ? "bg-mod" : "bg-bajo";
+            const valorEval = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
             
-            return `<div class="card ${c}">
-                <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bg}">${t}</div></div>
+            // LÓGICA DE RIESGO ASOCIADA
+            let riesgoT, riesgoC, iconoSup, bgClass;
+            if (valorEval >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; bgClass = "bg-peligro"; }
+            else if (valorEval >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; bgClass = "bg-alto"; }
+            else if (valorEval >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "⚠️"; bgClass = "bg-mod"; }
+            else { riesgoT = "RIESGO BAJO"; riesgoC = "card-bajo"; iconoSup = "✅"; bgClass = "bg-bajo"; }
+
+            if(valorEval >= 21) riesgoC += " card-titilar";
+            
+            return `<div class="card ${riesgoC}">
+                <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bgClass}">${iconoSup} ${riesgoT}</div></div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
                 <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>
                 <div class="data-row"><span>💨 VIENTO:</span><b>${r[4]}</b></div>

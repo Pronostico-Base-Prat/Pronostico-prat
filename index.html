@@ -18,7 +18,6 @@
 
         body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* SIDEBAR FIJA */
         .sidebar { 
             width: 260px; background: var(--navy); color: white; display: flex; 
             flex-direction: column; padding: 20px; flex-shrink: 0; 
@@ -35,11 +34,14 @@
         .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.75rem; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.3s; display: block; margin-bottom: 5px; }
         .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
 
-        .risk-legend { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.1); }
-        .risk-legend h4 { margin: 0 0 10px 0; color: #3498db; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; text-align: center; }
-        .legend-item { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
+        .risk-legend { 
+            background: white; padding: 20px; border-radius: 15px; font-size: 0.8rem; 
+            border: 1px solid #e2e8f0; max-width: 400px; margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .risk-legend h4 { margin: 0 0 10px 0; color: var(--navy); font-size: 0.9rem; border-bottom: 2px solid #f4f7f9; padding-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .legend-item { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; padding: 4px 10px; border-radius: 5px; }
 
-        /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; height: 100vh; }
         header { 
             background: linear-gradient(to top, var(--bg) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
@@ -49,7 +51,6 @@
         }
         .location-title { font-size: 2.8rem; font-weight: 900; color: #0d1b2a; margin: 0; text-shadow: 0 2px 10px rgba(255,255,255,0.8); text-align: center; }
 
-        /* METRICAS */
         .current-metrics { display: flex; gap: 20px; background: rgba(255,255,255,0.95); padding: 12px 35px; border-radius: 50px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-top: 10px; border: 1px solid white; align-items: center; }
         .metric-item { display: flex; flex-direction: column; align-items: center; }
         .metric-val { font-size: 1.15rem; font-weight: 900; color: #1a1a1a; display: flex; align-items: center; gap: 10px; }
@@ -63,7 +64,6 @@
         .astro-item label { font-size: 0.5rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
         .astro-item span { font-size: 0.8rem; color: #2d3748; font-weight: 700; }
 
-        /* DASHBOARD */
         .dashboard-layout { display: grid; grid-template-columns: 1fr 240px; gap: 30px; padding: 25px 45px; }
         
         .widget-container { 
@@ -74,27 +74,40 @@
 
         .widget-mask { 
             width: 100%; 
-            height: 380px; 
+            height: 340px; 
             overflow: hidden; 
             position: relative;
             border-radius: 12px;
         }
 
         .widget-mask iframe {
-            width: 100%;
-            height: 700px; 
+            width: 118%; 
+            height: 570px; 
             border: none;
             position: absolute;
-            top: -165px; 
+            top: -142px; 
+            left: -9%;  
+            transform: scale(0.85); 
+            transform-origin: top center;
+            /* Se elimina pointer-events:none para permitir clics en los días dentro del iframe */
+        }
+
+        /* Capa invisible para bloquear el botón "Más" de Meteoblue */
+        .block-bottom {
+            position: absolute;
+            bottom: 0;
             left: 0;
+            width: 100%;
+            height: 50px;
+            background: white;
+            z-index: 5;
         }
 
         .days-sidebar { display: flex; flex-direction: column; gap: 10px; }
         .day-tab { padding: 15px; border-radius: 12px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 800; font-size: 0.85rem; text-align: center; transition: 0.3s; color: var(--navy); }
         .day-tab.active { background: var(--navy); color: white; box-shadow: 0 5px 15px rgba(26,58,90,0.2); }
 
-        /* CARDS PRONOSTICO - ACTUALIZADOS CON COLOR DE FONDO */
-        .grid-container { padding: 10px 45px 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; }
+        .grid-container { padding: 10px 45px 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; }
         .card { 
             border-radius: 22px; padding: 30px; border-top: 12px solid #cbd5e0; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); transition: 0.3s; background: white; 
@@ -113,7 +126,6 @@
 
         .btn-full-day { grid-column: 1 / -1; background: var(--navy); color: white; padding: 22px; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 20px; }
 
-        /* CLASES DE RIESGO ACTUALIZADAS */
         .card-bajo { border-top-color: var(--color-bajo); background-color: var(--bg-bajo); }
         .card-mod { border-top-color: var(--color-mod); background-color: var(--bg-mod); }
         .card-alto { border-top-color: var(--color-alto); background-color: var(--bg-alto); animation: pulse-orange 2.5s infinite; }
@@ -122,11 +134,10 @@
         @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(237, 125, 49, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(237, 125, 49, 0); } }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5); } 70% { box-shadow: 0 0 0 25px rgba(255, 0, 0, 0); } }
 
-        /* RESPONSIVE PARA CELULARES */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow-y: auto; }
             .sidebar { width: 100%; height: auto; padding: 15px; }
-            .nav-scroll { display: none; } /* Ocultamos links extra en móvil para ahorrar espacio */
+            .nav-scroll { display: none; }
             .main-content { height: auto; overflow: visible; }
             .location-title { font-size: 1.8rem; }
             .current-metrics { padding: 10px 15px; gap: 10px; flex-wrap: wrap; justify-content: center; border-radius: 20px; }
@@ -134,11 +145,8 @@
             .days-sidebar { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
             .day-tab { min-width: 100px; padding: 10px; font-size: 0.75rem; }
             .grid-container { padding: 15px; gap: 20px; grid-template-columns: 1fr; }
-            .astro-bar { gap: 15px; padding: 15px; }
-            .modal-content { width: 95%; margin: 5% auto; padding: 15px; }
         }
 
-        /* MODAL */
         .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
         .modal-content { background: white; margin: 2% auto; padding: 30px; border-radius: 20px; width: 92%; max-width: 1300px; max-height: 92vh; overflow-y: auto; }
         .chart-box { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; height: 260px; }
@@ -162,14 +170,6 @@
         <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link">📊 METEOGRAMA PRAT</a>
         <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link">⚓ TABLA DE MAREAS</a>
     </div>
-
-    <div class="risk-legend">
-        <h4>Escala de Viento (kts)</h4>
-        <div class="legend-item"><span style="color:var(--color-bajo)">● Bajo:</span> <span>1 - 15</span></div>
-        <div class="legend-item"><span style="color:var(--color-mod)">● Moderado:</span> <span>16 - 20</span></div>
-        <div class="legend-item"><span style="color:var(--color-alto)">● Alto:</span> <span>21 - 25</span></div>
-        <div class="legend-item"><span style="color:var(--color-peligro)">● Peligro:</span> <span>30+</span></div>
-    </div>
 </aside>
 
 <main class="main-content">
@@ -190,12 +190,21 @@
         <section class="widget-container">
             <div class="widget-mask">
                 <iframe src="https://www.meteoblue.com/es/tiempo/widget/three/base-naval-capit%c3%a1n-arturo-prat_ant%c3%a1rtida_6620743?geoloc=fixed&nocurrent=0&noforecast=0&days=7&tempunit=CELSIUS&windunit=KNOT&precipunit=MILLIMETER&coloured=coloured&pictoicon=1&patch=1&climatedateline=0&densitydensity=0&filterbackground=0&localtime=0&mapped=0&background=%23ffffff&fontcolor=%231a3a5a&titlefontcolor=%231a3a5a&linecolor=%231a3a5a&fontfamily=Roboto" scrolling="NO"></iframe>
+                <div class="block-bottom"></div>
             </div>
         </section>
         <nav class="days-sidebar" id="days-nav"></nav>
     </div>
 
     <section class="grid-container" id="grid-pronostico"></section>
+
+    <div class="risk-legend">
+        <h4>Escala de Viento (kts)</h4>
+        <div class="legend-item"><span style="color:var(--color-bajo); font-weight: 900;">● Bajo:</span> <span style="font-weight: 700;">1 - 15</span></div>
+        <div class="legend-item"><span style="color:var(--color-mod); font-weight: 900;">● Moderado:</span> <span style="font-weight: 700;">16 - 20</span></div>
+        <div class="legend-item"><span style="color:var(--color-alto); font-weight: 900;">● Alto:</span> <span style="font-weight: 700;">21 - 25</span></div>
+        <div class="legend-item"><span style="color:var(--color-peligro); font-weight: 900;">● Peligro:</span> <span style="font-weight: 700;">30+</span></div>
+    </div>
 
     <footer class="credits-bar">
         <p style="margin:0; opacity:0.7; font-size:0.9rem;">© 2026 Sistema Autónomo de Pronóstico Antártico</p>
@@ -286,8 +295,6 @@
         document.getElementById('grid-pronostico').innerHTML = filtered.map(r => {
             const n = (r[4] || "0").match(/\d+/g);
             const val = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
-            
-            // Lógica de colores de fondo según riesgo
             let riesgoC = (val >= 30) ? "card-peligro" : (val >= 21) ? "card-alto" : (val >= 16) ? "card-mod" : "card-bajo";
             
             return `<div class="card ${riesgoC}">

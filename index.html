@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Cambiado a viewport responsivo para que móviles muestren el contenido correctamente -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Cambiamos el viewport para que el celular no intente ajustar el ancho y respete el diseño original -->
+    <meta name="viewport" content="width=1280"> 
     <title>Base Prat | Sistema Meteorológico Autónomo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,7 +18,7 @@
             --twitter-blue: #1DA1F2;
         }
 
-        /* Forzamos un ancho mínimo para que en el celular no se amontone nada (se sobrescribe en móvil) */
+        /* Forzamos un ancho mínimo para que en el celular no se amontone nada */
         body { 
             font-family: 'Roboto', sans-serif; 
             background: var(--bg); 
@@ -142,99 +142,6 @@
         .credits-bar { background: var(--navy); color: white; padding: 40px 20px; text-align: center; }
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
         .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
-
-        /* ========== OVERRIDES PARA MÓVIL (NO CAMBIAN ESTRUCTURA) ========== */
-        @media (max-width: 768px) {
-            /* Permitir que el cuerpo sea fluido en móvil (sobrescribe min-width:1280px) */
-            body {
-                min-width: auto !important;
-                flex-direction: column;
-                height: auto;
-                overflow-x: hidden;
-            }
-
-            /* Sidebar pasa abajo (se mantiene en DOM) */
-            .sidebar {
-                width: 100%;
-                padding: 12px 16px;
-                box-shadow: none;
-                order: 2;
-            }
-
-            /* Contenido principal primero */
-            .main-content {
-                min-width: auto !important;
-                width: 100%;
-                order: 1;
-            }
-
-            /* Header más compacto y visible en móvil */
-            header {
-                min-height: 220px;
-                padding: 18px;
-                background-position: center 20%;
-            }
-            .location-title {
-                font-size: 1.6rem;
-                color: #fff;
-                text-shadow: none;
-                text-align: left;
-            }
-
-            /* Métricas: que ocupen todo el ancho y sean legibles */
-            .current-metrics {
-                width: 100%;
-                box-sizing: border-box;
-                border-radius: 12px;
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 12px;
-                background: rgba(255,255,255,0.95);
-                align-self: flex-end;
-                justify-items: start;
-                align-items: center;
-                border: none;
-                box-shadow: none;
-            }
-            .metric-item { padding: 4px 0; border-bottom: none; }
-            .metric-val { font-size: 1rem; color: #0d1b2a; }
-            .metric-label { font-size: 0.72rem; color: #555; }
-
-            /* Astro bar y días con scroll horizontal */
-            .astro-bar { padding: 10px 16px; gap: 12px; flex-wrap: wrap; }
-            .astro-item { flex: 1 1 45%; }
-            .days-nav { padding: 12px 16px; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-            /* Layout de tarjetas a una columna */
-            .grid-container { padding: 12px 16px 32px; grid-template-columns: 1fr !important; gap: 12px; }
-            .card { padding: 16px; border-radius: 12px; border-top-width: 8px; }
-            .card-header h3 { font-size: 1rem; }
-
-            .temp-box { flex-direction: column; gap: 8px; }
-            .temp-item { padding: 8px; font-size: 0.95rem; }
-
-            .btn-full-day { font-size: 1rem; padding: 12px; border-radius: 10px; }
-
-            .footer-section { padding: 24px 16px; }
-            .row-container { gap: 10px; }
-            .btn-interest { font-size: 0.75rem; padding: 8px 12px; }
-            .btn-social { font-size: 0.68rem; padding: 6px 12px; }
-
-            /* Modal: ocupa todo en móvil */
-            .modal-content { width: 96%; margin: 4% auto; padding: 16px; max-height: 92vh; }
-            .charts-grid { grid-template-columns: 1fr; height: auto; gap: 12px; }
-            .chart-box { height: 200px; }
-        }
-
-        /* Pequeños ajustes a tablets - mantienen estructura */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            body { min-width: auto !important; overflow-x: hidden; height: auto; flex-direction: column; }
-            .sidebar { width: 100%; order: 2; box-shadow: none; }
-            .main-content { order: 1; min-width: auto; }
-            header { min-height: 320px; padding: 22px; }
-            .location-title { font-size: 2.2rem; text-align: center; color: #0d1b2a; }
-        }
     </style>
 </head>
 <body>
@@ -386,7 +293,7 @@
                 <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>`;
-        } catch (e) { console.error("Error RealTime", e); }
+        } catch (e) { console.error("Error RealTime"); }
     }
 
     async function fetchSheetsData() {
@@ -401,8 +308,7 @@
                 const diaActual = document.querySelector('.day-tab.active')?.innerText || dias[0];
                 document.getElementById('days-nav').innerHTML = dias.map(dia => `<div class="day-tab ${dia === diaActual ? 'active' : ''}" onclick="renderDia('${dia}', this)">${dia}</div>`).join('');
                 renderDia(diaActual);
-            },
-            error: function(err){ console.error('Error CSV', err); }
+            }
         });
     }
 

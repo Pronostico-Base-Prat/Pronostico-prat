@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>Base Prat | Sistema Meteorológico Autónomo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,16 +17,16 @@
             --twitter-blue: #1DA1F2;
         }
 
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            min-width: 1280px; 
-            overflow-x: auto; 
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            min-width: 1280px;
+            overflow-x: auto;
         }
-        
+
         .sidebar { width: 260px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
         .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 15px; }
         .sidebar img { width: 120px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
@@ -40,37 +40,38 @@
         .risk-legend { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; font-size: 0.7rem; margin-top: auto; }
         .risk-legend h4 { margin: 0 0 8px 0; font-size: 0.75rem; color: #3498db; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
         .legend-item { display: flex; justify-content: space-between; margin-bottom: 4px; padding: 2px 0; }
-        .l-bajo { color: var(--color-bajo); } .l-mod { color: var(--color-mod); } 
+        .l-bajo { color: var(--color-bajo); } .l-mod { color: var(--color-mod); }
         .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; }
-        
-        header { 
-            background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
-                        url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
-            background-size: cover; 
-            background-position: center 30%; 
-            min-height: 450px; 
-            padding: 45px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
+
+        header {
+            background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%),
+                        url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg');
+            background-size: cover;
+            background-position: center 30%;
+            min-height: 450px;
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             box-sizing: border-box;
             position: relative;
+            overflow: visible;
         }
 
-        .location-title { 
-            font-size: 3.7rem; 
-            font-weight: 900; 
-            color: #0d1b2a; 
-            margin: 0; 
-            letter-spacing: -1.5px; 
+        .location-title {
+            font-size: 3.7rem;
+            font-weight: 900;
+            color: #0d1b2a;
+            margin: 0;
+            letter-spacing: -1.5px;
             text-shadow: 0 2px 10px rgba(255,255,255,0.8);
             text-align: center;
             width: 100%;
         }
 
-        .current-metrics { 
+        .current-metrics {
             display: flex; gap: 18px; align-items: center; width: max-content;
             background: rgba(255,255,255,0.85); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15);
@@ -87,19 +88,19 @@
         .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
         .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
 
-        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; }
+        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; overflow-x: auto; }
         .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; }
         .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 4px 12px rgba(26, 58, 90, 0.2); }
 
         .grid-container { padding: 0 45px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { border-radius: 15px; padding: 22px; border-top: 10px solid #cbd5e0; box-shadow: 0 6px 15px rgba(0,0,0,0.07); transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-        
+
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; min-height: 35px; }
         .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 900; }
-        
+
         .risk-tag { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 900; color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); }
-        
+
         .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem; }
         .data-row span { font-weight: 700; color: #718096; width: 110px; }
         .data-row b { margin-left: auto; color: #2d3748; }
@@ -125,15 +126,15 @@
 
         .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 2% auto; padding: 30px; border-radius: 20px; width: 95%; max-width: 1400px; max-height: 90vh; overflow-y: auto; }
-        
+
         .charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         .chart-box { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; height: 230px; }
-        
+
         .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
         .row-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 25px; }
         .btn-interest { padding: 10px 20px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; transition: 0.3s; }
-        
+
         .btn-social { padding: 8px 18px; border: 1px solid var(--twitter-blue); border-radius: 20px; text-decoration: none; color: var(--twitter-blue); font-weight: 800; font-size: 0.7rem; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         .btn-social:hover { background: var(--twitter-blue); color: white; transform: scale(1.05); }
 
@@ -141,7 +142,7 @@
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
         .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
 
-        /* AJUSTES EXCLUSIVOS PARA CELULAR/TABLET */
+        /* AJUSTES EXCLUSIVOS PARA TABLET/MÓVIL */
         @media (max-width: 1280px) {
             body {
                 min-width: auto;
@@ -149,30 +150,60 @@
                 height: auto;
                 overflow-x: hidden;
             }
-            
-            /* Imagen superior solo en celular con el mismo porte del fondo */
-            body::before {
-                content: "";
-                display: block;
-                width: 100%;
-                min-height: 450px; /* Mismo porte que el header original */
-                background: url('https://pronostico-base-prat.github.io/Pronostico-prat/ESCUDO_GRANDE.jpg'), var(--navy); /* Reemplazar con la URL real de la imagen adjunta */
-                background-size: cover;
-                background-position: center;
-                order: 0;
-            }
 
             .main-content { order: 1; min-width: auto; width: 100%; }
             .sidebar { order: 2; width: 100%; box-shadow: none; padding: 20px; }
-            
+
             .sidebar-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
             .external-link { font-size: 0.75rem; flex: 1 1 auto; text-align: center; }
 
             header { min-height: 350px; padding: 20px; }
             .location-title { font-size: 2.2rem; }
             .current-metrics { width: 95%; align-self: center; flex-wrap: wrap; justify-content: center; }
-            
+
             .grid-container { grid-template-columns: 1fr; padding: 15px; }
+        }
+
+        /* AJUSTES EXCLUSIVOS SOLO PARA CELULAR (encabezado con el escudo recortado) */
+        @media (max-width: 768px) {
+            /* Limpiar cualquier pseudo-inserción previa en body si existiera (no hay aquí) */
+            header {
+                position: relative;
+                overflow: hidden;                    /* recorta la parte inferior del escudo */
+                background-image: none !important;   /* evitar duplicar el fondo */
+                background-color: var(--navy);       /* fondo detrás del escudo */
+                min-height: 450px;                   /* mismo porte visual que el header grande */
+                padding: 20px 20px 30px 20px;
+            }
+
+            header::before {
+                content: "";
+                position: absolute;
+                top: -6%;                             /* desplaza el escudo hacia arriba para recortar abajo */
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                height: 450px;                        /* altura visible del bloque del escudo */
+                background-image: url('https://cdn.abacus.ai/images/a36c81df-1e1d-4796-8c78-4aa1f9199efa.png');
+                background-repeat: no-repeat;
+                background-position: top center;      /* muestra la parte superior del escudo centrada */
+                background-size: auto 120%;           /* aumenta un poco para lograr el corte inferior */
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            /* Asegura que el contenido dentro del header quede por delante del escudo */
+            header > * {
+                position: relative;
+                z-index: 2;
+            }
+
+            /* Ajustes de legibilidad en móvil */
+            .location-title { font-size: 2.2rem; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+            .current-metrics { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.12); color: #fff; }
+            .current-metrics .metric-val { color: #fff !important; }
+            .astro-bar { padding: 12px 18px; gap: 12px; flex-wrap: wrap; }
+            .days-nav { padding: 12px 18px; gap: 8px; }
         }
     </style>
 </head>
@@ -275,13 +306,13 @@
 
 <script>
     const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
-    let myCharts = {}; 
+    let myCharts = {};
 
     function updateClock() {
         const now = new Date();
         const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
         const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Punta_Arenas' };
-        
+
         document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', timeOptions) + " (UTC -3)";
         document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL', dateOptions);
     }
@@ -292,7 +323,7 @@
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure&wind_speed_unit=kn`);
             const data = await res.json();
             const c = data.current;
-            
+
             const getDirText = (deg) => {
                 const dirs = ['NORTE', 'N/NE', 'NE', 'E/NE', 'ESTE', 'E/SE', 'SE', 'S/SE', 'SUR', 'S/SW', 'SW', 'SW/W', 'WESTE', 'W/NW', 'NW', 'NW/N'];
                 return dirs[Math.round(deg / 22.5) % 16];
@@ -356,7 +387,7 @@
         let gridHtml = filtered.map(r => {
             const n = (r[4] || "0").match(/\d+/g);
             const valorEval = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
-            
+
             let riesgoT, riesgoC, iconoSup, bgClass;
             if (valorEval >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; bgClass = "bg-peligro"; }
             else if (valorEval >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; bgClass = "bg-alto"; }
@@ -364,7 +395,7 @@
             else { riesgoT = "RIESGO BAJO"; riesgoC = "card-bajo"; iconoSup = "✅"; bgClass = "bg-bajo"; }
 
             if(valorEval >= 21) riesgoC += " card-titilar";
-            
+
             return `<div class="card ${riesgoC}">
                 <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bgClass}">${iconoSup} ${riesgoT}</div></div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
@@ -390,23 +421,23 @@
         document.getElementById('modalDetalle').style.display = 'block';
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.48&longitude=-59.63&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,cloud_cover,pressure_msl&wind_speed_unit=kn&timezone=America%2FPunta_Arenas`);
         const data = await res.json();
-        
+
         const l=[], v=[], r=[], t=[], st=[], h=[], p=[], cld=[], pres=[];
         let htm="";
-        
-        for(let i=idx*24; i<(idx24)+24; i++){
+
+        for(let i=idx*24; i<(idx*24)+24; i++){
             if(!data.hourly.time[i]) break;
             const hr = data.hourly.time[i].split('T')[1].substring(0,5);
-            l.push(hr); 
-            v.push(data.hourly.wind_speed_10m[i]); 
-            r.push(data.hourly.wind_gusts_10m[i]); 
+            l.push(hr);
+            v.push(data.hourly.wind_speed_10m[i]);
+            r.push(data.hourly.wind_gusts_10m[i]);
             t.push(data.hourly.temperature_2m[i]);
             st.push(data.hourly.apparent_temperature[i]);
             h.push(data.hourly.relative_humidity_2m[i]);
-            p.push(data.hourly.precipitation[i]); 
+            p.push(data.hourly.precipitation[i]);
             cld.push(data.hourly.cloud_cover[i]);
             pres.push(data.hourly.pressure_msl[i]);
-            
+
             htm += `<tr>
                 <td>${hr}</td>
                 <td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>

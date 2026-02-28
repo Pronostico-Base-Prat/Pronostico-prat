@@ -62,7 +62,7 @@
         }
 
         .location-title { 
-            font-size: 3.7rem; 
+            font-size: 5.0rem; 
             font-weight: 900; 
             color: #0d1b2a; 
             margin: 0; 
@@ -83,6 +83,9 @@
         .metric-val { font-size: 1.2rem; font-weight: 900; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
         .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
         .sep { color: rgba(0,0,0,0.15); font-size: 1.5rem; }
+
+        /* Dot para semáforo */
+        .dot { height:12px; width:12px; border-radius:50%; display:inline-block; background:#ccc; border: 1px solid rgba(0,0,0,0.12); }
 
         .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
         .astro-item { display: flex; flex-direction: column; }
@@ -150,14 +153,18 @@
     <div class="logo-container"><img src="https://pronostico-base-prat.github.io/Pronostico-prat/ESCUDO.png" alt="Escudo"></div>
     <h2>Base Naval Antártica Chilena<br>"Capitán Arturo Prat"</h2>
     <nav class="sidebar-nav">
-        <div class="sidebar-nav-title">Fuentes de Datos</div>
+        <div class="sidebar-nav-title">GLACIOLÓGICO Y CARTAS</div>
+        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="external-link"> INFORME GLACIOLÓGICO</a>
+        <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA CAPITÁN ARTURO PRAT</a>
+        <a href="http://triton.directemar.cl/web/meteograma_A_FILDES_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA BAHÍA FILDES</a>
+        <a href="http://triton.directemar.cl/web/meteograma_A_BAHIAPARAISO_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA BAHÍA PARAÍSO</a>
+        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE VIENTO ANTÁRTICA</a>
+        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE PRECIPITACIÓN ANTÁRTICA</a>
         <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="external-link"> IMAGEN SATELITAL</a>
         <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="external-link"> CARTA PRONOSTICADA</a>
-        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE VIENTO</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="external-link"> INFORME GLACIOLÓGICO</a>
-        <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA PRAT</a>
-        <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> Tabla de Mareas</a>
+        <a href="https://web.directemar.cl/met/jturno/pub/Cvtodrake.html" target="_blank" class="external-link"> CARTA DE VIENTO PASO DRAKE</a>
+        <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS PASO DRAKE</a>
+        <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> TABLA DE MAREAS</a>
     </nav>
     <div class="risk-legend">
         <h4>Referencia Viento (Sost.)</h4>
@@ -171,7 +178,16 @@
 <main class="main-content">
     <header>
         <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
-        <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
+            <!-- Nuevo: Semáforo de Operaciones -->
+            <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center;">
+                <span style="font-size: 0.65rem; font-weight: 900; color: #1a3a5a; text-transform: uppercase;">Estado Ops:</span>
+                <div id="light-botes" title="Operaciones de Botes/Zodiac" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> BOTES</div>
+                <div id="light-vuelo" title="Vuelo de Drones/Aeronaves" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> VUELO</div>
+                <div id="light-exterior" title="Trabajos en Exterior" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> EXTERIOR</div>
+            </div>
+        </div>
     </header>
 
     <section class="astro-bar">
@@ -219,10 +235,10 @@
         <div class="charts-grid">
             <div class="chart-box"><canvas id="chartViento"></canvas></div>
             <div class="chart-box"><canvas id="chartTemp"></canvas></div>
+            <div class="chart-box"><canvas id="chartPrec"></canvas></div>
             <div class="chart-box"><canvas id="chartHum"></canvas></div>
             <div class="chart-box"><canvas id="chartCloud"></canvas></div>
             <div class="chart-box"><canvas id="chartPresion"></canvas></div>
-            <div class="chart-box"><canvas id="chartPrec"></canvas></div>
         </div>
         <table style="width:100%; border-collapse: collapse; text-align:center; font-size: 0.85rem;">
             <thead>
@@ -230,10 +246,10 @@
                     <th style="padding:10px;">Hora</th>
                     <th>Viento/Racha (kts)</th>
                     <th>T° Aire/Sensación Térmica</th>
+                    <th>Prec (mm)</th>
                     <th>Hum (%)</th>
                     <th>Nub (%)</th>
                     <th>Pres (hPa)</th>
-                    <th>Prec (mm)</th>
                 </tr>
             </thead>
             <tbody id="modalBody"></tbody>
@@ -257,7 +273,8 @@
     async function fetchBirdseyeWeather() {
         try {
             const lat = -62.48, lon = -59.63;
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure&wind_speed_unit=kn`);
+            // Añadimos uv_index a la consulta
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index&wind_speed_unit=kn`);
             const data = await res.json();
             const c = data.current;
             
@@ -267,11 +284,21 @@
             };
 
             const temp = c.temperature_2m;
-            const windKmH = c.wind_speed_10m * 1.852;
+            const windKts = c.wind_speed_10m;
+            const windKmH = windKts * 1.852;
+            const uv = (c.uv_index !== undefined && c.uv_index !== null) ? c.uv_index : 0;
+            
             let windChill = temp;
             if (temp <= 10 && windKmH > 4.8) {
                 windChill = 13.12 + (0.6215 * temp) - (11.37 * Math.pow(windKmH, 0.16)) + (0.3965 * temp * Math.pow(windKmH, 0.16));
             }
+
+            // Lógica de Colores UV
+            let uvColor = "#27ae60"; // Bajo
+            if (uv >= 11) uvColor = "#8e44ad"; // Extremo
+            else if (uv >= 8) uvColor = "#e74c3c"; // Muy Alto
+            else if (uv >= 6) uvColor = "#e67e22"; // Alto
+            else if (uv >= 3) uvColor = "#f1c40f"; // Moderado
 
             const rotation = (c.wind_direction_10m + 180) % 360;
 
@@ -281,7 +308,7 @@
                         <div style="background:var(--navy); color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:1rem; border:1px solid white;">
                             <span style="transform: rotate(${rotation}deg); display:inline-block;">↑</span>
                         </div>
-                        ${Math.round(c.wind_speed_10m)} kts <small>(R ${Math.round(c.wind_gusts_10m)})</small>
+                        ${Math.round(windKts)} kts <small>(R ${Math.round(c.wind_gusts_10m)})</small>
                     </div>
                     <div class="metric-label">Viento (${getDirText(c.wind_direction_10m)})</div>
                 </div>
@@ -290,10 +317,35 @@
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val" style="color:#ff0000">${Math.round(windChill)}°C</div><div class="metric-label">Sensación Térmica (E.V)</div></div>
                 <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val">${c.relative_humidity_2m}%</div><div class="metric-label">Hum</div></div>
+                <div class="metric-item"><div class="metric-val" style="color:${uvColor}">${uv.toFixed(1)}</div><div class="metric-label">Índice UV</div></div>
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>`;
-        } catch (e) { console.error("Error RealTime"); }
+
+            updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv);
+
+        } catch (e) { console.error("Error RealTime", e); }
+    }
+
+    function updateTrafficLights(wind, gusts, chill, uv) {
+        const setLight = (id, color) => {
+            const el = document.getElementById(id);
+            if(el) el.querySelector('.dot').style.background = color;
+        };
+
+        // Lógica BOTES (Restricción por viento)
+        if (wind >= 20 || gusts >= 25) setLight('light-botes', '#ff0000'); // Rojo
+        else if (wind >= 15 || gusts >= 20) setLight('light-botes', '#ffc000'); // Amarillo
+        else setLight('light-botes', '#92d050'); // Verde
+
+        // Lógica VUELO (Drones/Helo - Sensible a rachas)
+        if (gusts >= 20) setLight('light-vuelo', '#ff0000');
+        else if (gusts >= 12) setLight('light-vuelo', '#ffc000');
+        else setLight('light-vuelo', '#92d050');
+
+        // Lógica EXTERIOR (Sensación térmica y UV y visibilidad no incluida)
+        if (chill <= -25 || uv >= 11) setLight('light-exterior', '#ff0000');
+        else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
+        else setLight('light-exterior', '#92d050');
     }
 
     async function fetchSheetsData() {
@@ -370,8 +422,8 @@
             r.push(data.hourly.wind_gusts_10m[i]); 
             t.push(data.hourly.temperature_2m[i]);
             st.push(data.hourly.apparent_temperature[i]);
-            h.push(data.hourly.relative_humidity_2m[i]);
             p.push(data.hourly.precipitation[i]); 
+            h.push(data.hourly.relative_humidity_2m[i]);
             cld.push(data.hourly.cloud_cover[i]);
             pres.push(data.hourly.pressure_msl[i]);
             
@@ -398,10 +450,10 @@
         };
         conf('chartViento', 'Viento (kts)', 'Rachas', null, v, r, null, '#3498db', '#e74c3c');
         conf('chartTemp', 'T° Aire (°C)', 'Sensación Térmica', null, t, st, null, '#0000ff', '#ff0000');
+        conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
         conf('chartHum', 'Humedad (%)', null, null, h, null, null, '#16a085');
         conf('chartCloud', 'Nubosidad (%)', null, null, cld, null, null, '#7f8c8d');
         conf('chartPresion', 'Presión (hPa)', null, null, pres, null, null, '#8e44ad');
-        conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
     }
 
     function cerrarModal() { document.getElementById('modalDetalle').style.display = 'none'; }
@@ -409,5 +461,196 @@
     updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000); setInterval(fetchBirdseyeWeather, 120000); setInterval(fetchSheetsData, 120000);
 </script>
+
+<!-- START: Widget Calculadora Oficial -->
+<style id="prat-wc-style">
+  #prat-wc {
+    position: fixed; right: 20px; bottom: 20px; width: 340px;
+    background: #1a3a5a; color: white; border-radius: 15px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5); font-family: 'Roboto', sans-serif;
+    z-index: 99999; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+  }
+  #prat-wc .head { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: rgba(0,0,0,0.2); }
+  #prat-wc .head .title { font-weight: 900; font-size: 1.0rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  #prat-wc .head button { background: none; border: none; color: white; font-size: 1.0rem; cursor: pointer; line-height: 1; }
+  #prat-wc .body { padding: 15px; }
+  #prat-wc label { font-size: 1.0rem; color: #a0c4ff; display: block; margin-bottom: 5px; font-weight: 800; text-transform: uppercase; }
+  #prat-wc input { width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 12px; background: white; color: #1a3a5a; font-weight: 700; font-size: 1.0rem; box-sizing: border-box; }
+  #prat-wc .row { display: flex; gap: 10px; }
+  #prat-wc .btn-calc { background: #3498db; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 900; flex: 1; text-transform: uppercase; transition: 0.3s; }
+  #prat-wc .btn-calc:hover { background: #2980b9; }
+  #prat-wc .btn-sync { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 1.0rem; font-weight: 700; }
+  
+  #prat-result-box { margin-top: 15px; padding: 15px; border-radius: 10px; text-align: center; transition: 0.5s; color: #1a1a1a; background: #ecf0f1; }
+  #prat-result-box .val { font-size: 1.8rem; font-weight: 900; display: block; }
+  #prat-result-box .desc { font-size: 1.0rem; font-weight: 800; text-transform: uppercase; margin-top: 5px; display: block; }
+  
+  /* Colores de la Tabla Oficial */
+  .risk-muy-peligro { background: #ffff00 !important; color: black !important; } /* Amarillo */
+  .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red 1s infinite; } /* Rojo */
+  
+  @keyframes pulse-red { 0% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } 50% { box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.5); } 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } }
+  #prat-wc.collapsed { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
+  #prat-wc.collapsed .body, #prat-wc.collapsed .head .title { display: none; }
+  #prat-wc.collapsed .head { padding: 13px; justify-content: center; }
+</style>
+
+<div id="prat-wc">
+  <div class="head">
+    <div class="title">Calculadora de Enfriamiento</div>
+    <button id="prat-toggle">—</button>
+  </div>
+  <div class="body">
+    <label>Temperatura Aire (°C)</label>
+    <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5">
+    
+    <label>Velocidad Viento (Nudos)</label>
+    <input type="number" id="inp-v" placeholder="Ej: 20" step="1">
+    
+    <div class="row">
+      <button class="btn-sync" id="btn-sync">Sincronizar Estación</button>
+      <button class="btn-calc" id="btn-calc">Calcular</button>
+    </div>
+
+    <div id="prat-result-box">
+      <small style="font-weight: 800; opacity: 0.7;">SENSACIÓN TÉRMICA</small>
+      <span class="val" id="res-val">—</span>
+      <span class="desc" id="res-desc">Ingrese datos</span>
+    </div>
+    <p style="font-size: 0.6rem; color: #a0c4ff; margin-top: 10px; text-align: center; font-weight: 600;">
+      Basado en Tabla Oficial de Enfriamiento por Viento (Base Prat)
+    </p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Datos de la tabla oficial (Nudos vs Temperatura)
+  const v_axis = [5, 10, 15, 20, 25, 30, 35, 40];
+  const t_axis = [10, 7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -42.5, -45, -47.5, -50];
+  
+  const tabla = [
+    [7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -55], // 5 kts
+    [5, 2.5, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -57.5, -60, -62.5, -65, -67.5], // 10 kts
+    [2.5, 0, -5, -7.5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -42.5, -45, -47.5, -52.5, -55, -57.5, -60, -65, -67.5, -72.5, -75, -77.5], // 15 kts
+    [0, -2.5, -7.5, -10, -12.5, -17.5, -20, -22.5, -25, -30, -35, -37.5, -42.5, -45, -47.5, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -85], // 20 kts
+    [0, -5, -7.5, -10, -15, -17.5, -22.5, -25, -30, -32.5, -37.5, -40, -45, -47.5, -52.5, -55, -60, -65, -67.5, -70, -72.5, -77.5, -82.5, -85, -90], // 25 kts
+    [-2.5, -5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -40, -42.5, -47.5, -50, -55, -57.5, -62.5, -67.5, -72.5, -75, -80, -85, -90, -95, -95], // 30 kts
+    [-2.5, -7.5, -10, -12.5, -17.5, -20, -25, -30, -32.5, -37.5, -42.5, -45, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -87.5, -90, -95, -95], // 35 kts
+    [-2.5, -7.5, -10, -15, -20, -22.5, -27.5, -30, -35, -37.5, -42.5, -45, -50, -55, -60, -62.5, -65, -70, -75, -77.5, -82.5, -85, -90, -92.5, -97.5]  // 40 kts
+  ];
+
+  function interpolate(x, x0, x1, y0, y1) { return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
+
+  function calcularST(t, v) {
+    try {
+      if (isNaN(t) || isNaN(v)) return null;
+      if (v < 5) return t;
+      if (v > 40) v = 40; // Límite de la tabla
+      if (t > 10) return t;
+      if (t < -50) t = -50;
+
+      // Encontrar índices para Viento (v_axis ascendente)
+      let iv = v_axis.findIndex(val => val >= v);
+      if (iv === -1) iv = v_axis.length - 1;
+      if (iv === 0) iv = 1;
+      const v0 = v_axis[iv-1], v1 = v_axis[iv];
+
+      // Encontrar índices para Temperatura (t_axis descendente)
+      let it = t_axis.findIndex(val => val <= t);
+      if (it === -1) it = t_axis.length - 1;
+      if (it === 0) it = 1;
+      const t0 = t_axis[it-1], t1 = t_axis[it];
+
+      // Valores de la tabla (aseguramos índices)
+      const q11 = tabla[iv-1] && tabla[iv-1][it-1] !== undefined ? tabla[iv-1][it-1] : t;
+      const q12 = tabla[iv-1] && tabla[iv-1][it]   !== undefined ? tabla[iv-1][it]   : t;
+      const q21 = tabla[iv]   && tabla[iv][it-1]   !== undefined ? tabla[iv][it-1]   : t;
+      const q22 = tabla[iv]   && tabla[iv][it]     !== undefined ? tabla[iv][it]     : t;
+
+      const r1 = interpolate(t, t0, t1, q11, q12);
+      const r2 = interpolate(t, t0, t1, q21, q22);
+      return Math.round(interpolate(v, v0, v1, r1, r2) * 10) / 10;
+    } catch (err) {
+      console.error("Error en calcularST:", err);
+      return null;
+    }
+  }
+
+  const btnCalc = document.getElementById('btn-calc');
+  const resBox = document.getElementById('prat-result-box');
+  const resVal = document.getElementById('res-val');
+  const resDesc = document.getElementById('res-desc');
+
+  if (btnCalc) {
+    btnCalc.addEventListener('click', function() {
+      try {
+        const t = parseFloat(document.getElementById('inp-t').value);
+        const v = parseFloat(document.getElementById('inp-v').value);
+        if (isNaN(t) || isNaN(v)) {
+          resVal.innerText = "—";
+          resDesc.innerText = "Ingrese temperatura y viento";
+          return;
+        }
+        const st = calcularST(t, v);
+        if (st === null) {
+          resVal.innerText = "—";
+          resDesc.innerText = "Error cálculo";
+          return;
+        }
+        resVal.innerText = st + "°C";
+        // reset estilos
+        resBox.className = '';
+        resBox.style.background = "#ecf0f1";
+
+        if (st <= -57.5) {
+          resDesc.innerText = "EXTREMADAMENTE PELIGROSO (Congelamiento 30s)";
+          resBox.classList.add('risk-ext-peligro');
+        } else if (st <= -30) {
+          resDesc.innerText = "MUY PELIGROSO (Congelamiento 1 min)";
+          resBox.classList.add('risk-muy-peligro');
+        } else {
+          resDesc.innerText = "PELIGRO (Usar vestimenta adecuada)";
+        }
+      } catch (err) {
+        console.error("Error en btnCalc:", err);
+      }
+    });
+  } else {
+    console.warn("btn-calc no encontrado en DOM");
+  }
+
+  // Sincronizar con los datos que ya están en el header
+  const btnSync = document.getElementById('btn-sync');
+  if (btnSync) {
+    btnSync.addEventListener('click', function() {
+      try {
+        const metrics = document.getElementById('header-metrics').innerText || '';
+        const tMatch = metrics.match(/(-?\d+)\s*°C/);
+        const vMatch = metrics.match(/(\d+)\s?kts/);
+        if (tMatch) document.getElementById('inp-t').value = tMatch[1];
+        if (vMatch) document.getElementById('inp-v').value = vMatch[1];
+        // activar cálculo
+        if (btnCalc) btnCalc.click();
+      } catch (err) {
+        console.error("Error en btn-sync:", err);
+      }
+    });
+  }
+
+  // Toggle colapsar
+  const widget = document.getElementById('prat-wc');
+  const toggle = document.getElementById('prat-toggle');
+  if (toggle && widget) {
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      widget.classList.toggle('collapsed');
+      this.innerText = widget.classList.contains('collapsed') ? "+" : "—";
+    });
+  }
+});
+</script>
+<!-- END: Widget Calculadora Oficial -->
+
 </body>
 </html>

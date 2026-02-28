@@ -144,7 +144,6 @@
 
         .credits-bar { background: var(--navy); color: white; padding: 40px 20px; text-align: center; }
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
-        .credits-bar a { color: #3498db; text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -270,11 +269,12 @@
         document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL', dateOptions);
     }
 
+    // Reemplazada: versión que añade Humedad Relativa y visibilidad (se pasa a updateTrafficLights)
     async function fetchBirdseyeWeather() {
         try {
             const lat = -62.48, lon = -59.63;
-            // Añadimos uv_index a la consulta
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index&wind_speed_unit=kn`);
+            // Añadimos uv_index y visibility a la consulta
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index,visibility&wind_speed_unit=kn`);
             const data = await res.json();
             const c = data.current;
             
@@ -287,6 +287,11 @@
             const windKts = c.wind_speed_10m;
             const windKmH = windKts * 1.852;
             const uv = (c.uv_index !== undefined && c.uv_index !== null) ? c.uv_index : 0;
+            // Humedad relativa (porcentaje)
+            const rh = (c.relative_humidity_2m !== undefined && c.relative_humidity_2m !== null) ? c.relative_humidity_2m : (c.relativehumidity ?? null);
+            // Visibilidad (Open-Meteo da metros). Convertir a km si está presente
+            const vis_m = (c.visibility !== undefined && c.visibility !== null) ? c.visibility : (data.current?.visibility ?? null);
+            const vis_km = (vis_m !== null && vis_m !== undefined) ? (vis_m / 1000) : null;
             
             let windChill = temp;
             if (temp <= 10 && windKmH > 4.8) {
@@ -319,14 +324,18 @@
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val" style="color:${uvColor}">${uv.toFixed(1)}</div><div class="metric-label">Índice UV</div></div>
                 <div class="sep">|</div>
-                <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>`;
+                <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>
+                ${ (rh !== null) ? `<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>` : '' }
+            `;
 
-            updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv);
+            // Pasamos vis_km al manejador de semáforo para que pueda colorear aviación si es necesario
+            updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv, vis_km);
 
         } catch (e) { console.error("Error RealTime", e); }
     }
 
-    function updateTrafficLights(wind, gusts, chill, uv) {
+    // Reemplazada: ahora recibe vis_km y fuerza rojo en VUELO si vis < 5 km
+    function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
         const setLight = (id, color) => {
             const el = document.getElementById(id);
             if(el) el.querySelector('.dot').style.background = color;
@@ -338,11 +347,18 @@
         else setLight('light-botes', '#92d050'); // Verde
 
         // Lógica VUELO (Drones/Helo - Sensible a rachas)
-        if (gusts >= 20) setLight('light-vuelo', '#ff0000');
-        else if (gusts >= 12) setLight('light-vuelo', '#ffc000');
-        else setLight('light-vuelo', '#92d050');
+        // Si visibilidad por debajo de 5 km => ROJO en aviación (prioridad)
+        if (vis_km !== null && vis_km !== undefined && vis_km < 5) {
+            setLight('light-vuelo', '#ff0000');
+        } else if (gusts >= 20) {
+            setLight('light-vuelo', '#ff0000');
+        } else if (gusts >= 12) {
+            setLight('light-vuelo', '#ffc000');
+        } else {
+            setLight('light-vuelo', '#92d050');
+        }
 
-        // Lógica EXTERIOR (Sensación térmica y UV y visibilidad no incluida)
+        // Lógica EXTERIOR (Sensación térmica y UV)
         if (chill <= -25 || uv >= 11) setLight('light-exterior', '#ff0000');
         else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
         else setLight('light-exterior', '#92d050');
@@ -559,8 +575,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Encontrar índices para Temperatura (t_axis descendente)
       let it = t_axis.findIndex(val => val <= t);
       if (it === -1) it = t_axis.length - 1;
-      if (it === 0) it = 1;
-      const t0 = t_axis[it-1], t1 = t_axis[it];
+      if (it === 0) it = t_axis.length - 1;
+      const t0 = t_axis[it-1] !== undefined ? t_axis[it-1] : t_axis[it];
+      const t1 = t_axis[it] !== undefined ? t_axis[it] : t_axis[it-1];
 
       // Valores de la tabla (aseguramos índices)
       const q11 = tabla[iv-1] && tabla[iv-1][it-1] !== undefined ? tabla[iv-1][it-1] : t;

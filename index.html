@@ -46,7 +46,7 @@
         .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; }
-        
+       
         header { 
             background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
                         url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
@@ -175,6 +175,7 @@
 </aside>
 
 <main class="main-content">
+
     <header>
         <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
@@ -196,8 +197,7 @@
         <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
         <div class="astro-item"><label>📅 Fecha Actualización</label><span id="current-date">--/--/----</span></div>
     </section>
-
-    <nav id="days-nav" class="days-nav"></nav>
+    <nav id="sector-tabs" style="display:flex; gap:10px; padding: 20px 45px 0; flex-wrap: wrap;"></nav>    <nav id="days-nav" class="days-nav"></nav>
     <section class="grid-container" id="grid-pronostico"></section>
 
     <section class="footer-section">
@@ -257,7 +257,7 @@
 </div>
 
 <script>
-    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
     let myCharts = {}; 
 
     function updateClock() {
@@ -334,38 +334,51 @@
         } catch (e) { console.error("Error RealTime", e); }
     }
 
-    // Reemplazada: ahora recibe vis_km y fuerza rojo en VUELO si vis < 5 km
-    function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
-        const setLight = (id, color) => {
-            const el = document.getElementById(id);
-            if(el) el.querySelector('.dot').style.background = color;
-        };
+    // Reemplazada: ahora recibe vis_km y fuerza rojo en VUELO si vis < 2 km
+function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
+    const setLight = (id, color) => {
+        const el = document.getElementById(id);
+        if(el) el.querySelector('.dot').style.background = color;
+    };
 
-        // Lógica BOTES (Restricción por viento)
-        if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ff0000'); // Rojo
-        else if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ffc000'); // Amarillo
-        else setLight('light-botes', '#92d050'); // Verde
-
-        // Lógica VUELO (Drones/Helo - Sensible a rachas)
-        // Si visibilidad por debajo de 2 km => ROJO en aviación (prioridad)
-        if (vis_km !== null && vis_km !== undefined && vis_km < 2) {
-            setLight('light-vuelo', '#ff0000');
-        } else if (gusts >= 25) {
-            setLight('light-vuelo', '#ff0000');
-        } else if (gusts >= 30) {
-            setLight('light-vuelo', '#ffc000');
+    // Lógica BOTES (Restricción por viento y visibilidad)
+    if (vis_km !== null && vis_km !== undefined) {
+        if (vis_km < 1) {
+            setLight('light-botes', '#ff0000'); // Rojo por visibilidad muy baja
+        } else if (vis_km >= 1 && vis_km <= 4) {
+            setLight('light-botes', '#ffc000'); // Amarillo por visibilidad moderada
+        } else if (wind >= 25 || gusts >= 30) {
+            setLight('light-botes', '#ff0000'); // Rojo por viento fuerte
+        } else if (wind >= 20 || gusts >= 25) {
+            setLight('light-botes', '#ffc000'); // Amarillo por viento moderado
         } else {
-            setLight('light-vuelo', '#92d050');
+            setLight('light-botes', '#92d050'); // Verde
         }
-
-        // Lógica EXTERIOR (Sensación térmica y UV)
-        if (chill <= -15 || uv >= 11) setLight('light-exterior', '#ff0000');
-        else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
-        else setLight('light-exterior', '#92d050');
+    } else {
+        // Si no hay dato de visibilidad, solo por viento
+        if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ff0000');
+        else if (wind >= 20 || gusts >= 25) setLight('light-botes', '#ffc000');
+        else setLight('light-botes', '#92d050');
     }
 
+    // Lógica VUELO (Drones/Helo - Sensible a rachas y visibilidad)
+    if (vis_km !== null && vis_km !== undefined && vis_km < 2) {
+        setLight('light-vuelo', '#ff0000');
+    } else if (gusts >= 25) {
+        setLight('light-vuelo', '#ff0000');
+    } else if (gusts >= 30) {
+        setLight('light-vuelo', '#ffc000');
+    } else {
+        setLight('light-vuelo', '#92d050');
+    }
+
+    // Lógica EXTERIOR (Sensación térmica y UV)
+    if (chill <= -15 || uv >= 11) setLight('light-exterior', '#ff0000');
+    else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
+    else setLight('light-exterior', '#92d050');
+}
     async function fetchSheetsData() {
-        Papa.parse(URL_CSV, {
+        Papa.parse(window.URL_CSV, {
             download: true,
             header: false,
             skipEmptyLines: true,
@@ -415,7 +428,7 @@
         }).join('');
 
         if (!esProyeccion) {
-            gridHtml += `<button class="btn-full-day" onclick="verDetalle24h(${dayIdx}, '${dia}')">📊 VER EVOLUCIÓN DETALLADA POR HORA (${dia})</button>`;
+            gridHtml += `<button class="btn-full-day" onclick="verDetalle24h(${dayIdx}, '${dia}')">📊 DETALLE POR HORA (${dia})</button>`;
         }
 
         document.getElementById('grid-pronostico').innerHTML = gridHtml;
@@ -666,6 +679,56 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+// Configuración de sectores y GIDs
+const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
+const sectores = [
+  { nombre: "Bahía Chile (Base Prat)", gid: "0" },
+  { nombre: "Caleta Ardley (Base Fildes)", gid: "540210436" },
+  { nombre: "Base O'Higgins", gid: "1123581909" },
+  { nombre: "Estrecho Bransfield", gid: "1516567212" },
+  { nombre: "Bahía Paraíso", gid: "1679758591" },
+  { nombre: "Estrecho de Gerlache", gid: "1768410688" }
+];
+
+function getCSVUrl(gid) {
+  return `https://docs.google.com/spreadsheets/d/e/${ID_DOCUMENTO}/pub?gid=${gid}&single=true&output=csv`;
+}
+
+(function initSectorTabs() {
+  const container = document.getElementById('sector-tabs');
+  if (!container) return;
+  container.innerHTML = "";
+  sectores.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sector-tab';
+    btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s;";
+    if (i === 0) {
+        btn.classList.add('active');
+        btn.style.background = 'var(--navy)';
+        btn.style.color = 'white';
+    } else {
+        btn.style.background = 'white';
+        btn.style.color = 'var(--navy)';
+    }
+    btn.textContent = s.nombre;
+    btn.onclick = function() {
+      if (this.classList.contains('active')) return;
+      document.querySelectorAll('.sector-tab').forEach(t => {
+        t.classList.remove('active');
+        t.style.background = 'white';
+        t.style.color = 'var(--navy)';
+      });
+      this.classList.add('active');
+      this.style.background = 'var(--navy)';
+      this.style.color = 'white';
+      const titleEl = document.querySelector('.location-title');
+      if (titleEl) titleEl.textContent = s.nombre;
+      window.URL_CSV = getCSVUrl(s.gid);
+      if (typeof fetchSheetsData === 'function') fetchSheetsData();
+    };
+    container.appendChild(btn);
+  });
+})();
 </script>
 <!-- END: Widget Calculadora Oficial -->
 

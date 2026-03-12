@@ -28,7 +28,7 @@
             min-width: 1280px; 
             overflow-x: auto; 
         }
-        
+      
         .sidebar { width: 260px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
         .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 15px; }
         .sidebar img { width: 120px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
@@ -46,7 +46,7 @@
         .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; }
-       
+     
         header { 
             background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
                         url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
@@ -99,12 +99,12 @@
         .grid-container { padding: 0 45px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { border-radius: 15px; padding: 22px; border-top: 10px solid #cbd5e0; box-shadow: 0 6px 15px rgba(0,0,0,0.07); transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-        
+      
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; min-height: 35px; }
         .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 900; }
-        
+      
         .risk-tag { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 900; color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); }
-        
+      
         .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem; }
         .data-row span { font-weight: 700; color: #718096; width: 110px; }
         .data-row b { margin-left: auto; color: #2d3748; }
@@ -130,15 +130,15 @@
 
         .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 2% auto; padding: 30px; border-radius: 20px; width: 95%; max-width: 1400px; max-height: 90vh; overflow-y: auto; }
-        
+      
         .charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         .chart-box { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; height: 230px; }
-        
+      
         .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
         .row-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 25px; }
         .btn-interest { padding: 10px 20px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; transition: 0.3s; }
-        
+      
         .btn-social { padding: 8px 18px; border: 1px solid var(--twitter-blue); border-radius: 20px; text-decoration: none; color: var(--twitter-blue); font-weight: 800; font-size: 0.7rem; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         .btn-social:hover { background: var(--twitter-blue); color: white; transform: scale(1.05); }
 
@@ -197,7 +197,8 @@
         <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
         <div class="astro-item"><label>📅 Fecha Actualización</label><span id="current-date">--/--/----</span></div>
     </section>
-    <nav id="sector-tabs" style="display:flex; gap:10px; padding: 20px 45px 0; flex-wrap: wrap;"></nav>    <nav id="days-nav" class="days-nav"></nav>
+    <nav id="sector-tabs" style="display:flex; gap:10px; padding: 20px 45px 0; flex-wrap: wrap;"></nav>
+    <nav id="days-nav" class="days-nav"></nav>
     <section class="grid-container" id="grid-pronostico"></section>
 
     <section class="footer-section">
@@ -257,27 +258,43 @@
 </div>
 
 <script>
-        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72/pub?output=csv";
+    const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
+    const sectores = [
+      { nombre: "Bahía Chile (Base Prat)", gid: "681265403" },
+      { nombre: "Bahía Fildes (Caleta Ardley)", gid: "540210436" },
+      { nombre: "Base O'Higgins", gid: "1123581909" },
+      { nombre: "Estrecho Nelson", gid: "576000133" },
+      { nombre: "Estrecho Bransfield", gid: "1516567212" },
+      { nombre: "Isla Decepción", gid: "1121548584" },
+      { nombre: "Estrecho de Gerlache", gid: "1768410688" },
+      { nombre: "Bahía Paraíso", gid: "1679758591" },
+      { nombre: "Base Carvajal", gid: "1048446631" }
+    ];
+
+    function getCSVUrl(gid) {
+      return `https://docs.google.com/spreadsheets/d/e/${ID_DOCUMENTO}/pub?gid=${gid}&single=true&output=csv`;
+    }
+
+    let URL_CSV = getCSVUrl(sectores[0].gid);
+
     let myCharts = {}; 
 
     function updateClock() {
         const now = new Date();
         const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
         const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Punta_Arenas' };
-        
+      
         document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', timeOptions) + " (UTC -3)";
         document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL', dateOptions);
     }
 
-    // Reemplazada: versión que añade Humedad Relativa y visibilidad (se pasa a updateTrafficLights)
     async function fetchBirdseyeWeather() {
         try {
             const lat = -62.48, lon = -59.66;
-            // Añadimos uv_index y visibility a la consulta
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index,visibility&wind_speed_unit=kn`);
             const data = await res.json();
             const c = data.current;
-            
+          
             const getDirText = (deg) => {
                 const dirs = ['NORTE', 'N/NE', 'NE', 'E/NE', 'ESTE', 'E/SE', 'SE', 'S/SE', 'SUR', 'S/SW', 'SW', 'SW/W', 'WESTE', 'W/NW', 'NW', 'NW/N'];
                 return dirs[Math.round(deg / 22.5) % 16];
@@ -287,18 +304,15 @@
             const windKts = c.wind_speed_10m;
             const windKmH = windKts * 1.852;
             const uv = (c.uv_index !== undefined && c.uv_index !== null) ? c.uv_index : 0;
-            // Humedad relativa (porcentaje)
             const rh = (c.relative_humidity_2m !== undefined && c.relative_humidity_2m !== null) ? c.relative_humidity_2m : (c.relativehumidity ?? null);
-            // Visibilidad (Open-Meteo da metros). Convertir a km si está presente
             const vis_m = (c.visibility !== undefined && c.visibility !== null) ? c.visibility : (data.current?.visibility ?? null);
             const vis_km = (vis_m !== null && vis_m !== undefined) ? (vis_m / 1000) : null;
-            
+          
             let windChill = temp;
             if (temp <= 10 && windKmH > 4.8) {
                 windChill = 13.12 + (0.6215 * temp) - (11.37 * Math.pow(windKmH, 0.16)) + (0.3965 * temp * Math.pow(windKmH, 0.16));
             }
 
-            // Lógica de Colores UV
             let uvColor = "#27ae60"; // Bajo
             if (uv >= 11) uvColor = "#8e44ad"; // Extremo
             else if (uv >= 8) uvColor = "#e74c3c"; // Muy Alto
@@ -328,57 +342,52 @@
                 ${ (rh !== null) ? `<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>` : '' }
             `;
 
-            // Pasamos vis_km al manejador de semáforo para que pueda colorear aviación si es necesario
             updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv, vis_km);
 
         } catch (e) { console.error("Error RealTime", e); }
     }
 
-    // Reemplazada: ahora recibe vis_km y fuerza rojo en VUELO si vis < 2 km
-function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
-    const setLight = (id, color) => {
-        const el = document.getElementById(id);
-        if(el) el.querySelector('.dot').style.background = color;
-    };
+    function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
+        const setLight = (id, color) => {
+            const el = document.getElementById(id);
+            if(el) el.querySelector('.dot').style.background = color;
+        };
 
-    // Lógica BOTES (Restricción por viento y visibilidad)
-    if (vis_km !== null && vis_km !== undefined) {
-        if (vis_km < 1) {
-            setLight('light-botes', '#ff0000'); // Rojo por visibilidad muy baja
-        } else if (vis_km >= 1 && vis_km <= 4) {
-            setLight('light-botes', '#ffc000'); // Amarillo por visibilidad moderada
-        } else if (wind >= 25 || gusts >= 30) {
-            setLight('light-botes', '#ff0000'); // Rojo por viento fuerte
-        } else if (wind >= 20 || gusts >= 25) {
-            setLight('light-botes', '#ffc000'); // Amarillo por viento moderado
+        if (vis_km !== null && vis_km !== undefined) {
+            if (vis_km < 1) {
+                setLight('light-botes', '#ff0000');
+            } else if (vis_km >= 1 && vis_km <= 4) {
+                setLight('light-botes', '#ffc000');
+            } else if (wind >= 25 || gusts >= 30) {
+                setLight('light-botes', '#ff0000');
+            } else if (wind >= 20 || gusts >= 25) {
+                setLight('light-botes', '#ffc000');
+            } else {
+                setLight('light-botes', '#92d050');
+            }
         } else {
-            setLight('light-botes', '#92d050'); // Verde
+            if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ff0000');
+            else if (wind >= 20 || gusts >= 25) setLight('light-botes', '#ffc000');
+            else setLight('light-botes', '#92d050');
         }
-    } else {
-        // Si no hay dato de visibilidad, solo por viento
-        if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ff0000');
-        else if (wind >= 20 || gusts >= 25) setLight('light-botes', '#ffc000');
-        else setLight('light-botes', '#92d050');
+
+        if (vis_km !== null && vis_km !== undefined && vis_km < 2) {
+            setLight('light-vuelo', '#ff0000');
+        } else if (gusts >= 25) {
+            setLight('light-vuelo', '#ff0000');
+        } else if (gusts >= 30) {
+            setLight('light-vuelo', '#ffc000');
+        } else {
+            setLight('light-vuelo', '#92d050');
+        }
+
+        if (chill <= -15 || uv >= 11) setLight('light-exterior', '#ff0000');
+        else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
+        else setLight('light-exterior', '#92d050');
     }
 
-    // Lógica VUELO (Drones/Helo - Sensible a rachas y visibilidad)
-    if (vis_km !== null && vis_km !== undefined && vis_km < 2) {
-        setLight('light-vuelo', '#ff0000');
-    } else if (gusts >= 25) {
-        setLight('light-vuelo', '#ff0000');
-    } else if (gusts >= 30) {
-        setLight('light-vuelo', '#ffc000');
-    } else {
-        setLight('light-vuelo', '#92d050');
-    }
-
-    // Lógica EXTERIOR (Sensación térmica y UV)
-    if (chill <= -15 || uv >= 11) setLight('light-exterior', '#ff0000');
-    else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
-    else setLight('light-exterior', '#92d050');
-}
     async function fetchSheetsData() {
-        Papa.parse(window.URL_CSV, {
+        Papa.parse(URL_CSV, {
             download: true,
             header: false,
             skipEmptyLines: true,
@@ -405,7 +414,7 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
         let gridHtml = filtered.map(r => {
             const n = (r[4] || "0").match(/\d+/g);
             const valorEval = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
-            
+          
             let riesgoT, riesgoC, iconoSup, bgClass;
             if (valorEval >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; bgClass = "bg-peligro"; }
             else if (valorEval >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; bgClass = "bg-alto"; }
@@ -413,7 +422,7 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
             else { riesgoT = "RIESGO BAJO"; riesgoC = "card-bajo"; iconoSup = "✅"; bgClass = "bg-bajo"; }
 
             if(valorEval >= 21) riesgoC += " card-titilar";
-            
+          
             return `<div class="card ${riesgoC}">
                 <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bgClass}">${iconoSup} ${riesgoT}</div></div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
@@ -439,10 +448,10 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
         document.getElementById('modalDetalle').style.display = 'block';
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.478796&longitude=-59.665912&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,cloud_cover,pressure_msl&wind_speed_unit=kn&timezone=America%2FPunta_Arenas`);
         const data = await res.json();
-        
+      
         const l=[], v=[], r=[], t=[], st=[], h=[], p=[], cld=[], pres=[];
         let htm="";
-        
+      
         for(let i=idx*24; i<(idx*24)+24; i++){
             if(!data.hourly.time[i]) break;
             const hr = data.hourly.time[i].split('T')[1].substring(0,5);
@@ -455,7 +464,7 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
             h.push(data.hourly.relative_humidity_2m[i]);
             cld.push(data.hourly.cloud_cover[i]);
             pres.push(data.hourly.pressure_msl[i]);
-            
+          
             htm += `<tr>
                 <td>${hr}</td>
                 <td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>
@@ -489,6 +498,42 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
 
     updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000); setInterval(fetchBirdseyeWeather, 120000); setInterval(fetchSheetsData, 120000);
+
+    (function initSectorTabs() {
+      const container = document.getElementById('sector-tabs');
+      if (!container) return;
+      container.innerHTML = "";
+      sectores.forEach((s, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'sector-tab';
+        btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s;";
+        if (i === 0) {
+            btn.classList.add('active');
+            btn.style.background = 'var(--navy)';
+            btn.style.color = 'white';
+        } else {
+            btn.style.background = 'white';
+            btn.style.color = 'var(--navy)';
+        }
+        btn.textContent = s.nombre;
+        btn.onclick = function() {
+          if (this.classList.contains('active')) return;
+          document.querySelectorAll('.sector-tab').forEach(t => {
+            t.classList.remove('active');
+            t.style.background = 'white';
+            t.style.color = 'var(--navy)';
+          });
+          this.classList.add('active');
+          this.style.background = 'var(--navy)';
+          this.style.color = 'white';
+          const titleEl = document.querySelector('.location-title');
+          if (titleEl) titleEl.textContent = s.nombre;
+          URL_CSV = getCSVUrl(s.gid);
+          if (typeof fetchSheetsData === 'function') fetchSheetsData();
+        };
+        container.appendChild(btn);
+      });
+    })();
 </script>
 
 <!-- START: Widget Calculadora Oficial -->
@@ -509,15 +554,15 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
   #prat-wc .btn-calc { background: #3498db; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 900; flex: 1; text-transform: uppercase; transition: 0.3s; }
   #prat-wc .btn-calc:hover { background: #2980b9; }
   #prat-wc .btn-sync { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 1.0rem; font-weight: 700; }
-  
+
   #prat-result-box { margin-top: 15px; padding: 15px; border-radius: 10px; text-align: center; transition: 0.5s; color: #1a1a1a; background: #ecf0f1; }
   #prat-result-box .val { font-size: 1.8rem; font-weight: 900; display: block; }
   #prat-result-box .desc { font-size: 1.0rem; font-weight: 800; text-transform: uppercase; margin-top: 5px; display: block; }
-  
+
   /* Colores de la Tabla Oficial */
   .risk-muy-peligro { background: #ffff00 !important; color: black !important; } /* Amarillo */
   .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red 1s infinite; } /* Rojo */
-  
+
   @keyframes pulse-red { 0% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } 50% { box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.5); } 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } }
   #prat-wc.collapsed { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
   #prat-wc.collapsed .body, #prat-wc.collapsed .head .title { display: none; }
@@ -532,10 +577,10 @@ function updateTrafficLights(wind, gusts, chill, uv, vis_km) {
   <div class="body">
     <label>Temperatura Aire (°C)</label>
     <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5">
-    
+  
     <label>Velocidad Viento (Nudos)</label>
     <input type="number" id="inp-v" placeholder="Ej: 20" step="1">
-    
+  
     <div class="row">
       <button class="btn-sync" id="btn-sync">Sincronizar Estación</button>
       <button class="btn-calc" id="btn-calc">Calcular</button>
@@ -557,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Datos de la tabla oficial (Nudos vs Temperatura)
   const v_axis = [5, 10, 15, 20, 25, 30, 35, 40];
   const t_axis = [10, 7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -42.5, -45, -47.5, -50];
-  
+
   const tabla = [
     [7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -55], // 5 kts
     [5, 2.5, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -57.5, -60, -62.5, -65, -67.5], // 10 kts
@@ -679,58 +724,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-// Configuración de sectores y GIDs
-const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
-const sectores = [
-  { nombre: "Bahía Chile (Base Prat)", gid: "0" },
-  { nombre: "Caleta Ardley (Base Fildes)", gid: "540210436" },
-  { nombre: "Base O'Higgins", gid: "1123581909" },
-  { nombre: "Estrecho Bransfield", gid: "1516567212" },
-  { nombre: "Bahía Paraíso", gid: "1679758591" },
-  { nombre: "Estrecho de Gerlache", gid: "1768410688" }
-];
-
-function getCSVUrl(gid) {
-  return `https://docs.google.com/spreadsheets/d/e/${ID_DOCUMENTO}/pub?gid=${gid}&single=true&output=csv`;
-}
-
-(function initSectorTabs() {
-  const container = document.getElementById('sector-tabs');
-  if (!container) return;
-  container.innerHTML = "";
-  sectores.forEach((s, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'sector-tab';
-    btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s;";
-    if (i === 0) {
-        btn.classList.add('active');
-        btn.style.background = 'var(--navy)';
-        btn.style.color = 'white';
-    } else {
-        btn.style.background = 'white';
-        btn.style.color = 'var(--navy)';
-    }
-    btn.textContent = s.nombre;
-    btn.onclick = function() {
-      if (this.classList.contains('active')) return;
-      document.querySelectorAll('.sector-tab').forEach(t => {
-        t.classList.remove('active');
-        t.style.background = 'white';
-        t.style.color = 'var(--navy)';
-      });
-      this.classList.add('active');
-      this.style.background = 'var(--navy)';
-      this.style.color = 'white';
-      const titleEl = document.querySelector('.location-title');
-      if (titleEl) titleEl.textContent = s.nombre;
-      window.URL_CSV = getCSVUrl(s.gid);
-      if (typeof fetchSheetsData === 'function') fetchSheetsData();
-    };
-    container.appendChild(btn);
-  });
-})();
 </script>
-<!-- END: Widget Calculadora Oficial -->
 
 </body>
 </html>

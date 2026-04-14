@@ -21,7 +21,7 @@
         /* Forzamos un ancho mínimo para que en el celular no se amontone nada */
         body { 
             font-family: 'Roboto', sans-serif; 
-            background: var(--bg); 
+            background: var(--navy); /* CAMBIO: Fondo azul oscuro en lugar de gris */
             margin: 0; 
             display: flex; 
             height: 100vh; 
@@ -29,7 +29,19 @@
             overflow-x: auto; 
         }
       
-        .sidebar { width: 260px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; }
+        /* CAMBIO: Sidebar extendida hasta abajo con flex */
+        .sidebar { 
+            width: 260px; 
+            background: var(--navy); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px; 
+            flex-shrink: 0; 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3); 
+            z-index: 10; 
+            min-height: 100vh; /* Extender hasta abajo */
+        }
         .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 15px; }
         .sidebar img { width: 120px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
         .sidebar h2 { font-size: 0.8rem; text-align: center; text-transform: uppercase; margin: 0 0 20px 0; line-height: 1.4; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 15px; color: #ecf0f1; }
@@ -39,13 +51,31 @@
         .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.8rem; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
 
-        .risk-legend { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; font-size: 0.7rem; margin-top: auto; }
-        .risk-legend h4 { margin: 0 0 8px 0; font-size: 0.75rem; color: #3498db; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
-        .legend-item { display: flex; justify-content: space-between; margin-bottom: 4px; padding: 2px 0; }
-        .l-bajo { color: var(--color-bajo); } .l-mod { color: var(--color-mod); } 
-        .l-alto { color: var(--color-alto); } .l-peli { color: #ff5555; }
+        /* CAMBIO: Recuadro de riesgo en fondo blanco */
+        .risk-legend { 
+            background: white; /* Fondo blanco */
+            color: #1a3a5a; /* Texto azul oscuro */
+            padding: 15px; 
+            border-radius: 10px; 
+            font-size: 0.75rem; 
+            margin-top: auto; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .risk-legend h4 { 
+            margin: 0 0 10px 0; 
+            font-size: 0.8rem; 
+            color: var(--navy); /* Título en azul */
+            border-bottom: 2px solid var(--navy); 
+            padding-bottom: 6px; 
+            font-weight: 900;
+        }
+        .legend-item { display: flex; justify-content: space-between; margin-bottom: 6px; padding: 3px 0; }
+        .l-bajo { color: var(--color-bajo); font-weight: 700; } 
+        .l-mod { color: var(--color-mod); font-weight: 700; } 
+        .l-alto { color: var(--color-alto); font-weight: 700; } 
+        .l-peli { color: #ff5555; font-weight: 700; }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; background: var(--bg); }
      
         header { 
             background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
@@ -145,6 +175,7 @@
         .credits-bar { background: var(--navy); color: white; padding: 40px 20px; text-align: center; }
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
     </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -165,6 +196,7 @@
         <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS PASO DRAKE</a>
         <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> TABLA DE MAREAS</a>
     </nav>
+    <!-- CAMBIO: Recuadro de riesgo con fondo blanco -->
     <div class="risk-legend">
         <h4>Referencia Viento (Sost.)</h4>
         <div class="legend-item"><span class="l-bajo">● Bajo:</span> <span>1 - 15 kts</span></div>
@@ -465,14 +497,16 @@
             cld.push(data.hourly.cloud_cover[i]);
             pres.push(data.hourly.pressure_msl[i]);
           
+            // CORREGIDO: Orden de columnas coincide con encabezados de tabla
+            // 1. Hora | 2. Viento/Racha | 3. T° Aire/Sensación | 4. Prec | 5. Hum | 6. Nub | 7. Pres
             htm += `<tr>
                 <td>${hr}</td>
                 <td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>
                 <td><span style="color:#0000ff">${t[t.length-1]}°</span> / <span style="color:#ff0000">${st[st.length-1]}°</span></td>
+                <td>${p[p.length-1]}</td>
                 <td>${h[h.length-1]}%</td>
                 <td>${cld[cld.length-1]}%</td>
                 <td>${Math.round(pres[pres.length-1])}</td>
-                <td>${p[p.length-1]}</td>
             </tr>`;
         }
         document.getElementById('modalBody').innerHTML = htm;
@@ -480,21 +514,87 @@
     }
 
     function initCharts(l, v, r, t, st, h, p, cld, pres) {
-        const conf = (id, lab, lab2, lab3, dat, dat2, dat3, col, col2, col3, type='line') => {
-            if(myCharts[id]) myCharts[id].destroy();
-            const datasets = [{ label: lab, data: dat, borderColor: col, backgroundColor: col+'22', fill: true, tension: 0.3 }];
-            if(dat2) datasets.push({ label: lab2 || 'Rachas', data: dat2, borderColor: col2 || 'red', borderDash: [5,5], fill: false, tension: 0.3 });
-            myCharts[id] = new Chart(document.getElementById(id), { type, data: { labels: l, datasets }, options: { responsive: true, maintainAspectRatio: false } });
-        };
-        conf('chartViento', 'Viento (kts)', 'Rachas', null, v, r, null, '#3498db', '#e74c3c');
-        conf('chartTemp', 'T° Aire (°C)', 'Sensación Térmica', null, t, st, null, '#0000ff', '#ff0000');
-        conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
-        conf('chartHum', 'Humedad (%)', null, null, h, null, null, '#16a085');
-        conf('chartCloud', 'Nubosidad (%)', null, null, cld, null, null, '#7f8c8d');
-        conf('chartPresion', 'Presión (hPa)', null, null, pres, null, null, '#8e44ad');
+    // Función para crear modal de gráfico agrandado
+    function createChartModal(canvasId, chartInstance) {
+        let modal = document.getElementById('chart-modal-' + canvasId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'chart-modal-' + canvasId;
+            modal.style.cssText = 'display: none; position: fixed; z-index: 20000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); cursor: pointer;';
+
+            const content = document.createElement('div');
+            content.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 80%; background: white; border-radius: 20px; padding: 30px; box-sizing: border-box;';
+
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.cssText = 'position: absolute; top: 15px; right: 25px; font-size: 3rem; font-weight: 900; cursor: pointer; color: #1a3a5a; z-index: 10;';
+            closeBtn.onclick = function(e) {
+                e.stopPropagation();
+                modal.style.display = 'none';
+            };
+
+            const canvasContainer = document.createElement('div');
+            canvasContainer.style.cssText = 'width: 100%; height: 100%; position: relative;';
+
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id = 'modal-canvas-' + canvasId;
+
+            canvasContainer.appendChild(newCanvas);
+            content.appendChild(closeBtn);
+            content.appendChild(canvasContainer);
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            modal.onclick = function(e) {
+                if (e.target === modal) modal.style.display = 'none';
+            };
+        }
+
+        modal.style.display = 'block';
+        const ctx = document.getElementById('modal-canvas-' + canvasId).getContext('2d');
+
+        if (window['modalChart_' + canvasId]) window['modalChart_' + canvasId].destroy();
+
+        const originalConfig = chartInstance.config;
+        window['modalChart_' + canvasId] = new Chart(ctx, {
+            type: originalConfig.type,
+            data: originalConfig.data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { font: { size: 16, weight: 'bold' } } } },
+                scales: { x: { ticks: { font: { size: 14 } } }, y: { ticks: { font: { size: 14 } } } }
+            }
+        });
     }
 
-    function cerrarModal() { document.getElementById('modalDetalle').style.display = 'none'; }
+    const conf = (id, lab, lab2, lab3, dat, dat2, dat3, col, col2, col3, type='line') => {
+        if(myCharts[id]) myCharts[id].destroy();
+        const datasets = [{ label: lab, data: dat, borderColor: col, backgroundColor: col+'22', fill: true, tension: 0.3 }];
+        if(dat2) datasets.push({ label: lab2 || 'Rachas', data: dat2, borderColor: col2 || 'red', borderDash: [5,5], fill: false, tension: 0.3 });
+
+        const canvas = document.getElementById(id);
+        myCharts[id] = new Chart(canvas, { 
+            type, 
+            data: { labels: l, datasets }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                onClick: function() { createChartModal(id, myCharts[id]); },
+                onHover: function(e, active) { e.native.target.style.cursor = active.length > 0 ? 'pointer' : 'zoom-in'; }
+            } 
+        });
+        canvas.style.cursor = 'zoom-in';
+    };
+    conf('chartViento', 'Viento (kts)', 'Rachas', null, v, r, null, '#3498db', '#e74c3c');
+    conf('chartTemp', 'T° Aire (°C)', 'Sensación Térmica', null, t, st, null, '#0000ff', '#ff0000');
+    conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
+    conf('chartHum', 'Humedad (%)', null, null, h, null, null, '#16a085');
+    conf('chartCloud', 'Nubosidad (%)', null, null, cld, null, null, '#7f8c8d');
+    conf('chartPresion', 'Presión (hPa)', null, null, pres, null, null, '#8e44ad');
+}
+
+function cerrarModal() { document.getElementById('modalDetalle').style.display = 'none'; }
 
     updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000); setInterval(fetchBirdseyeWeather, 120000); setInterval(fetchSheetsData, 120000);

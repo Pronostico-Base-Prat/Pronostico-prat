@@ -498,7 +498,7 @@
             pres.push(data.hourly.pressure_msl[i]);
           
             // CORREGIDO: Orden de columnas coincide con encabezados de tabla
-            // 1. Hora | 2. Viento/Racha | 3. T° Aire/Sensación | 4. Prec | 5. Hum | 6. Nub | 7. Pres
+            // 1. Hora (UTC)| 2. Viento/Racha (KT)| 3. T° Aire/Sensación (°C)| 4. Prec (mm)| 5. Hum (%)| 6. Nub | 7. Pres (hPa)
             htm += `<tr>
                 <td>${hr}</td>
                 <td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>

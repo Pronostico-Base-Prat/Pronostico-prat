@@ -78,17 +78,16 @@
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 1020px; background: var(--bg); }
      
         header { 
-            background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%), 
-                        url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg'); 
+            background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%);
             background-size: cover; 
-            background-position: center 30%; 
             min-height: 450px; 
-            padding: 45px; 
+            padding: 0; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between; 
             box-sizing: border-box;
             position: relative;
+            overflow: hidden;
         }
 
         .location-title { 
@@ -176,6 +175,7 @@
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -208,16 +208,19 @@
 
 <main class="main-content">
 
-    <header>
-        <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
-            <!-- Nuevo: Semáforo de Operaciones -->
-            <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center;">
-                <span style="font-size: 0.65rem; font-weight: 900; color: #1a3a5a; text-transform: uppercase;">Estado Ops:</span>
-                <div id="light-botes" title="Operaciones de Botes/Zodiac" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> BOTES</div>
-                <div id="light-vuelo" title="Vuelo de Drones/Aeronaves" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> VUELO</div>
-                <div id="light-exterior" title="Trabajos en Exterior" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> EXTERIOR</div>
+    <header id="main-header">
+        <div id="header-bg-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg') center 30% / cover no-repeat; z-index: 0; transition: background 0.5s ease;"></div>
+        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
+                <!-- Nuevo: Semáforo de Operaciones -->
+                <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center;">
+                    <span style="font-size: 0.65rem; font-weight: 900; color: #1a3a5a; text-transform: uppercase;">Estado Ops:</span>
+                    <div id="light-botes" title="Operaciones de Botes/Zodiac" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> BOTES</div>
+                    <div id="light-vuelo" title="Vuelo de Drones/Aeronaves" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> VUELO</div>
+                    <div id="light-exterior" title="Trabajos en Exterior" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> EXTERIOR</div>
+                </div>
             </div>
         </div>
     </header>
@@ -228,6 +231,7 @@
         <div class="astro-item"><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div>
         <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
         <div class="astro-item"><label>📅 Fecha Actualización</label><span id="current-date">--/--/----</span></div>
+        <div class="astro-item"><label>🔄 Última Corrida</label><span id="last-run">--:-- UTC | --</span></div>
     </section>
     <nav id="sector-tabs" style="display:flex; gap:10px; padding: 20px 45px 0; flex-wrap: wrap;"></nav>
     <nav id="days-nav" class="days-nav"></nav>
@@ -275,9 +279,9 @@
         <table style="width:100%; border-collapse: collapse; text-align:center; font-size: 0.85rem;">
             <thead>
                 <tr style="background: var(--navy); color: white;">
-                    <th style="padding:10px;">Hora</th>
+                    <th style="padding:10px;">Hora (UTC)</th>
                     <th>Viento/Racha (kts)</th>
-                    <th>T° Aire/Sensación Térmica</th>
+                    <th>T° Aire/Sensación Térmica (°C)</th>
                     <th>Prec (mm)</th>
                     <th>Hum (%)</th>
                     <th>Nub (%)</th>
@@ -292,15 +296,15 @@
 <script>
     const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
     const sectores = [
-      { nombre: "Bahía Chile (Base Prat)", gid: "939106272" },
-      { nombre: "Bahía Fildes (Caleta Ardley)", gid: "1678435349" },
-      { nombre: "Base O'Higgins", gid: "1123581909" },
-      { nombre: "Estrecho Nelson", gid: "942856754" },
-      { nombre: "Estrecho Bransfield", gid: "2098562938" },
-      { nombre: "Isla Decepción", gid: "1685199890" },
-      { nombre: "Estrecho de Gerlache", gid: "2049108687" },
-      { nombre: "Bahía Paraíso", gid: "1517815039" },
-      { nombre: "Base Carvajal", gid: "1183808960" }
+      { nombre: "Bahía Chile (Base Prat)", gid: "939106272", key: "prat", imagen: "https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg" },
+      { nombre: "Bahía Fildes (Caleta Ardley)", gid: "1678435349", key: "fildes", imagen: "https://images.visitchile.com/destinos/4451_Bahia_Fildes.jpg?w=960&h=448&fit=crop&q=auto&auto=format" },
+      { nombre: "Base O'Higgins", gid: "1123581909", key: "ohiggins", imagen: "https://www.calacademy.org/sites/default/files/medialibrary/blogs/thelongview/wp-content/uploads/2012/05/bernardo-oe28099higgins-base1041x673.jpg" },
+      { nombre: "Estrecho Nelson", gid: "942856754", key: "nelson", imagen: "https://cdn.britannica.com/86/189286-050-59B38044/Mountains-sunset-Antarctic-Peninsula-Moon.jpg" },
+      { nombre: "Estrecho Bransfield", gid: "2098562938", key: "bransfield", imagen: "https://wpd.ugr.es/~bravoseis/wp-content/uploads/2017/11/1200px-Bransfield-Strait-860x484.jpg" },
+      { nombre: "Isla Decepción", gid: "1685199890", key: "decepcion", imagen: "https://tecolotito.elsiglodetorreon.com.mx/i/2020/09/1343005.jpeg" },
+      { nombre: "Estrecho de Gerlache", gid: "2049108687", key: "gerlache", imagen: "https://live.staticflickr.com/65535/54340781868_b05aa3340b_b.jpg" },
+      { nombre: "Bahía Paraíso", gid: "1517815039", key: "paraiso", imagen: "https://i.ytimg.com/vi/WmlEtmXnD7c/maxresdefault.jpg" },
+      { nombre: "Base Carvajal", gid: "1183808960", key: "carvajal", imagen: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEid4dvkAJ_6EzVOnO67zfQCW5iqigfiEIdTtSbvqEt062CG-S7PTZjAJLf1vQunRbD8haqc-CZwchwRPXx-B3UQIjxBR0DLPGDOMw8sYnGBdzccmto1YAvr_2LmlgnkX6hQeVI23rTrTOzY/w1200-h630-p-k-no-nu/4g.jpg" }
     ];
 
     function getCSVUrl(gid) {
@@ -311,13 +315,50 @@
 
     let myCharts = {}; 
 
+    function getModelRunInfo() {
+        const now = new Date();
+        // Convertir hora local (Chile/Magallanes UTC-3) a UTC
+        const utcHour = (now.getUTCHours());
+        const utcMin = now.getUTCMinutes();
+        const utcTimeStr = String(utcHour).padStart(2, '0') + ':' + String(utcMin).padStart(2, '0');
+
+        let runModelo, runHoraUTC;
+        // 06:00 UTC → entre 06:00 y 14:00 local (03:00-11:00 UTC aprox, pero según regla del usuario)
+        // La regla es según hora LOCAL de Chile (UTC-3):
+        // 06:00 UTC corrida → visible entre 06:00-14:00 LOCAL (03:00-11:00 UTC)
+        // 12:00 UTC corrida → visible entre 14:00-20:00 LOCAL (11:00-17:00 UTC)  
+        // 18:00 UTC corrida → visible entre 20:00-24:00 LOCAL (17:00-21:00 UTC)
+        // 00:00 UTC corrida → visible entre 00:00-06:00 LOCAL (21:00-03:00 UTC)
+
+        const localHour = now.getHours(); // Hora local Chile
+
+        if (localHour >= 6 && localHour < 14) {
+            runModelo = "GFS / AMPS";
+            runHoraUTC = "06:00";
+        } else if (localHour >= 14 && localHour < 20) {
+            runModelo = "GFS / AMPS";
+            runHoraUTC = "12:00";
+        } else if (localHour >= 20 && localHour < 24) {
+            runModelo = "GFS / AMPS";
+            runHoraUTC = "18:00";
+        } else { // 00:00 a 06:00 local
+            runModelo = "GFS / AMPS";
+            runHoraUTC = "00:00";
+        }
+
+        return { runHoraUTC, runModelo, utcTimeStr };
+    }
+
     function updateClock() {
+
         const now = new Date();
         const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
         const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Punta_Arenas' };
       
         document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', timeOptions) + " (UTC -3)";
         document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL', dateOptions);
+        const runInfo = getModelRunInfo();
+        document.getElementById('last-run').innerText = runInfo.runHoraUTC + ' UTC | ' + runInfo.runModelo;
     }
 
     async function fetchBirdseyeWeather() {
@@ -372,6 +413,7 @@
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>
                 ${ (rh !== null) ? `<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>` : '' }
+            <div class="sep">|</div><div class="metric-item"><div class="metric-val" style="font-size:0.65rem; color:#1a3a5a; opacity:0.7;">Open-Meteo API</div><div class="metric-label" style="font-size:0.5rem;">FUENTE</div></div>
             `;
 
             updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv, vis_km);
@@ -465,6 +507,7 @@
                     <div class="temp-item"><small>Temperatura del aire</small><div style="color:#0000ff">${r[6]}</div></div>
                     <div class="temp-item"><small>Sensación Térmica</small><div style="color:#ff0000">${r[7]}</div></div>
                 </div>
+                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(0,0,0,0.08); font-size:0.65rem; color:#718096; font-weight:700; text-align:center; letter-spacing:0.3px;">Análisis propio de modelos: AMPS (coef. 5.0) - GFS (coef. 3.0)</div>
             </div>`;
         }).join('');
 
@@ -628,6 +671,11 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
           this.style.color = 'white';
           const titleEl = document.querySelector('.location-title');
           if (titleEl) titleEl.textContent = s.nombre;
+          // Cambiar imagen de fondo del header
+          const bgImg = document.getElementById('header-bg-img');
+          if (bgImg && s.imagen) {
+            bgImg.style.backgroundImage = "url('" + s.imagen + "')";
+          }
           URL_CSV = getCSVUrl(s.gid);
           if (typeof fetchSheetsData === 'function') fetchSheetsData();
         };

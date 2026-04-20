@@ -90,21 +90,38 @@
             overflow: hidden;
         }
 
+        .location-title-wrap { 
+            text-align: center; 
+            width: 100%; 
+            background: rgba(0,0,0,0.25); 
+            padding: 20px 30px; 
+            border-radius: 16px; 
+            backdrop-filter: blur(4px);
+            display: inline-block;
+        }
         .location-title { 
-            font-size: 5.0rem; 
+            font-size: 4.2rem; 
             font-weight: 900; 
-            color: #0d1b2a; 
+            color: #ffffff; 
             margin: 0; 
             letter-spacing: -1.5px; 
-            text-shadow: 0 2px 10px rgba(255,255,255,0.8);
-            text-align: center;
-            width: 100%;
+            text-shadow: 0 3px 12px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,1);
+            line-height: 1.1;
+        }
+        .location-subtitle {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-top: 10px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,1);
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .current-metrics { 
             display: flex; gap: 18px; align-items: center; width: max-content;
-            background: rgba(255,255,255,0.85); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.92); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.25);
             align-self: flex-start;
         }
 
@@ -210,8 +227,12 @@
 
     <header id="main-header">
         <div id="header-bg-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg') center 30% / cover no-repeat; z-index: 0; transition: background 0.5s ease;"></div>
-        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-            <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
+        <div id="header-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%); z-index: 1; pointer-events: none;"></div>
+        <div style="position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 45px;">
+            <div class="location-title-wrap">
+                <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
+                <div class="location-subtitle" id="location-subtitle">Base Naval Antártica Capitán Arturo Prat</div>
+            </div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
                 <!-- Nuevo: Semáforo de Operaciones -->
@@ -296,15 +317,15 @@
 <script>
     const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
     const sectores = [
-      { nombre: "Bahía Chile (Base Prat)", gid: "939106272", key: "prat", imagen: "https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg" },
-      { nombre: "Bahía Fildes (Caleta Ardley)", gid: "1678435349", key: "fildes", imagen: "https://images.visitchile.com/destinos/4451_Bahia_Fildes.jpg?w=960&h=448&fit=crop&q=auto&auto=format" },
-      { nombre: "Base O'Higgins", gid: "1123581909", key: "ohiggins", imagen: "https://www.calacademy.org/sites/default/files/medialibrary/blogs/thelongview/wp-content/uploads/2012/05/bernardo-oe28099higgins-base1041x673.jpg" },
-      { nombre: "Estrecho Nelson", gid: "942856754", key: "nelson", imagen: "https://cdn.britannica.com/86/189286-050-59B38044/Mountains-sunset-Antarctic-Peninsula-Moon.jpg" },
-      { nombre: "Estrecho Bransfield", gid: "2098562938", key: "bransfield", imagen: "https://wpd.ugr.es/~bravoseis/wp-content/uploads/2017/11/1200px-Bransfield-Strait-860x484.jpg" },
-      { nombre: "Isla Decepción", gid: "1685199890", key: "decepcion", imagen: "https://tecolotito.elsiglodetorreon.com.mx/i/2020/09/1343005.jpeg" },
-      { nombre: "Estrecho de Gerlache", gid: "2049108687", key: "gerlache", imagen: "https://live.staticflickr.com/65535/54340781868_b05aa3340b_b.jpg" },
-      { nombre: "Bahía Paraíso", gid: "1517815039", key: "paraiso", imagen: "https://i.ytimg.com/vi/WmlEtmXnD7c/maxresdefault.jpg" },
-      { nombre: "Base Carvajal", gid: "1183808960", key: "carvajal", imagen: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEid4dvkAJ_6EzVOnO67zfQCW5iqigfiEIdTtSbvqEt062CG-S7PTZjAJLf1vQunRbD8haqc-CZwchwRPXx-B3UQIjxBR0DLPGDOMw8sYnGBdzccmto1YAvr_2LmlgnkX6hQeVI23rTrTOzY/w1200-h630-p-k-no-nu/4g.jpg" }
+      { nombre: "Bahía Chile - Puerto Soberanía", subtitulo: "Base Naval Antártica Capitán Arturo Prat", gid: "939106272", key: "prat", imagen: "https://pronostico-base-prat.github.io/Pronostico-prat/fondo.jpg" },
+      { nombre: "Bahía Fildes (Caleta Ardley)", subtitulo: "Gobernación Marítima de la Antártica Chilena", gid: "1678435349", key: "fildes", imagen: "https://images.visitchile.com/destinos/4451_Bahia_Fildes.jpg?w=960&h=448&fit=crop&q=auto&auto=format" },
+      { nombre: "Base O'Higgins", subtitulo: "Base Militar Antártica General Bernardo O'Higgins Riquelme", gid: "1123581909", key: "ohiggins", imagen: "https://www.calacademy.org/sites/default/files/medialibrary/blogs/thelongview/wp-content/uploads/2012/05/bernardo-oe28099higgins-base1041x673.jpg" },
+      { nombre: "Estrecho Nelson", subtitulo: "", gid: "942856754", key: "nelson", imagen: "https://cdn.britannica.com/86/189286-050-59B38044/Mountains-sunset-Antarctic-Peninsula-Moon.jpg" },
+      { nombre: "Estrecho Bransfield", subtitulo: "", gid: "2098562938", key: "bransfield", imagen: "https://wpd.ugr.es/~bravoseis/wp-content/uploads/2017/11/1200px-Bransfield-Strait-860x484.jpg" },
+      { nombre: "Isla Decepción", subtitulo: "", gid: "1685199890", key: "decepcion", imagen: "https://tecolotito.elsiglodetorreon.com.mx/i/2020/09/1343005.jpeg" },
+      { nombre: "Estrecho de Gerlache", subtitulo: "", gid: "2049108687", key: "gerlache", imagen: "https://live.staticflickr.com/65535/54340781868_b05aa3340b_b.jpg" },
+      { nombre: "Bahía Paraíso", subtitulo: "Base Antártica Presidente Gabriel González Videla", gid: "1517815039", key: "paraiso", imagen: "https://i.ytimg.com/vi/WmlEtmXnD7c/maxresdefault.jpg" },
+      { nombre: "Isla Adelaida - Bahía Margarita", label: "Base Carvajal", subtitulo: "Base Antártica Teniente Luis Carvajal Villarroel", gid: "1183808960", key: "carvajal", imagen: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEid4dvkAJ_6EzVOnO67zfQCW5iqigfiEIdTtSbvqEt062CG-S7PTZjAJLf1vQunRbD8haqc-CZwchwRPXx-B3UQIjxBR0DLPGDOMw8sYnGBdzccmto1YAvr_2LmlgnkX6hQeVI23rTrTOzY/w1200-h630-p-k-no-nu/4g.jpg" }
     ];
 
     function getCSVUrl(gid) {
@@ -658,7 +679,7 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
             btn.style.background = 'white';
             btn.style.color = 'var(--navy)';
         }
-        btn.textContent = s.nombre;
+        btn.textContent = s.label || s.nombre;
         btn.onclick = function() {
           if (this.classList.contains('active')) return;
           document.querySelectorAll('.sector-tab').forEach(t => {
@@ -671,6 +692,8 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
           this.style.color = 'white';
           const titleEl = document.querySelector('.location-title');
           if (titleEl) titleEl.textContent = s.nombre;
+          const subEl = document.getElementById('location-subtitle');
+          if (subEl) subEl.innerHTML = s.subtitulo || '';
           // Cambiar imagen de fondo del header
           const bgImg = document.getElementById('header-bg-img');
           if (bgImg && s.imagen) {

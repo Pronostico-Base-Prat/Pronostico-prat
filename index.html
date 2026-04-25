@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Cambiamos el viewport para que el celular no intente ajustar el ancho y respete el diseño original -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=1280, maximum-scale=1.0">
     <title>Base Prat | Sistema Meteorológico Autónomo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,10 +17,9 @@
             --twitter-blue: #1DA1F2;
         }
 
-        /* Forzamos un ancho mínimo para que en el celular no se amontone nada */
         body { 
             font-family: 'Roboto', sans-serif; 
-            background: var(--navy); /* CAMBIO: Fondo azul oscuro en lugar de gris */
+            background: var(--navy);
             margin: 0; 
             display: flex; 
             height: 100vh; 
@@ -29,7 +27,6 @@
             overflow-x: auto; 
         }
       
-        /* CAMBIO: Sidebar extendida hasta abajo con flex */
         .sidebar { 
             width: 260px; 
             background: var(--navy); 
@@ -40,7 +37,7 @@
             flex-shrink: 0; 
             box-shadow: 2px 0 10px rgba(0,0,0,0.3); 
             z-index: 10; 
-            min-height: 100vh; /* Extender hasta abajo */
+            min-height: 100vh;
         }
         .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 15px; }
         .sidebar img { width: 120px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
@@ -51,10 +48,9 @@
         .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.8rem; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
 
-        /* CAMBIO: Recuadro de riesgo en fondo blanco */
         .risk-legend { 
-            background: white; /* Fondo blanco */
-            color: #1a3a5a; /* Texto azul oscuro */
+            background: white;
+            color: #1a3a5a;
             padding: 15px; 
             border-radius: 10px; 
             font-size: 0.75rem; 
@@ -64,7 +60,7 @@
         .risk-legend h4 { 
             margin: 0 0 10px 0; 
             font-size: 0.8rem; 
-            color: var(--navy); /* Título en azul */
+            color: var(--navy);
             border-bottom: 2px solid var(--navy); 
             padding-bottom: 6px; 
             font-weight: 900;
@@ -130,7 +126,6 @@
         .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
         .sep { color: rgba(0,0,0,0.15); font-size: 1.5rem; }
 
-        /* Dot para semáforo */
         .dot { height:12px; width:12px; border-radius:50%; display:inline-block; background:#ccc; border: 1px solid rgba(0,0,0,0.12); }
 
         .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
@@ -190,14 +185,193 @@
 
         .credits-bar { background: var(--navy); color: white; padding: 40px 20px; text-align: center; }
         .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
+
+        /* ── HAMBURGER BUTTON (solo mobile) ── */
+        .hamburger-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 9999;
+            background: var(--navy);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .hamburger-btn span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: white;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* ── OVERLAY (solo mobile) ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 998;
+        }
+
+        /* ── RESPONSIVE MOBILE ── */
+        @media (max-width: 768px) {
+            body {
+                min-width: unset;
+                overflow-x: hidden;
+                flex-direction: column;
+                height: auto;
+            }
+
+            /* Sidebar se convierte en drawer lateral */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 260px;
+                height: 100%;
+                z-index: 999;
+                transition: left 0.3s ease;
+                overflow-y: auto;
+                min-height: unset;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+
+            .main-content {
+                min-width: unset;
+                width: 100%;
+            }
+
+            header {
+                min-height: 280px;
+                padding-top: 60px;
+            }
+
+            .location-title {
+                font-size: 1.8rem;
+                letter-spacing: -0.5px;
+            }
+            .location-subtitle {
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
+            .location-title-wrap {
+                padding: 12px 16px;
+            }
+
+            .current-metrics {
+                width: auto;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 16px;
+            }
+            .metric-val { font-size: 0.95rem; }
+            .sep { display: none; }
+
+            #ops-traffic-light {
+                flex-wrap: wrap;
+                border-radius: 16px;
+                padding: 8px 14px;
+                gap: 8px;
+            }
+
+            .astro-bar {
+                padding: 12px 16px;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            .astro-item span { font-size: 0.8rem; }
+
+            #sector-tabs {
+                padding: 12px 16px 0 !important;
+                gap: 6px !important;
+                overflow-x: auto;
+                flex-wrap: nowrap !important;
+            }
+
+            .days-nav {
+                padding: 12px 16px 8px;
+                gap: 6px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+            .day-tab {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+
+            .grid-container {
+                padding: 0 16px 30px;
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .card { padding: 16px; }
+            .card-header h3 { font-size: 1rem; }
+
+            .btn-full-day {
+                font-size: 0.9rem;
+                padding: 14px;
+            }
+
+            .footer-section {
+                padding: 30px 16px;
+            }
+            .credits-bar { padding: 30px 16px; }
+            .credits-bar h3 { font-size: 1.2rem; }
+
+            /* Calculadora responsive */
+            #prat-wc {
+                width: calc(100vw - 40px) !important;
+                right: 10px !important;
+                bottom: 10px !important;
+            }
+
+            /* Modal responsive */
+            .modal-content {
+                margin: 0;
+                border-radius: 0;
+                padding: 16px;
+                max-height: 100vh;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 <body>
 
-<aside class="sidebar">
-    <img src="https://base-prat.github.io/Pronostico-prat/ESCUDO.png" alt="Escudo">
+<!-- Botón hamburguesa (solo visible en mobile) -->
+<button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<!-- Overlay oscuro detrás del sidebar en mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="logo-container"><img src="https://base-prat.github.io/Pronostico-prat/ESCUDO.png" alt="Escudo"></div>
     <h2>Base Naval Antártica Chilena<br>"Capitán Arturo Prat"</h2>
     <nav class="sidebar-nav">
         <div class="sidebar-nav-title">GLACIOLÓGICO Y CARTAS</div>
@@ -213,7 +387,6 @@
         <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS PASO DRAKE</a>
         <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> TABLA DE MAREAS</a>
     </nav>
-    <!-- CAMBIO: Recuadro de riesgo con fondo blanco -->
     <div class="risk-legend">
         <h4>Referencia Viento (Sost.)</h4>
         <div class="legend-item"><span class="l-bajo">● Bajo:</span> <span>1 - 15 kts</span></div>
@@ -235,7 +408,6 @@
             </div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
-                <!-- Nuevo: Semáforo de Operaciones -->
                 <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center;">
                     <span style="font-size: 0.65rem; font-weight: 900; color: #1a3a5a; text-transform: uppercase;">Estado Ops:</span>
                     <div id="light-botes" title="Operaciones de Botes/Zodiac" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> BOTES</div>
@@ -267,7 +439,6 @@
             <a href="https://www.sismologia.cl/" target="_blank" class="btn-interest">SISMOLOGÍA</a>
             <a href="https://www.horaoficial.cl/" target="_blank" class="btn-interest">HORA OFICIAL</a>
         </div>
-
         <h2 style="font-size: 1rem; color: #718096;">Redes Sociales X (Twitter)</h2>
         <div class="row-container">
             <a href="https://x.com/Armada_Chile" target="_blank" class="btn-social">@Armada_Chile</a>
@@ -315,6 +486,20 @@
 </div>
 
 <script>
+    // ── SIDEBAR TOGGLE (mobile) ──
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebar-overlay').classList.toggle('active');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebar-overlay').classList.remove('active');
+    }
+    // Cerrar sidebar al hacer click en un link (mobile)
+    document.querySelectorAll('.external-link').forEach(link => {
+        link.addEventListener('click', closeSidebar);
+    });
+
     const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
     const sectores = [
       { nombre: "Bahía Chile - Puerto Soberanía", subtitulo: "Base Naval Antártica Capitán Arturo Prat", gid: "939106272", key: "prat", imagen: "https://base-prat.github.io/Pronostico-prat/fondo.jpg" },
@@ -333,49 +518,23 @@
     }
 
     let URL_CSV = getCSVUrl(sectores[0].gid);
-
     let myCharts = {}; 
 
     function getModelRunInfo() {
         const now = new Date();
-        // Convertir hora local (Chile/Magallanes UTC-3) a UTC
-        const utcHour = (now.getUTCHours());
-        const utcMin = now.getUTCMinutes();
-        const utcTimeStr = String(utcHour).padStart(2, '0') + ':' + String(utcMin).padStart(2, '0');
-
+        const localHour = now.getHours();
         let runModelo, runHoraUTC;
-        // 06:00 UTC → entre 06:00 y 14:00 local (03:00-11:00 UTC aprox, pero según regla del usuario)
-        // La regla es según hora LOCAL de Chile (UTC-3):
-        // 06:00 UTC corrida → visible entre 06:00-14:00 LOCAL (03:00-11:00 UTC)
-        // 12:00 UTC corrida → visible entre 14:00-20:00 LOCAL (11:00-17:00 UTC)  
-        // 18:00 UTC corrida → visible entre 20:00-24:00 LOCAL (17:00-21:00 UTC)
-        // 00:00 UTC corrida → visible entre 00:00-06:00 LOCAL (21:00-03:00 UTC)
-
-        const localHour = now.getHours(); // Hora local Chile
-
-        if (localHour >= 6 && localHour < 14) {
-            runModelo = "GFS / AMPS";
-            runHoraUTC = "06:00";
-        } else if (localHour >= 14 && localHour < 20) {
-            runModelo = "GFS / AMPS";
-            runHoraUTC = "12:00";
-        } else if (localHour >= 20 && localHour < 24) {
-            runModelo = "GFS / AMPS";
-            runHoraUTC = "18:00";
-        } else { // 00:00 a 06:00 local
-            runModelo = "GFS / AMPS";
-            runHoraUTC = "00:00";
-        }
-
-        return { runHoraUTC, runModelo, utcTimeStr };
+        if (localHour >= 6 && localHour < 14) { runModelo = "GFS / AMPS"; runHoraUTC = "06:00"; }
+        else if (localHour >= 14 && localHour < 20) { runModelo = "GFS / AMPS"; runHoraUTC = "12:00"; }
+        else if (localHour >= 20 && localHour < 24) { runModelo = "GFS / AMPS"; runHoraUTC = "18:00"; }
+        else { runModelo = "GFS / AMPS"; runHoraUTC = "00:00"; }
+        return { runHoraUTC, runModelo };
     }
 
     function updateClock() {
-
         const now = new Date();
         const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'America/Punta_Arenas' };
         const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Punta_Arenas' };
-      
         document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL', timeOptions) + " (UTC -3)";
         document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL', dateOptions);
         const runInfo = getModelRunInfo();
@@ -388,33 +547,27 @@
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index,visibility&wind_speed_unit=kn`);
             const data = await res.json();
             const c = data.current;
-          
             const getDirText = (deg) => {
                 const dirs = ['NORTE', 'N/NE', 'NE', 'E/NE', 'ESTE', 'E/SE', 'SE', 'S/SE', 'SUR', 'S/SW', 'SW', 'SW/W', 'WESTE', 'W/NW', 'NW', 'NW/N'];
                 return dirs[Math.round(deg / 22.5) % 16];
             };
-
             const temp = c.temperature_2m;
             const windKts = c.wind_speed_10m;
             const windKmH = windKts * 1.852;
             const uv = (c.uv_index !== undefined && c.uv_index !== null) ? c.uv_index : 0;
-            const rh = (c.relative_humidity_2m !== undefined && c.relative_humidity_2m !== null) ? c.relative_humidity_2m : (c.relativehumidity ?? null);
-            const vis_m = (c.visibility !== undefined && c.visibility !== null) ? c.visibility : (data.current?.visibility ?? null);
-            const vis_km = (vis_m !== null && vis_m !== undefined) ? (vis_m / 1000) : null;
-          
+            const rh = (c.relative_humidity_2m !== undefined && c.relative_humidity_2m !== null) ? c.relative_humidity_2m : null;
+            const vis_m = (c.visibility !== undefined && c.visibility !== null) ? c.visibility : null;
+            const vis_km = (vis_m !== null) ? (vis_m / 1000) : null;
             let windChill = temp;
             if (temp <= 10 && windKmH > 4.8) {
                 windChill = 13.12 + (0.6215 * temp) - (11.37 * Math.pow(windKmH, 0.16)) + (0.3965 * temp * Math.pow(windKmH, 0.16));
             }
-
-            let uvColor = "#27ae60"; // Bajo
-            if (uv >= 11) uvColor = "#8e44ad"; // Extremo
-            else if (uv >= 8) uvColor = "#e74c3c"; // Muy Alto
-            else if (uv >= 6) uvColor = "#e67e22"; // Alto
-            else if (uv >= 3) uvColor = "#f1c40f"; // Moderado
-
+            let uvColor = "#27ae60";
+            if (uv >= 11) uvColor = "#8e44ad";
+            else if (uv >= 8) uvColor = "#e74c3c";
+            else if (uv >= 6) uvColor = "#e67e22";
+            else if (uv >= 3) uvColor = "#f1c40f";
             const rotation = (c.wind_direction_10m + 180) % 360;
-
             document.getElementById('header-metrics').innerHTML = `
                 <div class="metric-item">
                     <div class="metric-val">
@@ -434,11 +587,9 @@
                 <div class="sep">|</div>
                 <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>
                 ${ (rh !== null) ? `<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>` : '' }
-            <div class="sep">|</div><div class="metric-item"><div class="metric-val" style="font-size:0.65rem; color:#1a3a5a; opacity:0.7;">Open-Meteo API</div><div class="metric-label" style="font-size:0.5rem;">FUENTE</div></div>
+                <div class="sep">|</div><div class="metric-item"><div class="metric-val" style="font-size:0.65rem; color:#1a3a5a; opacity:0.7;">Open-Meteo API</div><div class="metric-label" style="font-size:0.5rem;">FUENTE</div></div>
             `;
-
             updateTrafficLights(windKts, c.wind_gusts_10m, windChill, uv, vis_km);
-
         } catch (e) { console.error("Error RealTime", e); }
     }
 
@@ -447,35 +598,21 @@
             const el = document.getElementById(id);
             if(el) el.querySelector('.dot').style.background = color;
         };
-
         if (vis_km !== null && vis_km !== undefined) {
-            if (vis_km < 1) {
-                setLight('light-botes', '#ff0000');
-            } else if (vis_km >= 1 && vis_km <= 4) {
-                setLight('light-botes', '#ffc000');
-            } else if (wind >= 25 || gusts >= 30) {
-                setLight('light-botes', '#ff0000');
-            } else if (wind >= 20 || gusts >= 25) {
-                setLight('light-botes', '#ffc000');
-            } else {
-                setLight('light-botes', '#92d050');
-            }
+            if (vis_km < 1) { setLight('light-botes', '#ff0000'); }
+            else if (vis_km >= 1 && vis_km <= 4) { setLight('light-botes', '#ffc000'); }
+            else if (wind >= 25 || gusts >= 30) { setLight('light-botes', '#ff0000'); }
+            else if (wind >= 20 || gusts >= 25) { setLight('light-botes', '#ffc000'); }
+            else { setLight('light-botes', '#92d050'); }
         } else {
             if (wind >= 25 || gusts >= 30) setLight('light-botes', '#ff0000');
             else if (wind >= 20 || gusts >= 25) setLight('light-botes', '#ffc000');
             else setLight('light-botes', '#92d050');
         }
-
-        if (vis_km !== null && vis_km !== undefined && vis_km < 2) {
-            setLight('light-vuelo', '#ff0000');
-        } else if (gusts >= 25) {
-            setLight('light-vuelo', '#ff0000');
-        } else if (gusts >= 30) {
-            setLight('light-vuelo', '#ffc000');
-        } else {
-            setLight('light-vuelo', '#92d050');
-        }
-
+        if (vis_km !== null && vis_km !== undefined && vis_km < 2) { setLight('light-vuelo', '#ff0000'); }
+        else if (gusts >= 25) { setLight('light-vuelo', '#ff0000'); }
+        else if (gusts >= 30) { setLight('light-vuelo', '#ffc000'); }
+        else { setLight('light-vuelo', '#92d050'); }
         if (chill <= -15 || uv >= 11) setLight('light-exterior', '#ff0000');
         else if (chill <= -15 || uv >= 8) setLight('light-exterior', '#ffc000');
         else setLight('light-exterior', '#92d050');
@@ -483,9 +620,7 @@
 
     async function fetchSheetsData() {
         Papa.parse(URL_CSV, {
-            download: true,
-            header: false,
-            skipEmptyLines: true,
+            download: true, header: false, skipEmptyLines: true,
             complete: function(results) {
                 const cleanData = results.data.filter(r => r[0] && r[0] !== "Día" && r[1] !== "");
                 window.allWeather = cleanData;
@@ -509,15 +644,12 @@
         let gridHtml = filtered.map(r => {
             const n = (r[4] || "0").match(/\d+/g);
             const valorEval = n ? (n.length >= 2 ? parseInt(n[1]) : parseInt(n[0])) : 0;
-          
             let riesgoT, riesgoC, iconoSup, bgClass;
             if (valorEval >= 30) { riesgoT = "PELIGRO EXTREMO"; riesgoC = "card-peligro"; iconoSup = "🚫"; bgClass = "bg-peligro"; }
             else if (valorEval >= 21) { riesgoT = "RIESGO ALTO"; riesgoC = "card-alto"; iconoSup = "⚠️"; bgClass = "bg-alto"; }
             else if (valorEval >= 16) { riesgoT = "RIESGO MODERADO"; riesgoC = "card-mod"; iconoSup = "⚠️"; bgClass = "bg-mod"; }
             else { riesgoT = "RIESGO BAJO"; riesgoC = "card-bajo"; iconoSup = "✅"; bgClass = "bg-bajo"; }
-
             if(valorEval >= 21) riesgoC += " card-titilar";
-          
             return `<div class="card ${riesgoC}">
                 <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bgClass}">${iconoSup} ${riesgoT}</div></div>
                 <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
@@ -535,7 +667,6 @@
         if (!esProyeccion) {
             gridHtml += `<button class="btn-full-day" onclick="verDetalle24h(${dayIdx}, '${dia}')">📊 DETALLE POR HORA (${dia})</button>`;
         }
-
         document.getElementById('grid-pronostico').innerHTML = gridHtml;
     }
 
@@ -544,25 +675,15 @@
         document.getElementById('modalDetalle').style.display = 'block';
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.478796&longitude=-59.665912&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,cloud_cover,pressure_msl&wind_speed_unit=kn&timezone=America%2FPunta_Arenas`);
         const data = await res.json();
-      
         const l=[], v=[], r=[], t=[], st=[], h=[], p=[], cld=[], pres=[];
         let htm="";
-      
         for(let i=idx*24; i<(idx*24)+24; i++){
             if(!data.hourly.time[i]) break;
             const hr = data.hourly.time[i].split('T')[1].substring(0,5);
-            l.push(hr); 
-            v.push(data.hourly.wind_speed_10m[i]); 
-            r.push(data.hourly.wind_gusts_10m[i]); 
-            t.push(data.hourly.temperature_2m[i]);
-            st.push(data.hourly.apparent_temperature[i]);
-            p.push(data.hourly.precipitation[i]); 
-            h.push(data.hourly.relative_humidity_2m[i]);
-            cld.push(data.hourly.cloud_cover[i]);
-            pres.push(data.hourly.pressure_msl[i]);
-          
-            // CORREGIDO: Orden de columnas coincide con encabezados de tabla
-            // 1. Hora (UTC)| 2. Viento/Racha (KT)| 3. T° Aire/Sensación (°C)| 4. Prec (mm)| 5. Hum (%)| 6. Nub | 7. Pres (hPa)
+            l.push(hr); v.push(data.hourly.wind_speed_10m[i]); r.push(data.hourly.wind_gusts_10m[i]);
+            t.push(data.hourly.temperature_2m[i]); st.push(data.hourly.apparent_temperature[i]);
+            p.push(data.hourly.precipitation[i]); h.push(data.hourly.relative_humidity_2m[i]);
+            cld.push(data.hourly.cloud_cover[i]); pres.push(data.hourly.pressure_msl[i]);
             htm += `<tr>
                 <td>${hr}</td>
                 <td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>
@@ -578,136 +699,92 @@
     }
 
     function initCharts(l, v, r, t, st, h, p, cld, pres) {
-    // Función para crear modal de gráfico agrandado
-    function createChartModal(canvasId, chartInstance) {
-        let modal = document.getElementById('chart-modal-' + canvasId);
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'chart-modal-' + canvasId;
-            modal.style.cssText = 'display: none; position: fixed; z-index: 20000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); cursor: pointer;';
-
-            const content = document.createElement('div');
-            content.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 80%; background: white; border-radius: 20px; padding: 30px; box-sizing: border-box;';
-
-            const closeBtn = document.createElement('span');
-            closeBtn.innerHTML = '&times;';
-            closeBtn.style.cssText = 'position: absolute; top: 15px; right: 25px; font-size: 3rem; font-weight: 900; cursor: pointer; color: #1a3a5a; z-index: 10;';
-            closeBtn.onclick = function(e) {
-                e.stopPropagation();
-                modal.style.display = 'none';
-            };
-
-            const canvasContainer = document.createElement('div');
-            canvasContainer.style.cssText = 'width: 100%; height: 100%; position: relative;';
-
-            const newCanvas = document.createElement('canvas');
-            newCanvas.id = 'modal-canvas-' + canvasId;
-
-            canvasContainer.appendChild(newCanvas);
-            content.appendChild(closeBtn);
-            content.appendChild(canvasContainer);
-            modal.appendChild(content);
-            document.body.appendChild(modal);
-
-            modal.onclick = function(e) {
-                if (e.target === modal) modal.style.display = 'none';
-            };
-        }
-
-        modal.style.display = 'block';
-        const ctx = document.getElementById('modal-canvas-' + canvasId).getContext('2d');
-
-        if (window['modalChart_' + canvasId]) window['modalChart_' + canvasId].destroy();
-
-        const originalConfig = chartInstance.config;
-        window['modalChart_' + canvasId] = new Chart(ctx, {
-            type: originalConfig.type,
-            data: originalConfig.data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { labels: { font: { size: 16, weight: 'bold' } } } },
-                scales: { x: { ticks: { font: { size: 14 } } }, y: { ticks: { font: { size: 14 } } } }
+        function createChartModal(canvasId, chartInstance) {
+            let modal = document.getElementById('chart-modal-' + canvasId);
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'chart-modal-' + canvasId;
+                modal.style.cssText = 'display: none; position: fixed; z-index: 20000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); cursor: pointer;';
+                const content = document.createElement('div');
+                content.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 80%; background: white; border-radius: 20px; padding: 30px; box-sizing: border-box;';
+                const closeBtn = document.createElement('span');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.style.cssText = 'position: absolute; top: 15px; right: 25px; font-size: 3rem; font-weight: 900; cursor: pointer; color: #1a3a5a; z-index: 10;';
+                closeBtn.onclick = function(e) { e.stopPropagation(); modal.style.display = 'none'; };
+                const canvasContainer = document.createElement('div');
+                canvasContainer.style.cssText = 'width: 100%; height: 100%; position: relative;';
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = 'modal-canvas-' + canvasId;
+                canvasContainer.appendChild(newCanvas);
+                content.appendChild(closeBtn);
+                content.appendChild(canvasContainer);
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+                modal.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
             }
-        });
+            modal.style.display = 'block';
+            const ctx = document.getElementById('modal-canvas-' + canvasId).getContext('2d');
+            if (window['modalChart_' + canvasId]) window['modalChart_' + canvasId].destroy();
+            const originalConfig = chartInstance.config;
+            window['modalChart_' + canvasId] = new Chart(ctx, {
+                type: originalConfig.type,
+                data: originalConfig.data,
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 16, weight: 'bold' } } } }, scales: { x: { ticks: { font: { size: 14 } } }, y: { ticks: { font: { size: 14 } } } } }
+            });
+        }
+        const conf = (id, lab, lab2, lab3, dat, dat2, dat3, col, col2, col3, type='line') => {
+            if(myCharts[id]) myCharts[id].destroy();
+            const datasets = [{ label: lab, data: dat, borderColor: col, backgroundColor: col+'22', fill: true, tension: 0.3 }];
+            if(dat2) datasets.push({ label: lab2 || 'Rachas', data: dat2, borderColor: col2 || 'red', borderDash: [5,5], fill: false, tension: 0.3 });
+            const canvas = document.getElementById(id);
+            myCharts[id] = new Chart(canvas, { type, data: { labels: l, datasets }, options: { responsive: true, maintainAspectRatio: false, onClick: function() { createChartModal(id, myCharts[id]); }, onHover: function(e, active) { e.native.target.style.cursor = active.length > 0 ? 'pointer' : 'zoom-in'; } } });
+            canvas.style.cursor = 'zoom-in';
+        };
+        conf('chartViento', 'Viento (kts)', 'Rachas', null, v, r, null, '#3498db', '#e74c3c');
+        conf('chartTemp', 'T° Aire (°C)', 'Sensación Térmica', null, t, st, null, '#0000ff', '#ff0000');
+        conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
+        conf('chartHum', 'Humedad (%)', null, null, h, null, null, '#16a085');
+        conf('chartCloud', 'Nubosidad (%)', null, null, cld, null, null, '#7f8c8d');
+        conf('chartPresion', 'Presión (hPa)', null, null, pres, null, null, '#8e44ad');
     }
 
-    const conf = (id, lab, lab2, lab3, dat, dat2, dat3, col, col2, col3, type='line') => {
-        if(myCharts[id]) myCharts[id].destroy();
-        const datasets = [{ label: lab, data: dat, borderColor: col, backgroundColor: col+'22', fill: true, tension: 0.3 }];
-        if(dat2) datasets.push({ label: lab2 || 'Rachas', data: dat2, borderColor: col2 || 'red', borderDash: [5,5], fill: false, tension: 0.3 });
-
-        const canvas = document.getElementById(id);
-        myCharts[id] = new Chart(canvas, { 
-            type, 
-            data: { labels: l, datasets }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false,
-                onClick: function() { createChartModal(id, myCharts[id]); },
-                onHover: function(e, active) { e.native.target.style.cursor = active.length > 0 ? 'pointer' : 'zoom-in'; }
-            } 
-        });
-        canvas.style.cursor = 'zoom-in';
-    };
-    conf('chartViento', 'Viento (kts)', 'Rachas', null, v, r, null, '#3498db', '#e74c3c');
-    conf('chartTemp', 'T° Aire (°C)', 'Sensación Térmica', null, t, st, null, '#0000ff', '#ff0000');
-    conf('chartPrec', 'Prec. (mm)', null, null, p, null, null, '#27ae60', null, null, 'bar');
-    conf('chartHum', 'Humedad (%)', null, null, h, null, null, '#16a085');
-    conf('chartCloud', 'Nubosidad (%)', null, null, cld, null, null, '#7f8c8d');
-    conf('chartPresion', 'Presión (hPa)', null, null, pres, null, null, '#8e44ad');
-}
-
-function cerrarModal() { document.getElementById('modalDetalle').style.display = 'none'; }
+    function cerrarModal() { document.getElementById('modalDetalle').style.display = 'none'; }
 
     updateClock(); fetchBirdseyeWeather(); fetchSheetsData();
     setInterval(updateClock, 1000); setInterval(fetchBirdseyeWeather, 120000); setInterval(fetchSheetsData, 120000);
 
     (function initSectorTabs() {
-      const container = document.getElementById('sector-tabs');
-      if (!container) return;
-      container.innerHTML = "";
-      sectores.forEach((s, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'sector-tab';
-        btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s;";
-        if (i === 0) {
-            btn.classList.add('active');
-            btn.style.background = 'var(--navy)';
-            btn.style.color = 'white';
-        } else {
-            btn.style.background = 'white';
-            btn.style.color = 'var(--navy)';
-        }
-        btn.textContent = s.label || s.nombre;
-        btn.onclick = function() {
-          if (this.classList.contains('active')) return;
-          document.querySelectorAll('.sector-tab').forEach(t => {
-            t.classList.remove('active');
-            t.style.background = 'white';
-            t.style.color = 'var(--navy)';
-          });
-          this.classList.add('active');
-          this.style.background = 'var(--navy)';
-          this.style.color = 'white';
-          const titleEl = document.querySelector('.location-title');
-          if (titleEl) titleEl.textContent = s.nombre;
-          const subEl = document.getElementById('location-subtitle');
-          if (subEl) subEl.innerHTML = s.subtitulo || '';
-          // Cambiar imagen de fondo del header
-          const bgImg = document.getElementById('header-bg-img');
-          if (bgImg && s.imagen) {
-            bgImg.style.backgroundImage = "url('" + s.imagen + "')";
-          }
-          URL_CSV = getCSVUrl(s.gid);
-          if (typeof fetchSheetsData === 'function') fetchSheetsData();
-        };
-        container.appendChild(btn);
-      });
+        const container = document.getElementById('sector-tabs');
+        if (!container) return;
+        container.innerHTML = "";
+        sectores.forEach((s, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'sector-tab';
+            btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s; white-space: nowrap;";
+            if (i === 0) { btn.style.background = 'var(--navy)'; btn.style.color = 'white'; btn.classList.add('active'); }
+            else { btn.style.background = 'white'; btn.style.color = 'var(--navy)'; }
+            btn.textContent = s.label || s.nombre;
+            btn.onclick = function() {
+                if (this.classList.contains('active')) return;
+                document.querySelectorAll('.sector-tab').forEach(t => { t.classList.remove('active'); t.style.background = 'white'; t.style.color = 'var(--navy)'; });
+                this.classList.add('active'); this.style.background = 'var(--navy)'; this.style.color = 'white';
+                const titleEl = document.querySelector('.location-title');
+                if (titleEl) titleEl.textContent = s.nombre;
+                const subEl = document.getElementById('location-subtitle');
+                if (subEl) subEl.innerHTML = s.subtitulo || '';
+                const bgImg = document.getElementById('header-bg-img');
+                if (bgImg && s.imagen) bgImg.style.backgroundImage = "url('" + s.imagen + "')";
+                URL_CSV = getCSVUrl(s.gid);
+                if (typeof fetchSheetsData === 'function') fetchSheetsData();
+                // Cerrar sidebar en mobile al seleccionar sector
+                closeSidebar();
+            };
+            container.appendChild(btn);
+        });
     })();
 </script>
 
-<!-- START: Widget Calculadora Oficial -->
+<!-- Widget Calculadora Oficial -->
 <style id="prat-wc-style">
   #prat-wc {
     position: fixed; right: 20px; bottom: 20px; width: 340px;
@@ -725,15 +802,11 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
   #prat-wc .btn-calc { background: #3498db; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 900; flex: 1; text-transform: uppercase; transition: 0.3s; }
   #prat-wc .btn-calc:hover { background: #2980b9; }
   #prat-wc .btn-sync { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 1.0rem; font-weight: 700; }
-
   #prat-result-box { margin-top: 15px; padding: 15px; border-radius: 10px; text-align: center; transition: 0.5s; color: #1a1a1a; background: #ecf0f1; }
   #prat-result-box .val { font-size: 1.8rem; font-weight: 900; display: block; }
   #prat-result-box .desc { font-size: 1.0rem; font-weight: 800; text-transform: uppercase; margin-top: 5px; display: block; }
-
-  /* Colores de la Tabla Oficial */
-  .risk-muy-peligro { background: #ffff00 !important; color: black !important; } /* Amarillo */
-  .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red 1s infinite; } /* Rojo */
-
+  .risk-muy-peligro { background: #ffff00 !important; color: black !important; }
+  .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red 1s infinite; }
   @keyframes pulse-red { 0% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } 50% { box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.5); } 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } }
   #prat-wc.collapsed { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
   #prat-wc.collapsed .body, #prat-wc.collapsed .head .title { display: none; }
@@ -748,15 +821,12 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
   <div class="body">
     <label>Temperatura Aire (°C)</label>
     <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5">
-  
     <label>Velocidad Viento (Nudos)</label>
     <input type="number" id="inp-v" placeholder="Ej: 20" step="1">
-  
     <div class="row">
       <button class="btn-sync" id="btn-sync">Sincronizar Estación</button>
       <button class="btn-calc" id="btn-calc">Calcular</button>
     </div>
-
     <div id="prat-result-box">
       <small style="font-weight: 800; opacity: 0.7;">SENSACIÓN TÉRMICA</small>
       <span class="val" id="res-val">—</span>
@@ -770,19 +840,17 @@ function cerrarModal() { document.getElementById('modalDetalle').style.display =
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Datos de la tabla oficial (Nudos vs Temperatura)
   const v_axis = [5, 10, 15, 20, 25, 30, 35, 40];
   const t_axis = [10, 7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -42.5, -45, -47.5, -50];
-
   const tabla = [
-    [7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -55], // 5 kts
-    [5, 2.5, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -57.5, -60, -62.5, -65, -67.5], // 10 kts
-    [2.5, 0, -5, -7.5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -42.5, -45, -47.5, -52.5, -55, -57.5, -60, -65, -67.5, -72.5, -75, -77.5], // 15 kts
-    [0, -2.5, -7.5, -10, -12.5, -17.5, -20, -22.5, -25, -30, -35, -37.5, -42.5, -45, -47.5, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -85], // 20 kts
-    [0, -5, -7.5, -10, -15, -17.5, -22.5, -25, -30, -32.5, -37.5, -40, -45, -47.5, -52.5, -55, -60, -65, -67.5, -70, -72.5, -77.5, -82.5, -85, -90], // 25 kts
-    [-2.5, -5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -40, -42.5, -47.5, -50, -55, -57.5, -62.5, -67.5, -72.5, -75, -80, -85, -90, -95, -95], // 30 kts
-    [-2.5, -7.5, -10, -12.5, -17.5, -20, -25, -30, -32.5, -37.5, -42.5, -45, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -87.5, -90, -95, -95], // 35 kts
-    [-2.5, -7.5, -10, -15, -20, -22.5, -27.5, -30, -35, -37.5, -42.5, -45, -50, -55, -60, -62.5, -65, -70, -75, -77.5, -82.5, -85, -90, -92.5, -97.5]  // 40 kts
+    [7.5, 5, 2.5, 0, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -22.5, -25, -27.5, -30, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -55],
+    [5, 2.5, -2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -40, -45, -47.5, -50, -52.5, -57.5, -60, -62.5, -65, -67.5],
+    [2.5, 0, -5, -7.5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -37.5, -42.5, -45, -47.5, -52.5, -55, -57.5, -60, -65, -67.5, -72.5, -75, -77.5],
+    [0, -2.5, -7.5, -10, -12.5, -17.5, -20, -22.5, -25, -30, -35, -37.5, -42.5, -45, -47.5, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -85],
+    [0, -5, -7.5, -10, -15, -17.5, -22.5, -25, -30, -32.5, -37.5, -40, -45, -47.5, -52.5, -55, -60, -65, -67.5, -70, -72.5, -77.5, -82.5, -85, -90],
+    [-2.5, -5, -10, -12.5, -17.5, -20, -25, -27.5, -32.5, -35, -40, -42.5, -47.5, -50, -55, -57.5, -62.5, -67.5, -72.5, -75, -80, -85, -90, -95, -95],
+    [-2.5, -7.5, -10, -12.5, -17.5, -20, -25, -30, -32.5, -37.5, -42.5, -45, -50, -52.5, -57.5, -60, -65, -67.5, -72.5, -75, -80, -87.5, -90, -95, -95],
+    [-2.5, -7.5, -10, -15, -20, -22.5, -27.5, -30, -35, -37.5, -42.5, -45, -50, -55, -60, -62.5, -65, -70, -75, -77.5, -82.5, -85, -90, -92.5, -97.5]
   ];
 
   function interpolate(x, x0, x1, y0, y1) { return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
@@ -791,36 +859,26 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       if (isNaN(t) || isNaN(v)) return null;
       if (v < 5) return t;
-      if (v > 40) v = 40; // Límite de la tabla
+      if (v > 40) v = 40;
       if (t > 10) return t;
       if (t < -50) t = -50;
-
-      // Encontrar índices para Viento (v_axis ascendente)
       let iv = v_axis.findIndex(val => val >= v);
       if (iv === -1) iv = v_axis.length - 1;
       if (iv === 0) iv = 1;
       const v0 = v_axis[iv-1], v1 = v_axis[iv];
-
-      // Encontrar índices para Temperatura (t_axis descendente)
       let it = t_axis.findIndex(val => val <= t);
       if (it === -1) it = t_axis.length - 1;
       if (it === 0) it = t_axis.length - 1;
       const t0 = t_axis[it-1] !== undefined ? t_axis[it-1] : t_axis[it];
       const t1 = t_axis[it] !== undefined ? t_axis[it] : t_axis[it-1];
-
-      // Valores de la tabla (aseguramos índices)
       const q11 = tabla[iv-1] && tabla[iv-1][it-1] !== undefined ? tabla[iv-1][it-1] : t;
       const q12 = tabla[iv-1] && tabla[iv-1][it]   !== undefined ? tabla[iv-1][it]   : t;
       const q21 = tabla[iv]   && tabla[iv][it-1]   !== undefined ? tabla[iv][it-1]   : t;
       const q22 = tabla[iv]   && tabla[iv][it]     !== undefined ? tabla[iv][it]     : t;
-
       const r1 = interpolate(t, t0, t1, q11, q12);
       const r2 = interpolate(t, t0, t1, q21, q22);
       return Math.round(interpolate(v, v0, v1, r1, r2) * 10) / 10;
-    } catch (err) {
-      console.error("Error en calcularST:", err);
-      return null;
-    }
+    } catch (err) { return null; }
   }
 
   const btnCalc = document.getElementById('btn-calc');
@@ -830,61 +888,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (btnCalc) {
     btnCalc.addEventListener('click', function() {
-      try {
-        const t = parseFloat(document.getElementById('inp-t').value);
-        const v = parseFloat(document.getElementById('inp-v').value);
-        if (isNaN(t) || isNaN(v)) {
-          resVal.innerText = "—";
-          resDesc.innerText = "Ingrese temperatura y viento";
-          return;
-        }
-        const st = calcularST(t, v);
-        if (st === null) {
-          resVal.innerText = "—";
-          resDesc.innerText = "Error cálculo";
-          return;
-        }
-        resVal.innerText = st + "°C";
-        // reset estilos
-        resBox.className = '';
-        resBox.style.background = "#ecf0f1";
-
-        if (st <= -57.5) {
-          resDesc.innerText = "EXTREMADAMENTE PELIGROSO (Congelamiento 30s)";
-          resBox.classList.add('risk-ext-peligro');
-        } else if (st <= -30) {
-          resDesc.innerText = "MUY PELIGROSO (Congelamiento 1 min)";
-          resBox.classList.add('risk-muy-peligro');
-        } else {
-          resDesc.innerText = "PELIGRO (Usar vestimenta adecuada)";
-        }
-      } catch (err) {
-        console.error("Error en btnCalc:", err);
-      }
+      const t = parseFloat(document.getElementById('inp-t').value);
+      const v = parseFloat(document.getElementById('inp-v').value);
+      if (isNaN(t) || isNaN(v)) { resVal.innerText = "—"; resDesc.innerText = "Ingrese temperatura y viento"; return; }
+      const st = calcularST(t, v);
+      if (st === null) { resVal.innerText = "—"; resDesc.innerText = "Error cálculo"; return; }
+      resVal.innerText = st + "°C";
+      resBox.className = ''; resBox.style.background = "#ecf0f1";
+      if (st <= -57.5) { resDesc.innerText = "EXTREMADAMENTE PELIGROSO (Congelamiento 30s)"; resBox.classList.add('risk-ext-peligro'); }
+      else if (st <= -30) { resDesc.innerText = "MUY PELIGROSO (Congelamiento 1 min)"; resBox.classList.add('risk-muy-peligro'); }
+      else { resDesc.innerText = "PELIGRO (Usar vestimenta adecuada)"; }
     });
-  } else {
-    console.warn("btn-calc no encontrado en DOM");
   }
 
-  // Sincronizar con los datos que ya están en el header
   const btnSync = document.getElementById('btn-sync');
   if (btnSync) {
     btnSync.addEventListener('click', function() {
-      try {
-        const metrics = document.getElementById('header-metrics').innerText || '';
-        const tMatch = metrics.match(/(-?\d+)\s*°C/);
-        const vMatch = metrics.match(/(\d+)\s?kts/);
-        if (tMatch) document.getElementById('inp-t').value = tMatch[1];
-        if (vMatch) document.getElementById('inp-v').value = vMatch[1];
-        // activar cálculo
-        if (btnCalc) btnCalc.click();
-      } catch (err) {
-        console.error("Error en btn-sync:", err);
-      }
+      const metrics = document.getElementById('header-metrics').innerText || '';
+      const tMatch = metrics.match(/(-?\d+)\s*°C/);
+      const vMatch = metrics.match(/(\d+)\s?kts/);
+      if (tMatch) document.getElementById('inp-t').value = tMatch[1];
+      if (vMatch) document.getElementById('inp-v').value = vMatch[1];
+      if (btnCalc) btnCalc.click();
     });
   }
 
-  // Toggle colapsar
   const widget = document.getElementById('prat-wc');
   const toggle = document.getElementById('prat-toggle');
   if (toggle && widget) {

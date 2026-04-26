@@ -220,6 +220,22 @@
             z-index: 998;
         }
 
+        /* ── BOTÓN VER VERSIÓN WEB (solo mobile) ── */
+        .btn-ver-web {
+            display: none;
+            width: 100%;
+            background: var(--navy);
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            z-index: 100;
+        }
+
         /* ── RESPONSIVE MOBILE ── */
         @media (max-width: 768px) {
             body {
@@ -241,17 +257,10 @@
                 overflow-y: auto;
                 min-height: unset;
             }
-            .sidebar.open {
-                left: 0;
-            }
-
-            .sidebar-overlay.active {
-                display: block;
-            }
-
-            .hamburger-btn {
-                display: flex;
-            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            .hamburger-btn { display: flex; }
+            .btn-ver-web { display: block; }
 
             .main-content {
                 min-width: unset;
@@ -259,85 +268,104 @@
             }
 
             header {
-                min-height: 280px;
-                padding-top: 60px;
+                min-height: 220px;
+            }
+
+            /* Padding top para no quedar bajo el hamburger */
+            header > div[style] {
+                padding: 50px 16px 16px !important;
             }
 
             .location-title {
-                font-size: 1.8rem;
+                font-size: 1.4rem;
                 letter-spacing: -0.5px;
             }
             .location-subtitle {
-                font-size: 0.8rem;
-                letter-spacing: 1px;
+                font-size: 0.65rem;
+                letter-spacing: 0.5px;
             }
             .location-title-wrap {
-                padding: 12px 16px;
+                padding: 10px 12px;
             }
 
             .current-metrics {
                 width: auto;
                 flex-wrap: wrap;
-                gap: 8px;
-                padding: 10px 14px;
-                border-radius: 16px;
+                gap: 6px;
+                padding: 8px 12px;
+                border-radius: 12px;
             }
-            .metric-val { font-size: 0.95rem; }
+            .metric-val { font-size: 0.8rem; }
+            .metric-label { font-size: 0.5rem; }
             .sep { display: none; }
 
             #ops-traffic-light {
                 flex-wrap: wrap;
-                border-radius: 16px;
-                padding: 8px 14px;
-                gap: 8px;
+                border-radius: 12px;
+                padding: 6px 12px;
+                gap: 6px;
+                font-size: 0.65rem;
             }
 
             .astro-bar {
-                padding: 12px 16px;
-                gap: 12px;
+                padding: 8px 12px;
+                gap: 10px;
                 flex-wrap: wrap;
             }
-            .astro-item span { font-size: 0.8rem; }
+            .astro-item label { font-size: 0.5rem; }
+            .astro-item span { font-size: 0.7rem; }
 
             #sector-tabs {
-                padding: 12px 16px 0 !important;
-                gap: 6px !important;
+                padding: 8px 12px 0 !important;
+                gap: 5px !important;
                 overflow-x: auto;
                 flex-wrap: nowrap !important;
             }
 
             .days-nav {
-                padding: 12px 16px 8px;
-                gap: 6px;
+                padding: 8px 12px 6px;
+                gap: 5px;
                 flex-wrap: nowrap;
                 overflow-x: auto;
             }
             .day-tab {
-                padding: 8px 14px;
-                font-size: 0.75rem;
+                padding: 6px 12px;
+                font-size: 0.7rem;
                 white-space: nowrap;
             }
 
             .grid-container {
-                padding: 0 16px 30px;
+                padding: 0 12px 20px;
                 grid-template-columns: 1fr;
-                gap: 14px;
+                gap: 10px;
             }
-            .card { padding: 16px; }
-            .card-header h3 { font-size: 1rem; }
+            .card {
+                padding: 12px;
+                border-top-width: 6px;
+                border-radius: 10px;
+            }
+            .card-header { margin-bottom: 10px; min-height: unset; }
+            .card-header h3 { font-size: 0.85rem; }
+            .risk-tag { font-size: 0.65rem; padding: 3px 8px; }
+            .data-row { font-size: 0.75rem; padding: 5px 0; }
+            .data-row span { width: 80px; font-size: 0.7rem; }
+            .temp-box { margin-top: 8px; margin-bottom: 8px; gap: 6px; }
+            .temp-item { padding: 6px; border-radius: 8px; }
+            .temp-item small { font-size: 0.5rem; }
+            .temp-item div { font-size: 0.95rem; }
 
             .btn-full-day {
-                font-size: 0.9rem;
-                padding: 14px;
+                font-size: 0.8rem;
+                padding: 12px;
             }
 
-            .footer-section {
-                padding: 30px 16px;
-            }
-            .credits-bar { padding: 30px 16px; }
-            .credits-bar h3 { font-size: 1.2rem; }
+            .footer-section { padding: 20px 12px; }
+            .footer-section h2 { font-size: 1rem; }
+            .btn-interest { font-size: 0.65rem; padding: 7px 12px; }
+            .credits-bar { padding: 20px 12px; }
+            .credits-bar h3 { font-size: 1rem; }
 
-            /* Calculadora responsive */
+            /* Calculadora colapsada por defecto en mobile */
             #prat-wc {
                 width: calc(100vw - 40px) !important;
                 right: 10px !important;
@@ -348,12 +376,10 @@
             .modal-content {
                 margin: 0;
                 border-radius: 0;
-                padding: 16px;
+                padding: 12px;
                 max-height: 100vh;
             }
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
+            .charts-grid { grid-template-columns: 1fr; }
         }
     </style>
 <base target="_blank">
@@ -366,6 +392,9 @@
     <span></span>
     <span></span>
 </button>
+
+<!-- Botón ver versión web (solo mobile) -->
+<button class="btn-ver-web" onclick="verVersionWeb()">🖥️ Ver versión escritorio</button>
 
 <!-- Overlay oscuro detrás del sidebar en mobile -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -388,10 +417,10 @@
         <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> TABLA DE MAREAS</a>
     </nav>
     <div class="risk-legend">
-        <h4>Referencia RIESGO</h4>
+        <h4>Referencia Viento (Sost.)</h4>
         <div class="legend-item"><span class="l-bajo">● Bajo:</span> <span>1 - 15 kts</span></div>
         <div class="legend-item"><span class="l-mod">● Moderado:</span> <span>16 - 20 kts</span></div>
-        <div class="legend-item"><span class="l-alto">● Alto:</span> <span>21 - 29 kts</span></div>
+        <div class="legend-item"><span class="l-alto">● Alto:</span> <span>21 - 25 kts</span></div>
         <div class="legend-item"><span class="l-peli">● Peligro:</span> <span>30+ kts</span></div>
     </div>
 </aside>
@@ -486,6 +515,13 @@
 </div>
 
 <script>
+    // ── VERSIÓN ESCRITORIO (mobile) ──
+    function verVersionWeb() {
+        document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
+        document.querySelector('.btn-ver-web').style.display = 'none';
+        document.querySelector('.hamburger-btn').style.display = 'none';
+    }
+
     // ── SIDEBAR TOGGLE (mobile) ──
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('open');

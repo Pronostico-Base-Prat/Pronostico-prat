@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <!-- FIX 1: Viewport corregido con maximum-scale para evitar zoom involuntario -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Base Prat | Sistema Meteorológico Autónomo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,18 +18,21 @@
             --twitter-blue: #1DA1F2;
         }
 
+        /* FIX 2: body sin min-width absoluto — se controla solo en desktop */
+        * { box-sizing: border-box; }
+
         body { 
             font-family: 'Roboto', sans-serif; 
             background: var(--navy);
             margin: 0; 
             display: flex; 
             height: 100vh; 
-            min-width: 960px; 
-            overflow-x: auto; 
+            overflow-x: hidden; /* FIX: previene scroll horizontal global */
         }
       
         .sidebar { 
             width: 260px; 
+            min-width: 260px;
             background: var(--navy); 
             color: white; 
             display: flex; 
@@ -71,7 +75,18 @@
         .l-alto { color: var(--color-alto); font-weight: 700; } 
         .l-peli { color: #ff5555; font-weight: 700; }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-width: 720px; background: var(--bg); }
+        /* FIX 3: main-content con max-width y overflow controlado */
+        .main-content { 
+            flex: 1; 
+            min-width: 0; /* FIX CRÍTICO: permite que flex item se encoja */
+            max-width: 100%;
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            overflow-x: hidden; /* FIX: evita scroll horizontal */
+            position: relative; 
+            background: var(--bg); 
+        }
      
         header { 
             background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%);
@@ -115,7 +130,9 @@
         }
 
         .current-metrics { 
-            display: flex; gap: 18px; align-items: center; width: max-content;
+            display: flex; gap: 18px; align-items: center;
+            max-width: 100%; /* FIX: no desborda */
+            flex-wrap: wrap; /* FIX: siempre wrap para evitar overflow */
             background: rgba(255,255,255,0.92); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.25);
             align-self: flex-start;
@@ -126,32 +143,32 @@
         .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
         .sep { color: rgba(0,0,0,0.15); font-size: 1.5rem; }
 
-        .dot { height:12px; width:12px; border-radius:50%; display:inline-block; background:#ccc; border: 1px solid rgba(0,0,0,0.12); }
+        .dot { height:12px; width:12px; border-radius:50%; display:inline-block; background:#ccc; border: 1px solid rgba(0,0,0,0.12); flex-shrink: 0; }
 
-        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; }
+        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; flex-wrap: wrap; }
         .astro-item { display: flex; flex-direction: column; }
         .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
         .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
 
-        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; }
-        .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; }
+        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
         .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 4px 12px rgba(26, 58, 90, 0.2); }
 
         .grid-container { padding: 0 45px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { border-radius: 15px; padding: 22px; border-top: 10px solid #cbd5e0; box-shadow: 0 6px 15px rgba(0,0,0,0.07); transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
       
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; min-height: 35px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; min-height: 35px; flex-wrap: wrap; gap: 8px; }
         .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 900; }
       
         .risk-tag { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 900; color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); }
       
         .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem; }
-        .data-row span { font-weight: 700; color: #718096; width: 110px; }
-        .data-row b { margin-left: auto; color: #2d3748; }
+        .data-row span { font-weight: 700; color: #718096; width: 110px; flex-shrink: 0; }
+        .data-row b { margin-left: auto; color: #2d3748; text-align: right; }
 
         .temp-box { display: flex; margin-top: 15px; gap: 10px; margin-bottom: 15px; }
-        .temp-item { flex: 1; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
+        .temp-item { flex: 1; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); min-width: 0; }
         .temp-item small { display: block; font-size: 0.6rem; color: #718096; font-weight: 800; margin-bottom: 4px; }
         .temp-item div { font-weight: 900; font-size: 1.2rem; }
 
@@ -236,13 +253,21 @@
             z-index: 100;
         }
 
-        /* ── RESPONSIVE MOBILE ── */
+        /* ══════════════════════════════════════════════
+           RESPONSIVE MOBILE — TODOS LOS FIXES APLICADOS
+        ══════════════════════════════════════════════ */
         @media (max-width: 768px) {
+            html, body {
+                width: 100%;
+                overflow-x: hidden; /* FIX: previene scroll horizontal */
+            }
+
             body {
-                min-width: unset;
+                min-width: 0 !important; /* FIX CRÍTICO: anula cualquier min-width heredado */
                 overflow-x: hidden;
                 flex-direction: column;
                 height: auto;
+                width: 100%;
             }
 
             /* Sidebar se convierte en drawer lateral */
@@ -251,6 +276,7 @@
                 top: 0;
                 left: -280px;
                 width: 260px;
+                min-width: unset;
                 height: 100%;
                 z-index: 999;
                 transition: left 0.3s ease;
@@ -263,17 +289,20 @@
             .btn-ver-web { display: block; }
 
             .main-content {
-                min-width: unset;
+                min-width: 0 !important; /* FIX CRÍTICO */
                 width: 100%;
+                max-width: 100vw; /* FIX: no supera el ancho de pantalla */
+                overflow-x: hidden;
             }
 
             header {
                 min-height: 220px;
+                width: 100%;
             }
 
-            /* Padding top para no quedar bajo el hamburger */
-            header > div[style] {
-                padding: 50px 16px 16px !important;
+            /* FIX: padding top para no quedar bajo el hamburger */
+            .header-inner {
+                padding: 55px 16px 16px !important;
             }
 
             .location-title {
@@ -288,8 +317,10 @@
                 padding: 10px 12px;
             }
 
+            /* FIX: metrics no desborda */
             .current-metrics {
                 width: auto;
+                max-width: calc(100vw - 32px); /* FIX: acotado al ancho de pantalla */
                 flex-wrap: wrap;
                 gap: 6px;
                 padding: 8px 12px;
@@ -299,50 +330,68 @@
             .metric-label { font-size: 0.5rem; }
             .sep { display: none; }
 
+            /* FIX: traffic light no desborda */
             #ops-traffic-light {
                 flex-wrap: wrap;
                 border-radius: 12px;
                 padding: 6px 12px;
                 gap: 6px;
                 font-size: 0.65rem;
+                max-width: calc(100vw - 32px); /* FIX */
             }
 
             .astro-bar {
                 padding: 8px 12px;
                 gap: 10px;
                 flex-wrap: wrap;
+                width: 100%;
             }
             .astro-item label { font-size: 0.5rem; }
             .astro-item span { font-size: 0.7rem; }
 
+            /* FIX: sector tabs con scroll horizontal controlado */
             #sector-tabs {
                 padding: 8px 12px 0 !important;
                 gap: 5px !important;
                 overflow-x: auto;
+                overflow-y: hidden;
                 flex-wrap: nowrap !important;
+                width: 100%;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* oculta scrollbar en Firefox */
             }
+            #sector-tabs::-webkit-scrollbar { display: none; } /* oculta en Chrome/Safari */
 
             .days-nav {
                 padding: 8px 12px 6px;
                 gap: 5px;
                 flex-wrap: nowrap;
                 overflow-x: auto;
+                overflow-y: hidden;
+                width: 100%;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
             }
+            .days-nav::-webkit-scrollbar { display: none; }
             .day-tab {
                 padding: 6px 12px;
                 font-size: 0.7rem;
                 white-space: nowrap;
+                flex-shrink: 0;
             }
 
+            /* FIX: grid y cards sin desborde */
             .grid-container {
                 padding: 0 12px 20px;
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* FIX: una columna en mobile */
                 gap: 10px;
+                width: 100%;
             }
             .card {
                 padding: 12px;
                 border-top-width: 6px;
                 border-radius: 10px;
+                width: 100%; /* FIX: ocupa solo lo disponible */
             }
             .card-header { margin-bottom: 10px; min-height: unset; }
             .card-header h3 { font-size: 0.85rem; }
@@ -365,7 +414,6 @@
             .credits-bar { padding: 20px 12px; }
             .credits-bar h3 { font-size: 1rem; }
 
-            /* Calculadora colapsada por defecto en mobile */
             #prat-wc {
                 width: calc(100vw - 40px) !important;
                 right: 10px !important;
@@ -380,6 +428,33 @@
                 max-height: 100vh;
             }
             .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── TABLET (769px - 1024px) ── */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            body {
+                min-width: 0;
+            }
+            .sidebar {
+                width: 220px;
+                min-width: 220px;
+                padding: 15px;
+            }
+            .location-title { font-size: 2.8rem; }
+            .grid-container { padding: 0 20px 30px; }
+            .astro-bar { padding: 15px 20px; gap: 20px; }
+            .days-nav { padding: 15px 20px 10px; }
+        }
+
+        /* ── DESKTOP (>1024px): mantiene min-width para layout sidebar+main ── */
+        @media (min-width: 1025px) {
+            body {
+                min-width: 960px;
+                overflow-x: auto;
+            }
+            .main-content {
+                min-width: 700px;
+            }
         }
     </style>
 <base target="_blank">
@@ -430,14 +505,15 @@
     <header id="main-header">
         <div id="header-bg-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://base-prat.github.io/Pronostico-prat/fondo.jpg') center 30% / cover no-repeat; z-index: 0; transition: background 0.5s ease;"></div>
         <div id="header-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%); z-index: 1; pointer-events: none;"></div>
-        <div style="position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 45px;">
+        <!-- FIX: clase header-inner en vez de estilos inline para poder sobreescribir con CSS en mobile -->
+        <div class="header-inner" style="position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 45px;">
             <div class="location-title-wrap">
                 <h1 class="location-title">Bahía Chile - Puerto Soberanía</h1>
                 <div class="location-subtitle" id="location-subtitle">Base Naval Antártica Capitán Arturo Prat</div>
             </div>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; max-width: 100%;">
                 <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
-                <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center;">
+                <div id="ops-traffic-light" style="display: flex; gap: 10px; background: rgba(255,255,255,0.85); padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.15); align-items: center; flex-wrap: wrap;">
                     <span style="font-size: 0.65rem; font-weight: 900; color: #1a3a5a; text-transform: uppercase;">Estado Ops:</span>
                     <div id="light-botes" title="Operaciones de Botes/Zodiac" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> BOTES</div>
                     <div id="light-vuelo" title="Vuelo de Drones/Aeronaves" style="display:flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:800;"><span class="dot"></span> VUELO</div>
@@ -515,11 +591,19 @@
 </div>
 
 <script>
-    // ── VERSIÓN ESCRITORIO (mobile) ──
+    /* ══════════════════════════════════════════
+       FIX 4: verVersionWeb() condicional — solo
+       altera el viewport si es realmente mobile
+    ══════════════════════════════════════════ */
     function verVersionWeb() {
-        document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
-        document.querySelector('.btn-ver-web').style.display = 'none';
-        document.querySelector('.hamburger-btn').style.display = 'none';
+        if (window.innerWidth < 1025) {
+            document.querySelector('meta[name="viewport"]')
+                .setAttribute('content', 'width=1280, initial-scale=0.45, minimum-scale=0.3');
+        }
+        const btnWeb = document.querySelector('.btn-ver-web');
+        const btnHam = document.querySelector('.hamburger-btn');
+        if (btnWeb) btnWeb.style.display = 'none';
+        if (btnHam) btnHam.style.display = 'none';
     }
 
     // ── SIDEBAR TOGGLE (mobile) ──
@@ -531,7 +615,6 @@
         document.getElementById('sidebar').classList.remove('open');
         document.getElementById('sidebar-overlay').classList.remove('active');
     }
-    // Cerrar sidebar al hacer click en un link (mobile)
     document.querySelectorAll('.external-link').forEach(link => {
         link.addEventListener('click', closeSidebar);
     });
@@ -607,7 +690,7 @@
             document.getElementById('header-metrics').innerHTML = `
                 <div class="metric-item">
                     <div class="metric-val">
-                        <div style="background:var(--navy); color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:1rem; border:1px solid white;">
+                        <div style="background:var(--navy); color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:1rem; border:1px solid white; flex-shrink:0;">
                             <span style="transform: rotate(${rotation}deg); display:inline-block;">↑</span>
                         </div>
                         ${Math.round(windKts)} kts <small>(R ${Math.round(c.wind_gusts_10m)})</small>
@@ -796,7 +879,7 @@
         sectores.forEach((s, i) => {
             const btn = document.createElement('button');
             btn.className = 'sector-tab';
-            btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s; white-space: nowrap;";
+            btn.style.cssText = "padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; transition: 0.3s; white-space: nowrap; flex-shrink: 0;";
             if (i === 0) { btn.style.background = 'var(--navy)'; btn.style.color = 'white'; btn.classList.add('active'); }
             else { btn.style.background = 'white'; btn.style.color = 'var(--navy)'; }
             btn.textContent = s.label || s.nombre;
@@ -812,7 +895,6 @@
                 if (bgImg && s.imagen) bgImg.style.backgroundImage = "url('" + s.imagen + "')";
                 URL_CSV = getCSVUrl(s.gid);
                 if (typeof fetchSheetsData === 'function') fetchSheetsData();
-                // Cerrar sidebar en mobile al seleccionar sector
                 closeSidebar();
             };
             container.appendChild(btn);
@@ -820,7 +902,9 @@
     })();
 </script>
 
-<!-- Widget Calculadora Oficial -->
+<!-- ══════════════════════════════════════════
+     Widget Calculadora de Enfriamiento por Viento
+══════════════════════════════════════════ -->
 <style id="prat-wc-style">
   #prat-wc {
     position: fixed; right: 20px; bottom: 20px; width: 340px;
@@ -842,11 +926,21 @@
   #prat-result-box .val { font-size: 1.8rem; font-weight: 900; display: block; }
   #prat-result-box .desc { font-size: 1.0rem; font-weight: 800; text-transform: uppercase; margin-top: 5px; display: block; }
   .risk-muy-peligro { background: #ffff00 !important; color: black !important; }
-  .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red 1s infinite; }
-  @keyframes pulse-red { 0% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } 50% { box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.5); } 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } }
+  .risk-ext-peligro { background: #ff0000 !important; color: white !important; animation: pulse-red-wc 1s infinite; }
+  @keyframes pulse-red-wc { 0% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } 50% { box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.5); } 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.2); } }
   #prat-wc.collapsed { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
   #prat-wc.collapsed .body, #prat-wc.collapsed .head .title { display: none; }
   #prat-wc.collapsed .head { padding: 13px; justify-content: center; }
+
+  /* FIX mobile: widget no desborda */
+  @media (max-width: 768px) {
+    #prat-wc {
+        width: calc(100vw - 40px) !important;
+        right: 10px !important;
+        bottom: 10px !important;
+        left: auto !important;
+    }
+  }
 </style>
 
 <div id="prat-wc">
